@@ -1,9 +1,11 @@
 package io.connorwyatt.flashcards;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import java.util.ArrayList;
 
@@ -31,5 +33,10 @@ public class FlashcardCardList extends AppCompatActivity {
 
         adapter = new FlashcardCardListAdapter(flashcards);
         recyclerView.setAdapter(adapter);
+    }
+
+    public void addNewFlashcard(View view) {
+        Intent intent = new Intent(this, FlashcardDetails.class);
+        startActivity(intent);
     }
 }
