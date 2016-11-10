@@ -7,6 +7,16 @@
     android:layout_height="match_parent"
     tools:context="io.connorwyatt.flashcards.FlashcardCardList">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/flashcard_details_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:title="@string/app_name"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/flashcard_card_list_recycler_view"
         android:layout_width="match_parent"
@@ -14,6 +24,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
+        android:layout_marginTop="?attr/actionBarSize"
         android:clipToPadding="false"
         android:paddingBottom="80dp"
         android:paddingLeft="8dp"
@@ -30,8 +41,8 @@
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        app:fabSize="normal"
         android:clickable="true"
         android:onClick="addNewFlashcard"
+        app:fabSize="normal"
         app:srcCompat="@drawable/ic_add_white" />
 </RelativeLayout>
