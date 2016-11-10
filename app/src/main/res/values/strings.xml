@@ -3,4 +3,5 @@
     <string name="flashcard_details_title">Title</string>
     <string name="flashcard_details_text">Text</string>
     <string name="flashcard_details_save">Save</string>
+    <string name="flashcard_details_save_toast">Saved successfully</string>
 </resources>

@@ -1,10 +1,12 @@
 package io.connorwyatt.flashcards;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import io.connorwyatt.flashcards.data.Flashcard;
 import io.connorwyatt.flashcards.data.FlashcardDataSource;
@@ -52,10 +54,19 @@ public class FlashcardDetails extends AppCompatActivity {
 
         FlashcardDataSource fds = new FlashcardDataSource(this);
         fds.open();
-
-            fds.save(flashcardToSave);
-
+        fds.save(flashcardToSave);
         fds.close();
+
+        showToast(R.string.flashcard_details_save_toast);
+    }
+
+    private void showToast(int messageStringId) {
+        Context context = getApplicationContext();
+        CharSequence toastMessage = getString(messageStringId);
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, toastMessage, duration);
+        toast.show();
     }
 
     private void setViewFromFlashcard(Flashcard flashcard, boolean shouldFocus) {
