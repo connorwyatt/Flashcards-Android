@@ -60,18 +60,21 @@ public class FlashcardDataSource {
 
     public Flashcard save(Flashcard flashcard) {
         boolean isCreate = flashcard.getId() <= 0;
+        Long currentTimestamp = System.currentTimeMillis() / 1000;
 
         ContentValues values = new ContentValues();
         values.put(FlashcardContract.Columns.TITLE, flashcard.getTitle());
         values.put(FlashcardContract.Columns.TEXT, flashcard.getText());
+        values.put(FlashcardContract.Columns._LAST_MODIFIED_ON, currentTimestamp.intValue());
 
         long id;
 
         if (isCreate) {
+            values.put(FlashcardContract.Columns._CREATED_ON, currentTimestamp.intValue());
             id = database.insert(FlashcardContract.TABLE_NAME, null, values);
         } else {
             id = flashcard.getId();
-            database.update(FlashcardContract.TABLE_NAME, values, FlashcardContract.Columns._ID + " = " + flashcard.getId(), null);
+            database.update(FlashcardContract.TABLE_NAME, values, FlashcardContract.Columns._ID + " = " + id, null);
         }
 
         Cursor cursor = database.query(FlashcardContract.TABLE_NAME, allColumns, FlashcardContract.Columns._ID + " = " + id, null, null, null, null);
