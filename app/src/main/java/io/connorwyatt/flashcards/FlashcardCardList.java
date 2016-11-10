@@ -29,6 +29,12 @@ public class FlashcardCardList extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
 
         adapter = new FlashcardCardListAdapter();
+        adapter.setOnCardClickListener(new FlashcardCardListAdapter.OnCardClickListener() {
+            @Override
+            public void onClick(Flashcard flashcard) {
+                navigateToFlashcardDetails(flashcard);
+            }
+        });
 
         updateAdapterData();
 
@@ -43,16 +49,31 @@ public class FlashcardCardList extends AppCompatActivity {
     }
 
     public void addNewFlashcard(View view) {
-        Intent intent = new Intent(this, FlashcardDetails.class);
-        startActivity(intent);
+        navigateToFlashcardDetails(null);
     }
 
     private void updateAdapterData() {
         FlashcardDataSource fds = new FlashcardDataSource(this);
         fds.open();
-        List<Flashcard> flashcards = fds.getAllFlashcards();
+        List<Flashcard> flashcards = fds.getAll();
         fds.close();
 
         adapter.setItems(flashcards);
+    }
+
+    private void navigateToFlashcardDetails(Flashcard flashcard) {
+        Bundle extras = new Bundle();
+
+        if (flashcard != null) {
+            extras.putLong(FlashcardDetails.INTENT_EXTRAS.FLASHCARD_ID, flashcard.getId());
+        }
+
+        startFlashcardDetailsActivity(extras);
+    }
+
+    private void startFlashcardDetailsActivity(Bundle extras) {
+        Intent intent = new Intent(this, FlashcardDetails.class);
+        intent.putExtras(extras);
+        startActivity(intent);
     }
 }

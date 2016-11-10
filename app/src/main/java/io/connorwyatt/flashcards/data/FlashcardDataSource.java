@@ -26,7 +26,20 @@ public class FlashcardDataSource {
         dbHelper.close();
     }
 
-    public List<Flashcard> getAllFlashcards() {
+    public Flashcard getById(long id) {
+        Cursor cursor = database.query(FlashcardContract.TABLE_NAME,
+                allColumns, FlashcardContract.Columns._ID + " = " + id, null, null, null, null);
+
+        cursor.moveToFirst();
+
+        Flashcard flashcard = cursorToFlashcard(cursor);
+
+        cursor.close();
+
+        return flashcard;
+    }
+
+    public List<Flashcard> getAll() {
         List<Flashcard> flashcards = new ArrayList<>();
 
         Cursor cursor = database.query(FlashcardContract.TABLE_NAME,
@@ -45,13 +58,23 @@ public class FlashcardDataSource {
         return flashcards;
     }
 
-    public Flashcard createFlashcard(Flashcard flashcard) {
+    public Flashcard save(Flashcard flashcard) {
+        boolean isCreate = flashcard.getId() <= 0;
+
         ContentValues values = new ContentValues();
         values.put(FlashcardContract.Columns.TITLE, flashcard.getTitle());
         values.put(FlashcardContract.Columns.TEXT, flashcard.getText());
 
-        long insertId = database.insert(FlashcardContract.TABLE_NAME, null, values);
-        Cursor cursor = database.query(FlashcardContract.TABLE_NAME, allColumns, FlashcardContract.Columns._ID + " = " + insertId, null, null, null, null);
+        long id;
+
+        if (isCreate) {
+            id = database.insert(FlashcardContract.TABLE_NAME, null, values);
+        } else {
+            id = flashcard.getId();
+            database.update(FlashcardContract.TABLE_NAME, values, FlashcardContract.Columns._ID + " = " + flashcard.getId(), null);
+        }
+
+        Cursor cursor = database.query(FlashcardContract.TABLE_NAME, allColumns, FlashcardContract.Columns._ID + " = " + id, null, null, null, null);
         cursor.moveToFirst();
         Flashcard newFlashcard = cursorToFlashcard(cursor);
         cursor.close();
