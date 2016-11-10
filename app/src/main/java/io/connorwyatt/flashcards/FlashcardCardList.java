@@ -7,10 +7,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import io.connorwyatt.flashcards.adapters.FlashcardCardListAdapter;
 import io.connorwyatt.flashcards.data.Flashcard;
+import io.connorwyatt.flashcards.data.FlashcardDataSource;
 
 public class FlashcardCardList extends AppCompatActivity {
     private RecyclerView recyclerView;
@@ -29,14 +30,28 @@ public class FlashcardCardList extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-        ArrayList<Flashcard> flashcards = new ArrayList<>();
+        updateRecyclerView();
+    }
 
-        adapter = new FlashcardCardListAdapter(flashcards);
-        recyclerView.setAdapter(adapter);
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        updateRecyclerView();
     }
 
     public void addNewFlashcard(View view) {
         Intent intent = new Intent(this, FlashcardDetails.class);
         startActivity(intent);
+    }
+
+    private void updateRecyclerView() {
+        FlashcardDataSource fds = new FlashcardDataSource(this);
+        fds.open();
+        List<Flashcard> flashcards = fds.getAllFlashcards();
+        fds.close();
+
+        adapter = new FlashcardCardListAdapter(flashcards);
+        recyclerView.setAdapter(adapter);
     }
 }
