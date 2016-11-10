@@ -77,7 +77,7 @@ public class FlashcardDetails extends AppCompatActivity {
     }
 
     private void save() {
-        Flashcard flashcardToSave = flashcard != null ? flashcard : new Flashcard();
+        Flashcard flashcardToSave = isCreate() ? flashcard : new Flashcard();
 
         flashcardToSave.setTitle(title.getText().toString());
         flashcardToSave.setText(text.getText().toString());
@@ -115,5 +115,9 @@ public class FlashcardDetails extends AppCompatActivity {
         if (shouldFocus) {
             title.requestFocus();
         }
+    }
+
+    private boolean isCreate() {
+        return flashcard == null;
     }
 }
