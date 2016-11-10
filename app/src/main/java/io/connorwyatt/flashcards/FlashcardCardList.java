@@ -14,30 +14,32 @@ import io.connorwyatt.flashcards.data.Flashcard;
 import io.connorwyatt.flashcards.data.FlashcardDataSource;
 
 public class FlashcardCardList extends AppCompatActivity {
-    private RecyclerView recyclerView;
-    private RecyclerView.Adapter adapter;
-    private RecyclerView.LayoutManager layoutManager;
+    private FlashcardCardListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_flashcard_card_list);
 
-        recyclerView = (RecyclerView) findViewById(R.id.flashcard_card_list_recycler_view);
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.flashcard_card_list_recycler_view);
 
         recyclerView.setHasFixedSize(true);
 
-        layoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-        updateRecyclerView();
+        adapter = new FlashcardCardListAdapter();
+
+        updateAdapterData();
+
+        recyclerView.setAdapter(adapter);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        updateRecyclerView();
+        updateAdapterData();
     }
 
     public void addNewFlashcard(View view) {
@@ -45,13 +47,12 @@ public class FlashcardCardList extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void updateRecyclerView() {
+    private void updateAdapterData() {
         FlashcardDataSource fds = new FlashcardDataSource(this);
         fds.open();
         List<Flashcard> flashcards = fds.getAllFlashcards();
         fds.close();
 
-        adapter = new FlashcardCardListAdapter(flashcards);
-        recyclerView.setAdapter(adapter);
+        adapter.setItems(flashcards);
     }
 }

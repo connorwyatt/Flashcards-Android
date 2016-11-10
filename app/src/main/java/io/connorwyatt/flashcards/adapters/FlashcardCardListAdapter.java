@@ -13,10 +13,10 @@ import io.connorwyatt.flashcards.R;
 import io.connorwyatt.flashcards.data.Flashcard;
 
 public class FlashcardCardListAdapter extends RecyclerView.Adapter<FlashcardCardListAdapter.FlashcardCardViewHolder> {
-    List<Flashcard> flashcards;
+    private List<Flashcard> flashcards;
+    private OnCardClickListener onCardClickListener;
 
-    public FlashcardCardListAdapter(List<Flashcard> flashcards) {
-        this.flashcards = flashcards;
+    public FlashcardCardListAdapter() {
     }
 
     public static class FlashcardCardViewHolder extends RecyclerView.ViewHolder {
@@ -29,8 +29,11 @@ public class FlashcardCardListAdapter extends RecyclerView.Adapter<FlashcardCard
             cv = (CardView) itemView.findViewById(R.id.flashcard_card);
             title = (TextView) itemView.findViewById(R.id.flashcard_card_title);
             text = (TextView) itemView.findViewById(R.id.flashcard_card_text);
-
         }
+    }
+
+    public interface OnCardClickListener {
+        void onClick(Flashcard flashcard);
     }
 
     @Override
@@ -45,8 +48,18 @@ public class FlashcardCardListAdapter extends RecyclerView.Adapter<FlashcardCard
     }
 
     @Override
-    public void onBindViewHolder(FlashcardCardViewHolder holder, int position) {
+    public void onBindViewHolder(final FlashcardCardViewHolder holder, int position) {
         Flashcard currentFlashcard = flashcards.get(position);
+
+        if (onCardClickListener != null) {
+            final FlashcardCardListAdapter context = this;
+            holder.cv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    context.onCardClickListener.onClick(flashcards.get(holder.getAdapterPosition()));
+                }
+            });
+        }
 
         holder.title.setText(currentFlashcard.getTitle());
         holder.text.setText(currentFlashcard.getText());
@@ -55,5 +68,14 @@ public class FlashcardCardListAdapter extends RecyclerView.Adapter<FlashcardCard
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
+    }
+
+    public void setItems(List<Flashcard> flashcards) {
+        this.flashcards = flashcards;
+        notifyDataSetChanged();
+    }
+
+    public void setOnCardClickListener(OnCardClickListener onCardClickListener) {
+        this.onCardClickListener = onCardClickListener;
     }
 }
