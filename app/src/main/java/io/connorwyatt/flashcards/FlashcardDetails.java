@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -32,6 +33,9 @@ public class FlashcardDetails extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.flashcard_details_toolbar);
         setSupportActionBar(toolbar);
 
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
         title = (EditText) findViewById(R.id.flashcard_details_title);
         text = (EditText) findViewById(R.id.flashcard_details_text);
 
@@ -56,6 +60,10 @@ public class FlashcardDetails extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_flashcard_details_menu, menu);
+
+        if (isCreate()) {
+            menu.findItem(R.id.action_delete).setEnabled(false);
+        }
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -89,6 +97,8 @@ public class FlashcardDetails extends AppCompatActivity {
         fds.close();
 
         showToast(R.string.flashcard_details_save_toast);
+
+        this.invalidateOptionsMenu();
     }
 
     private void delete() {
