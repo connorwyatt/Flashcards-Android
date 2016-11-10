@@ -3,7 +3,12 @@ package io.connorwyatt.flashcards;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -24,6 +29,12 @@ public class FlashcardDetails extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_flashcard_details);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.flashcard_details_toolbar);
+        setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         title = (EditText) findViewById(R.id.flashcard_details_title);
         text = (EditText) findViewById(R.id.flashcard_details_text);
@@ -46,18 +57,59 @@ public class FlashcardDetails extends AppCompatActivity {
         }
     }
 
-    public void save(View view) {
-        Flashcard flashcardToSave = flashcard != null ? flashcard : new Flashcard();
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_flashcard_details_menu, menu);
+
+        if (isCreate()) {
+            menu.findItem(R.id.action_delete).setEnabled(false);
+        }
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_delete:
+                delete();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    public void onSaveClick(View view) {
+        save();
+    }
+
+    private void save() {
+        Flashcard flashcardToSave = isCreate() ? new Flashcard() : flashcard;
 
         flashcardToSave.setTitle(title.getText().toString());
         flashcardToSave.setText(text.getText().toString());
 
         FlashcardDataSource fds = new FlashcardDataSource(this);
         fds.open();
-        fds.save(flashcardToSave);
+        flashcard = fds.save(flashcardToSave);
         fds.close();
 
         showToast(R.string.flashcard_details_save_toast);
+
+        this.invalidateOptionsMenu();
+    }
+
+    private void delete() {
+        FlashcardDataSource fds = new FlashcardDataSource(this);
+        fds.open();
+        fds.deleteById(flashcard.getId());
+        fds.close();
+
+        showToast(R.string.flashcard_details_delete_toast);
+
+        NavUtils.navigateUpFromSameTask(this);
     }
 
     private void showToast(int messageStringId) {
@@ -76,5 +128,9 @@ public class FlashcardDetails extends AppCompatActivity {
         if (shouldFocus) {
             title.requestFocus();
         }
+    }
+
+    private boolean isCreate() {
+        return flashcard == null;
     }
 }
