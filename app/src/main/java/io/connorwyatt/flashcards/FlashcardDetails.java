@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -50,7 +52,31 @@ public class FlashcardDetails extends AppCompatActivity {
         }
     }
 
-    public void save(View view) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_flashcard_details_menu, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_delete:
+                delete();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    public void onSaveClick(View view) {
+        save();
+    }
+
+    private void save() {
         Flashcard flashcardToSave = flashcard != null ? flashcard : new Flashcard();
 
         flashcardToSave.setTitle(title.getText().toString());
@@ -62,6 +88,15 @@ public class FlashcardDetails extends AppCompatActivity {
         fds.close();
 
         showToast(R.string.flashcard_details_save_toast);
+    }
+
+    private void delete() {
+        FlashcardDataSource fds = new FlashcardDataSource(this);
+        fds.open();
+        fds.deleteById(flashcard.getId());
+        fds.close();
+
+        showToast(R.string.flashcard_details_delete_toast);
     }
 
     private void showToast(int messageStringId) {
