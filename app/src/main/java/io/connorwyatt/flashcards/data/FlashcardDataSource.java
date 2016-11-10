@@ -81,6 +81,10 @@ public class FlashcardDataSource {
         return newFlashcard;
     }
 
+    public void deleteById(long id) {
+        database.delete(FlashcardContract.TABLE_NAME, FlashcardContract.Columns._ID + " = " + id, null);
+    }
+
     private Flashcard cursorToFlashcard(Cursor cursor) {
         Flashcard flashcard = new Flashcard();
 
