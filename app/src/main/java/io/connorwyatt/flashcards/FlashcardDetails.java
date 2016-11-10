@@ -77,14 +77,14 @@ public class FlashcardDetails extends AppCompatActivity {
     }
 
     private void save() {
-        Flashcard flashcardToSave = isCreate() ? flashcard : new Flashcard();
+        Flashcard flashcardToSave = isCreate() ? new Flashcard() : flashcard;
 
         flashcardToSave.setTitle(title.getText().toString());
         flashcardToSave.setText(text.getText().toString());
 
         FlashcardDataSource fds = new FlashcardDataSource(this);
         fds.open();
-        fds.save(flashcardToSave);
+        flashcard = fds.save(flashcardToSave);
         fds.close();
 
         showToast(R.string.flashcard_details_save_toast);
