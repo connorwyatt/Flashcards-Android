@@ -43,20 +43,18 @@
                 android:orientation="vertical"
                 android:padding="8dp">
 
-                <EditText
+                <AutoCompleteTextView
                     android:id="@+id/flashcard_details_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/flashcard_details_title"
-                    android:inputType="text"
                     android:textSize="30sp" />
 
-                <EditText
+                <MultiAutoCompleteTextView
                     android:id="@+id/flashcard_details_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/flashcard_details_text"
-                    android:inputType="textMultiLine" />
+                    android:hint="@string/flashcard_details_text" />
 
                 <Button
                     android:layout_width="wrap_content"
