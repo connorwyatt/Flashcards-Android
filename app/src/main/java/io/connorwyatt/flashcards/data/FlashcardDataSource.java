@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.connorwyatt.flashcards.exceptions.SQLNoRowsAffectedException;
+
 public class FlashcardDataSource {
     private SQLiteDatabase database;
     private DBHelper dbHelper;
@@ -71,10 +73,14 @@ public class FlashcardDataSource {
 
         if (isCreate) {
             values.put(FlashcardContract.Columns._CREATED_ON, currentTimestamp.intValue());
-            id = database.insert(FlashcardContract.TABLE_NAME, null, values);
+            id = database.insertOrThrow(FlashcardContract.TABLE_NAME, null, values);
         } else {
             id = flashcard.getId();
-            database.update(FlashcardContract.TABLE_NAME, values, FlashcardContract.Columns._ID + " = " + id, null);
+            int rowsAffected = database.update(FlashcardContract.TABLE_NAME, values, FlashcardContract.Columns._ID + " = " + id, null);
+
+            if (rowsAffected == 0) {
+                throw new SQLNoRowsAffectedException();
+            }
         }
 
         Cursor cursor = database.query(FlashcardContract.TABLE_NAME, allColumns, FlashcardContract.Columns._ID + " = " + id, null, null, null, null);
@@ -85,7 +91,11 @@ public class FlashcardDataSource {
     }
 
     public void deleteById(long id) {
-        database.delete(FlashcardContract.TABLE_NAME, FlashcardContract.Columns._ID + " = " + id, null);
+        int rowsAffected = database.delete(FlashcardContract.TABLE_NAME, FlashcardContract.Columns._ID + " = " + id, null);
+
+        if (rowsAffected == 0) {
+            throw new SQLNoRowsAffectedException();
+        }
     }
 
     private Flashcard cursorToFlashcard(Cursor cursor) {
