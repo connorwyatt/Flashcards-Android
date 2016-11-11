@@ -8,11 +8,6 @@ public class Flashcard {
     public Flashcard() {
     }
 
-    public Flashcard(String title, String text) {
-        this.title = title;
-        this.text = text;
-    }
-
     public long getId() {
         return id;
     }
