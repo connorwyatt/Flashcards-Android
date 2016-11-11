@@ -3,7 +3,6 @@ package io.connorwyatt.flashcards.data;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
@@ -11,21 +10,15 @@ import java.util.List;
 
 import io.connorwyatt.flashcards.exceptions.SQLNoRowsAffectedException;
 
-public class FlashcardDataSource {
-    private SQLiteDatabase database;
-    private DBHelper dbHelper;
+public class FlashcardDataSource extends BaseDataSource {
     private String[] allColumns = {FlashcardContract.Columns._ID, FlashcardContract.Columns.TITLE, FlashcardContract.Columns.TEXT};
 
     public FlashcardDataSource(Context context) {
-        dbHelper = new DBHelper(context);
+        super(context);
     }
 
-    public void open() throws SQLException {
-        database = dbHelper.getWritableDatabase();
-    }
-
-    public void close() {
-        dbHelper.close();
+    FlashcardDataSource(SQLiteDatabase database) {
+        super(database);
     }
 
     public Flashcard getById(long id) {
