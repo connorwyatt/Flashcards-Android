@@ -83,11 +83,7 @@ public class FlashcardDataSource {
             }
         }
 
-        Cursor cursor = database.query(FlashcardContract.TABLE_NAME, allColumns, FlashcardContract.Columns._ID + " = " + id, null, null, null, null);
-        cursor.moveToFirst();
-        Flashcard newFlashcard = cursorToFlashcard(cursor);
-        cursor.close();
-        return newFlashcard;
+        return getById(id);
     }
 
     public void deleteById(long id) {
