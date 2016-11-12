@@ -1,22 +1,14 @@
 package io.connorwyatt.flashcards.data;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class Flashcard {
-    private long id;
+public class Flashcard extends BaseEntity {
     private String title;
     private String text;
-    private List<Category> categories;
+    private List<Category> categories = new ArrayList<>();
 
     public Flashcard() {
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getTitle() {

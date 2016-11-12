@@ -54,28 +54,48 @@ public class FlashcardDataSource extends BaseDataSource {
     }
 
     public Flashcard save(Flashcard flashcard) {
-        boolean isCreate = flashcard.getId() <= 0;
+        long savedFlashcardId;
 
-        ContentValues values = new ContentValues();
-        values.put(FlashcardContract.Columns.TITLE, flashcard.getTitle());
-        values.put(FlashcardContract.Columns.TEXT, flashcard.getText());
+        try {
+            database.beginTransaction();
 
-        long id;
+            boolean isCreate = flashcard.getId() <= 0;
 
-        if (isCreate) {
-            addCreateTimestamp(values);
-            id = database.insertOrThrow(FlashcardContract.TABLE_NAME, null, values);
-        } else {
-            id = flashcard.getId();
-            addUpdateTimestamp(values);
-            int rowsAffected = database.update(FlashcardContract.TABLE_NAME, values, FlashcardContract.Columns._ID + " = " + id, null);
+            ContentValues values = new ContentValues();
+            values.put(FlashcardContract.Columns.TITLE, flashcard.getTitle());
+            values.put(FlashcardContract.Columns.TEXT, flashcard.getText());
 
-            if (rowsAffected == 0) {
-                throw new SQLNoRowsAffectedException();
+            if (isCreate) {
+                addCreateTimestamp(values);
+                savedFlashcardId = database.insertOrThrow(FlashcardContract.TABLE_NAME, null, values);
+            } else {
+                savedFlashcardId = flashcard.getId();
+                addUpdateTimestamp(values);
+                int rowsAffected = database.update(FlashcardContract.TABLE_NAME, values,
+                                                   FlashcardContract.Columns._ID + " = " + savedFlashcardId,
+                                                   null);
+
+                if (rowsAffected == 0) {
+                    throw new SQLNoRowsAffectedException();
+                }
             }
+
+            createNonexistentCategories(flashcard);
+
+            List<Long> categoryIds = getIdsFromList(flashcard.getCategories());
+
+            FlashcardCategoryDataSource fcds = new FlashcardCategoryDataSource(database);
+            fcds.updateFlashcardCategoryLinks(savedFlashcardId, categoryIds);
+
+            database.setTransactionSuccessful();
+        } catch (Exception e) {
+            database.endTransaction();
+            throw e;
         }
 
-        return getById(id);
+        database.endTransaction();
+
+        return getById(savedFlashcardId);
     }
 
     public void deleteById(long id) {
@@ -92,6 +112,8 @@ public class FlashcardDataSource extends BaseDataSource {
         flashcard.setId(cursor.getLong(0));
         flashcard.setTitle(cursor.getString(1));
         flashcard.setText(cursor.getString(2));
+
+        populateCategories(flashcard);
 
         return flashcard;
     }
@@ -115,5 +137,18 @@ public class FlashcardDataSource extends BaseDataSource {
 
             flashcard.setCategories(savedCategories);
         }
+    }
+
+    private void populateCategories(Flashcard flashcard) {
+        FlashcardCategoryDataSource fcds = new FlashcardCategoryDataSource(database);
+        List<Long> categoryIds = fcds.getLinkedCategoryIdsForFlashcardId(flashcard.getId());
+        List<Category> categories = new ArrayList<>();
+
+        CategoryDataSource cds = new CategoryDataSource(database);
+        for (Long categoryId : categoryIds) {
+            categories.add(cds.getById(categoryId));
+        }
+
+        flashcard.setCategories(categories);
     }
 }

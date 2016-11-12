@@ -5,6 +5,9 @@ import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class BaseDataSource {
     protected SQLiteDatabase database;
     protected DBHelper dbHelper;
@@ -47,5 +50,17 @@ public class BaseDataSource {
         Long currentTimestamp = System.currentTimeMillis() / 1000;
         values.put(BaseColumnsTimeline._CREATED_ON, currentTimestamp.intValue());
         values.put(BaseColumnsTimeline._LAST_MODIFIED_ON, currentTimestamp.intValue());
+    }
+
+    protected <T extends BaseEntity> List<Long> getIdsFromList(List<T> entityList) {
+        List<Long> idList = new ArrayList<>();
+
+        if (entityList != null) {
+            for (T entity : entityList) {
+                idList.add(entity.getId());
+            }
+        }
+
+            return idList;
     }
 }

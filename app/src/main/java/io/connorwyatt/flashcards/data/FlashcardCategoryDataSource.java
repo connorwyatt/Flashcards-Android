@@ -20,6 +20,24 @@ public class FlashcardCategoryDataSource extends BaseDataSource {
         super(database);
     }
 
+    public void updateFlashcardCategoryLinks(long flashcardId, List<Long> categoryIds) {
+        if (categoryIds == null) {
+            categoryIds = new ArrayList<>();
+        }
+
+        List<Long> previousCategoryIds = getLinkedCategoryIdsForFlashcardId(flashcardId);
+        List<Long> addedCategoryIds = ListUtils.difference(categoryIds, previousCategoryIds);
+        List<Long> removedCategoryIds = ListUtils.difference(previousCategoryIds, categoryIds);
+
+        for (long id : addedCategoryIds) {
+            addLink(flashcardId, id);
+        }
+
+        for (long id : removedCategoryIds) {
+            removeLink(flashcardId, id);
+        }
+    }
+
     public List<Long> getLinkedCategoryIdsForFlashcardId(long flashcardId) {
         List<Long> categoryIds = new ArrayList<>();
 
