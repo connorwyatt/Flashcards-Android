@@ -1,9 +1,12 @@
 package io.connorwyatt.flashcards.data;
 
+import java.util.List;
+
 public class Flashcard {
     private long id;
     private String title;
     private String text;
+    private List<Category> categories;
 
     public Flashcard() {
     }
@@ -30,5 +33,13 @@ public class Flashcard {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
     }
 }
