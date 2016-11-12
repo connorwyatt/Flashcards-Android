@@ -148,10 +148,14 @@ public class FlashcardDetails extends AppCompatActivity {
 
         String[] categoryNames = categoriesString.split(",");
 
-        for (String categoryName: categoryNames) {
-            Category category = new Category();
-            category.setName(categoryName.trim());
-            categories.add(category);
+        for (String categoryName : categoryNames) {
+            String trimmedString = categoryName.trim();
+
+            if (trimmedString.length() > 0) {
+                Category category = new Category();
+                category.setName(categoryName.trim());
+                categories.add(category);
+            }
         }
 
         return categories;
