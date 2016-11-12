@@ -36,7 +36,7 @@ public class CategoryDataSource extends BaseDataSource {
 
         Cursor cursor = database.query(CategoryContract.TABLE_NAME,
                                        allColumns,
-                                       CategoryContract.Columns.NAME + " = '" + name + "'", null,
+                                       CategoryContract.Columns.NAME + " LIKE '" + name + "'", null,
                                        null, null, null);
 
         if (cursor.getCount() > 0) {
