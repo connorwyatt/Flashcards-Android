@@ -13,8 +13,7 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
-        android:theme="@style/AppTheme.AppBar"
-        android:title="@string/app_name">
+        android:theme="@style/AppTheme.AppBar">
 
         <Spinner
             android:id="@+id/flashcard_card_list_spinner"

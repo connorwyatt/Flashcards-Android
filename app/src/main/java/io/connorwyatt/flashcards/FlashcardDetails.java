@@ -41,6 +41,7 @@ public class FlashcardDetails extends AppCompatActivity {
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowTitleEnabled(false);
 
         title = (AutoCompleteTextView) findViewById(R.id.flashcard_details_title);
         text = (MultiAutoCompleteTextView) findViewById(R.id.flashcard_details_text);
