@@ -3,11 +3,7 @@ package io.connorwyatt.flashcards.data;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import io.connorwyatt.flashcards.exceptions.SQLNoRowsAffectedException;
 
@@ -31,6 +27,25 @@ public class CategoryDataSource extends BaseDataSource {
         Category category = cursorToCategory(cursor);
 
         cursor.close();
+
+        return category;
+    }
+
+    public Category getByName(String name) {
+        Category category = null;
+
+        Cursor cursor = database.query(CategoryContract.TABLE_NAME,
+                                       allColumns,
+                                       CategoryContract.Columns.NAME + " = '" + name + "'", null,
+                                       null, null, null);
+
+        if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+
+            category = cursorToCategory(cursor);
+
+            cursor.close();
+        }
 
         return category;
     }
