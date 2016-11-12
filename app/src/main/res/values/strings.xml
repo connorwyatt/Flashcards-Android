@@ -3,6 +3,7 @@
     <string name="action_delete">Delete</string>
     <string name="flashcard_details_title">Title</string>
     <string name="flashcard_details_text">Text</string>
+    <string name="flashcard_details_categories">Categories</string>
     <string name="flashcard_details_save">Save</string>
     <string name="flashcard_details_save_toast">Saved successfully</string>
     <string name="flashcard_details_delete_toast">Delete successful</string>

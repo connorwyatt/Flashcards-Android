@@ -56,6 +56,12 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/flashcard_details_text" />
 
+                <MultiAutoCompleteTextView
+                    android:id="@+id/flashcard_details_categories"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/flashcard_details_categories" />
+
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

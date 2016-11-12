@@ -10,16 +10,22 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.AutoCompleteTextView;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import io.connorwyatt.flashcards.data.Category;
 import io.connorwyatt.flashcards.data.Flashcard;
 import io.connorwyatt.flashcards.data.FlashcardDataSource;
 
 public class FlashcardDetails extends AppCompatActivity {
     private Flashcard flashcard;
-    private EditText title;
-    private EditText text;
+    private AutoCompleteTextView title;
+    private MultiAutoCompleteTextView text;
+    private MultiAutoCompleteTextView categories;
 
     public static class INTENT_EXTRAS {
         public static String FLASHCARD_ID = "FLASHCARD_ID";
@@ -36,8 +42,9 @@ public class FlashcardDetails extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        title = (EditText) findViewById(R.id.flashcard_details_title);
-        text = (EditText) findViewById(R.id.flashcard_details_text);
+        title = (AutoCompleteTextView) findViewById(R.id.flashcard_details_title);
+        text = (MultiAutoCompleteTextView) findViewById(R.id.flashcard_details_text);
+        categories = (MultiAutoCompleteTextView) findViewById(R.id.flashcard_details_categories);
 
         Intent intent = getIntent();
 
@@ -90,6 +97,7 @@ public class FlashcardDetails extends AppCompatActivity {
 
         flashcardToSave.setTitle(title.getText().toString());
         flashcardToSave.setText(text.getText().toString());
+        flashcardToSave.setCategories(processCategoriesString(categories.getText().toString()));
 
         FlashcardDataSource fds = new FlashcardDataSource(this);
         fds.open();
@@ -124,6 +132,7 @@ public class FlashcardDetails extends AppCompatActivity {
     private void setViewFromFlashcard(Flashcard flashcard, boolean shouldFocus) {
         title.setText(flashcard.getTitle());
         text.setText(flashcard.getText());
+        categories.setText(stringifyCategories(flashcard.getCategories()));
 
         if (shouldFocus) {
             title.requestFocus();
@@ -132,5 +141,33 @@ public class FlashcardDetails extends AppCompatActivity {
 
     private boolean isCreate() {
         return flashcard == null;
+    }
+
+    private List<Category> processCategoriesString(String categoriesString) {
+        List<Category> categories = new ArrayList<>();
+
+        String[] categoryNames = categoriesString.split(",");
+
+        for (String categoryName: categoryNames) {
+            Category category = new Category();
+            category.setName(categoryName.trim());
+            categories.add(category);
+        }
+
+        return categories;
+    }
+
+    private String stringifyCategories(List<Category> categories) {
+        String categoriesString = "";
+
+        for (Category category : categories) {
+            if (categoriesString.length() != 0) {
+                categoriesString = categoriesString.concat(", ");
+            }
+
+            categoriesString = categoriesString.concat(category.getName());
+        }
+
+        return categoriesString;
     }
 }
