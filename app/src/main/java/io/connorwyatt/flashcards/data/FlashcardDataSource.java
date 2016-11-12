@@ -95,4 +95,25 @@ public class FlashcardDataSource extends BaseDataSource {
 
         return flashcard;
     }
+
+    private void createNonexistentCategories(Flashcard flashcard) {
+        List<Category> savedCategories = new ArrayList<>();
+        List<Category> categories = flashcard.getCategories();
+
+        if (categories != null) {
+            CategoryDataSource cds = new CategoryDataSource(database);
+
+            for (Category category : categories) {
+                Category dbCategory = cds.getByName(category.getName());
+
+                if (dbCategory == null) {
+                    dbCategory = cds.save(category);
+                }
+
+                savedCategories.add(dbCategory);
+            }
+
+            flashcard.setCategories(savedCategories);
+        }
+    }
 }
