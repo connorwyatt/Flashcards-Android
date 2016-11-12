@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
@@ -63,6 +64,24 @@ public class FlashcardCardList extends AppCompatActivity {
         ArrayAdapter<Category> spinnerAdapter = new CategoryNameArrayAdapter(
                 getSupportActionBar().getThemedContext(), categories);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position,
+                                       long id) {
+                Category category = (Category) adapterView.getItemAtPosition(position);
+
+                if (category == allCategory) {
+                    adapter.removeFilter();
+                } else {
+                    adapter.applyCategoryFilter(category.getId());
+                }
+            }
+
+            @Override public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
+
         spinner.setAdapter(spinnerAdapter);
     }
 

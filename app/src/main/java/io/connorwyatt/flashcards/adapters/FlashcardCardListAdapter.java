@@ -7,14 +7,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.android.internal.util.Predicate;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import io.connorwyatt.flashcards.R;
+import io.connorwyatt.flashcards.data.Category;
 import io.connorwyatt.flashcards.data.Flashcard;
+import io.connorwyatt.flashcards.utils.ListUtils;
 
 public class FlashcardCardListAdapter extends RecyclerView.Adapter<FlashcardCardListAdapter
         .FlashcardCardViewHolder> {
     private List<Flashcard> flashcards;
+    private List<Flashcard> viewFlashcards;
+    private long categoryFilter;
     private OnCardClickListener onCardClickListener;
 
     public FlashcardCardListAdapter() {
@@ -22,7 +29,7 @@ public class FlashcardCardListAdapter extends RecyclerView.Adapter<FlashcardCard
 
     @Override
     public int getItemCount() {
-        return flashcards.size();
+        return viewFlashcards.size();
     }
 
     @Override
@@ -34,7 +41,7 @@ public class FlashcardCardListAdapter extends RecyclerView.Adapter<FlashcardCard
 
     @Override
     public void onBindViewHolder(final FlashcardCardViewHolder holder, int position) {
-        Flashcard currentFlashcard = flashcards.get(position);
+        Flashcard currentFlashcard = viewFlashcards.get(position);
 
         if (onCardClickListener != null) {
             final FlashcardCardListAdapter context = this;
@@ -42,7 +49,7 @@ public class FlashcardCardListAdapter extends RecyclerView.Adapter<FlashcardCard
                 @Override
                 public void onClick(View view) {
                     context.onCardClickListener
-                            .onClick(flashcards.get(holder.getAdapterPosition()));
+                            .onClick(viewFlashcards.get(holder.getAdapterPosition()));
                 }
             });
         }
@@ -59,7 +66,43 @@ public class FlashcardCardListAdapter extends RecyclerView.Adapter<FlashcardCard
 
     public void setItems(List<Flashcard> flashcards) {
         this.flashcards = flashcards;
+        updateViewFlashcards();
+    }
+
+    private void updateViewFlashcards() {
+        viewFlashcards = flashcards;
+
+        viewFlashcards = applyFilters(viewFlashcards);
+
         notifyDataSetChanged();
+    }
+
+    private List<Flashcard> applyFilters(List<Flashcard> flashcards) {
+        List<Flashcard> filteredList = new ArrayList<>(flashcards);
+
+        if (categoryFilter > 0) {
+            filteredList = ListUtils.filter(filteredList, new Predicate<Flashcard>() {
+                @Override public boolean apply(Flashcard flashcard) {
+                    return ListUtils.contains(flashcard.getCategories(), new Predicate<Category>() {
+                        @Override public boolean apply(Category category) {
+                            return category.getId() == categoryFilter;
+                        }
+                    });
+                }
+            });
+        }
+
+        return filteredList;
+    }
+
+    public void applyCategoryFilter(long categoryId) {
+        categoryFilter = categoryId;
+        updateViewFlashcards();
+    }
+
+    public void removeFilter() {
+        categoryFilter = 0;
+        updateViewFlashcards();
     }
 
     public void setOnCardClickListener(OnCardClickListener onCardClickListener) {
