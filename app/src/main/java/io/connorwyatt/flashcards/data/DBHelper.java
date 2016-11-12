@@ -7,7 +7,7 @@ import android.util.Log;
 
 public class DBHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "flashcards.db";
-    private static final int DATABASE_VERSION = 5;
+    private static final int DATABASE_VERSION = 6;
 
     public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -16,14 +16,12 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase database) {
         database.execSQL(FlashcardContract.TABLE_CREATE);
+        database.execSQL(CategoryContract.TABLE_CREATE);
+        database.execSQL(FlashcardCategoryContract.TABLE_CREATE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.w(DBHelper.class.getName(),
-                "Upgrading database from version " + oldVersion + " to "
-                        + newVersion + ", which will destroy all old data.");
-        db.execSQL("DROP TABLE IF EXISTS " + FlashcardContract.TABLE_NAME);
-        onCreate(db);
+        DBUpgradeHelper.upgradeDB(db, oldVersion, newVersion);
     }
 }

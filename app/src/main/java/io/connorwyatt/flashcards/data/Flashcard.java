@@ -1,24 +1,14 @@
 package io.connorwyatt.flashcards.data;
 
-public class Flashcard {
-    private long id;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Flashcard extends BaseEntity {
     private String title;
     private String text;
+    private List<Category> categories = new ArrayList<>();
 
     public Flashcard() {
-    }
-
-    public Flashcard(String title, String text) {
-        this.title = title;
-        this.text = text;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getTitle() {
@@ -35,5 +25,27 @@ public class Flashcard {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
+    }
+
+    public String getCategoriesString() {
+        String categoriesString = "";
+
+        for (Category category : categories) {
+            if (categoriesString.length() != 0) {
+                categoriesString = categoriesString.concat(", ");
+            }
+
+            categoriesString = categoriesString.concat(category.getName());
+        }
+
+        return categoriesString;
     }
 }

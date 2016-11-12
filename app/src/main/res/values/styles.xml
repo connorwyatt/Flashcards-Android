@@ -1,9 +1,21 @@
 <resources>
 
+    <style name="AppTheme.CardView">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+    </style>
+
     <style name="AppTheme.AppBar">
         <item name="titleTextColor">?android:attr/textColorPrimaryInverse</item>
         <item name="subtitleTextColor">?android:attr/textColorPrimaryInverse</item>
+        <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
         <item name="colorControlNormal">?android:attr/textColorPrimaryInverse</item>
+        <item name="spinnerDropDownItemStyle">@style/AppTheme.AppBar.Popup</item>
+        <item name="android:spinnerDropDownItemStyle">@style/AppTheme.AppBar.Popup</item>
+    </style>
+
+    <style name="AppTheme.AppBar.Popup" parent="Widget.AppCompat.Light.DropDownItem.Spinner">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="colorControlNormal">?android:attr/textColorPrimary</item>
     </style>
 
     <!-- Base application theme. -->

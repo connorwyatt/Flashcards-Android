@@ -3,27 +3,22 @@ package io.connorwyatt.flashcards.data;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FlashcardDataSource {
-    private SQLiteDatabase database;
-    private DBHelper dbHelper;
+import io.connorwyatt.flashcards.exceptions.SQLNoRowsAffectedException;
+
+public class FlashcardDataSource extends BaseDataSource {
     private String[] allColumns = {FlashcardContract.Columns._ID, FlashcardContract.Columns.TITLE, FlashcardContract.Columns.TEXT};
 
     public FlashcardDataSource(Context context) {
-        dbHelper = new DBHelper(context);
+        super(context);
     }
 
-    public void open() throws SQLException {
-        database = dbHelper.getWritableDatabase();
-    }
-
-    public void close() {
-        dbHelper.close();
+    FlashcardDataSource(SQLiteDatabase database) {
+        super(database);
     }
 
     public Flashcard getById(long id) {
@@ -59,33 +54,56 @@ public class FlashcardDataSource {
     }
 
     public Flashcard save(Flashcard flashcard) {
-        boolean isCreate = flashcard.getId() <= 0;
-        Long currentTimestamp = System.currentTimeMillis() / 1000;
+        long savedFlashcardId;
 
-        ContentValues values = new ContentValues();
-        values.put(FlashcardContract.Columns.TITLE, flashcard.getTitle());
-        values.put(FlashcardContract.Columns.TEXT, flashcard.getText());
-        values.put(FlashcardContract.Columns._LAST_MODIFIED_ON, currentTimestamp.intValue());
+        try {
+            database.beginTransaction();
 
-        long id;
+            boolean isCreate = flashcard.getId() <= 0;
 
-        if (isCreate) {
-            values.put(FlashcardContract.Columns._CREATED_ON, currentTimestamp.intValue());
-            id = database.insert(FlashcardContract.TABLE_NAME, null, values);
-        } else {
-            id = flashcard.getId();
-            database.update(FlashcardContract.TABLE_NAME, values, FlashcardContract.Columns._ID + " = " + id, null);
+            ContentValues values = new ContentValues();
+            values.put(FlashcardContract.Columns.TITLE, flashcard.getTitle());
+            values.put(FlashcardContract.Columns.TEXT, flashcard.getText());
+
+            if (isCreate) {
+                addCreateTimestamp(values);
+                savedFlashcardId = database.insertOrThrow(FlashcardContract.TABLE_NAME, null, values);
+            } else {
+                savedFlashcardId = flashcard.getId();
+                addUpdateTimestamp(values);
+                int rowsAffected = database.update(FlashcardContract.TABLE_NAME, values,
+                                                   FlashcardContract.Columns._ID + " = " + savedFlashcardId,
+                                                   null);
+
+                if (rowsAffected == 0) {
+                    throw new SQLNoRowsAffectedException();
+                }
+            }
+
+            createNonexistentCategories(flashcard);
+
+            List<Long> categoryIds = getIdsFromList(flashcard.getCategories());
+
+            FlashcardCategoryDataSource fcds = new FlashcardCategoryDataSource(database);
+            fcds.updateFlashcardCategoryLinks(savedFlashcardId, categoryIds);
+
+            database.setTransactionSuccessful();
+        } catch (Exception e) {
+            database.endTransaction();
+            throw e;
         }
 
-        Cursor cursor = database.query(FlashcardContract.TABLE_NAME, allColumns, FlashcardContract.Columns._ID + " = " + id, null, null, null, null);
-        cursor.moveToFirst();
-        Flashcard newFlashcard = cursorToFlashcard(cursor);
-        cursor.close();
-        return newFlashcard;
+        database.endTransaction();
+
+        return getById(savedFlashcardId);
     }
 
     public void deleteById(long id) {
-        database.delete(FlashcardContract.TABLE_NAME, FlashcardContract.Columns._ID + " = " + id, null);
+        int rowsAffected = database.delete(FlashcardContract.TABLE_NAME, FlashcardContract.Columns._ID + " = " + id, null);
+
+        if (rowsAffected == 0) {
+            throw new SQLNoRowsAffectedException();
+        }
     }
 
     private Flashcard cursorToFlashcard(Cursor cursor) {
@@ -95,6 +113,42 @@ public class FlashcardDataSource {
         flashcard.setTitle(cursor.getString(1));
         flashcard.setText(cursor.getString(2));
 
+        populateCategories(flashcard);
+
         return flashcard;
+    }
+
+    private void createNonexistentCategories(Flashcard flashcard) {
+        List<Category> savedCategories = new ArrayList<>();
+        List<Category> categories = flashcard.getCategories();
+
+        if (categories != null) {
+            CategoryDataSource cds = new CategoryDataSource(database);
+
+            for (Category category : categories) {
+                Category dbCategory = cds.getByName(category.getName());
+
+                if (dbCategory == null) {
+                    dbCategory = cds.save(category);
+                }
+
+                savedCategories.add(dbCategory);
+            }
+
+            flashcard.setCategories(savedCategories);
+        }
+    }
+
+    private void populateCategories(Flashcard flashcard) {
+        FlashcardCategoryDataSource fcds = new FlashcardCategoryDataSource(database);
+        List<Long> categoryIds = fcds.getLinkedCategoryIdsForFlashcardId(flashcard.getId());
+        List<Category> categories = new ArrayList<>();
+
+        CategoryDataSource cds = new CategoryDataSource(database);
+        for (Long categoryId : categoryIds) {
+            categories.add(cds.getById(categoryId));
+        }
+
+        flashcard.setCategories(categories);
     }
 }
