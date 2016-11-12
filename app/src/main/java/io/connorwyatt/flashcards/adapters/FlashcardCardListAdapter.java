@@ -12,28 +12,12 @@ import java.util.List;
 import io.connorwyatt.flashcards.R;
 import io.connorwyatt.flashcards.data.Flashcard;
 
-public class FlashcardCardListAdapter extends RecyclerView.Adapter<FlashcardCardListAdapter.FlashcardCardViewHolder> {
+public class FlashcardCardListAdapter extends RecyclerView.Adapter<FlashcardCardListAdapter
+        .FlashcardCardViewHolder> {
     private List<Flashcard> flashcards;
     private OnCardClickListener onCardClickListener;
 
     public FlashcardCardListAdapter() {
-    }
-
-    public static class FlashcardCardViewHolder extends RecyclerView.ViewHolder {
-        CardView cv;
-        TextView title;
-        TextView text;
-
-        FlashcardCardViewHolder(View itemView) {
-            super(itemView);
-            cv = (CardView) itemView.findViewById(R.id.flashcard_card);
-            title = (TextView) itemView.findViewById(R.id.flashcard_card_title);
-            text = (TextView) itemView.findViewById(R.id.flashcard_card_text);
-        }
-    }
-
-    public interface OnCardClickListener {
-        void onClick(Flashcard flashcard);
     }
 
     @Override
@@ -43,7 +27,8 @@ public class FlashcardCardListAdapter extends RecyclerView.Adapter<FlashcardCard
 
     @Override
     public FlashcardCardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View inflatedView = LayoutInflater.from(parent.getContext()).inflate(R.layout.flashcard_card, parent, false);
+        View inflatedView = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.flashcard_card, parent, false);
         return new FlashcardCardViewHolder(inflatedView);
     }
 
@@ -56,13 +41,15 @@ public class FlashcardCardListAdapter extends RecyclerView.Adapter<FlashcardCard
             holder.cv.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    context.onCardClickListener.onClick(flashcards.get(holder.getAdapterPosition()));
+                    context.onCardClickListener
+                            .onClick(flashcards.get(holder.getAdapterPosition()));
                 }
             });
         }
 
         holder.title.setText(currentFlashcard.getTitle());
         holder.text.setText(currentFlashcard.getText());
+        holder.categories.setText(currentFlashcard.getCategoriesString());
     }
 
     @Override
@@ -77,5 +64,24 @@ public class FlashcardCardListAdapter extends RecyclerView.Adapter<FlashcardCard
 
     public void setOnCardClickListener(OnCardClickListener onCardClickListener) {
         this.onCardClickListener = onCardClickListener;
+    }
+
+    public interface OnCardClickListener {
+        void onClick(Flashcard flashcard);
+    }
+
+    public static class FlashcardCardViewHolder extends RecyclerView.ViewHolder {
+        CardView cv;
+        TextView title;
+        TextView text;
+        TextView categories;
+
+        FlashcardCardViewHolder(View itemView) {
+            super(itemView);
+            cv = (CardView) itemView.findViewById(R.id.flashcard_card);
+            title = (TextView) itemView.findViewById(R.id.flashcard_card_title);
+            text = (TextView) itemView.findViewById(R.id.flashcard_card_text);
+            categories = (TextView) itemView.findViewById(R.id.flashcard_card_categories);
+        }
     }
 }

@@ -34,4 +34,18 @@ public class Flashcard extends BaseEntity {
     public void setCategories(List<Category> categories) {
         this.categories = categories;
     }
+
+    public String getCategoriesString() {
+        String categoriesString = "";
+
+        for (Category category : categories) {
+            if (categoriesString.length() != 0) {
+                categoriesString = categoriesString.concat(", ");
+            }
+
+            categoriesString = categoriesString.concat(category.getName());
+        }
+
+        return categoriesString;
+    }
 }

@@ -1,5 +1,9 @@
 <resources>
 
+    <style name="AppTheme.CardView">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+    </style>
+
     <style name="AppTheme.AppBar">
         <item name="titleTextColor">?android:attr/textColorPrimaryInverse</item>
         <item name="subtitleTextColor">?android:attr/textColorPrimaryInverse</item>

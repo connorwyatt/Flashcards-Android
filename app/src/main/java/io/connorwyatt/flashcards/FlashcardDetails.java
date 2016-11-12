@@ -133,7 +133,7 @@ public class FlashcardDetails extends AppCompatActivity {
     private void setViewFromFlashcard(Flashcard flashcard, boolean shouldFocus) {
         title.setText(flashcard.getTitle());
         text.setText(flashcard.getText());
-        categories.setText(stringifyCategories(flashcard.getCategories()));
+        categories.setText(flashcard.getCategoriesString());
 
         if (shouldFocus) {
             title.requestFocus();
@@ -160,19 +160,5 @@ public class FlashcardDetails extends AppCompatActivity {
         }
 
         return categories;
-    }
-
-    private String stringifyCategories(List<Category> categories) {
-        String categoriesString = "";
-
-        for (Category category : categories) {
-            if (categoriesString.length() != 0) {
-                categoriesString = categoriesString.concat(", ");
-            }
-
-            categoriesString = categoriesString.concat(category.getName());
-        }
-
-        return categoriesString;
     }
 }
