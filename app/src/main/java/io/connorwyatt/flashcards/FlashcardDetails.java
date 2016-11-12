@@ -106,6 +106,7 @@ public class FlashcardDetails extends AppCompatActivity {
 
         showToast(R.string.flashcard_details_save_toast);
 
+        setViewFromFlashcard(flashcard, false);
         this.invalidateOptionsMenu();
     }
 
