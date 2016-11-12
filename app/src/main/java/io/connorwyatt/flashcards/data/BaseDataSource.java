@@ -1,5 +1,6 @@
 package io.connorwyatt.flashcards.data;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -35,5 +36,16 @@ public class BaseDataSource {
 
     public void close() {
         dbHelper.close();
+    }
+
+    protected void addUpdateTimestamp(ContentValues values) {
+        Long currentTimestamp = System.currentTimeMillis() / 1000;
+        values.put(BaseColumnsTimeline._LAST_MODIFIED_ON, currentTimestamp.intValue());
+    }
+
+    protected void addCreateTimestamp(ContentValues values) {
+        Long currentTimestamp = System.currentTimeMillis() / 1000;
+        values.put(BaseColumnsTimeline._CREATED_ON, currentTimestamp.intValue());
+        values.put(BaseColumnsTimeline._LAST_MODIFIED_ON, currentTimestamp.intValue());
     }
 }
