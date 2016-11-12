@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_flashcard_details"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="io.connorwyatt.flashcards.FlashcardDetails">
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/activity_flashcard_details"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="io.connorwyatt.flashcards.FlashcardDetails">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/flashcard_details_toolbar"
@@ -13,7 +14,7 @@
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
         android:theme="@style/AppTheme.AppBar"
-        android:title="@string/app_name" />
+        android:title="@string/app_name"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -48,19 +49,19 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/flashcard_details_title"
-                    android:textSize="30sp" />
+                    android:textSize="30sp"/>
 
                 <MultiAutoCompleteTextView
                     android:id="@+id/flashcard_details_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/flashcard_details_text" />
+                    android:hint="@string/flashcard_details_text"/>
 
                 <MultiAutoCompleteTextView
                     android:id="@+id/flashcard_details_categories"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/flashcard_details_categories" />
+                    android:hint="@string/flashcard_details_categories"/>
 
                 <Button
                     android:layout_width="wrap_content"
@@ -68,7 +69,7 @@
                     android:layout_marginEnd="0dp"
                     android:layout_marginRight="0dp"
                     android:onClick="onSaveClick"
-                    android:text="@string/flashcard_details_save" />
+                    android:text="@string/flashcard_details_save"/>
 
             </LinearLayout>
 

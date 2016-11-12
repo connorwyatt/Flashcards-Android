@@ -5,6 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.connorwyatt.flashcards.exceptions.SQLNoRowsAffectedException;
 
 public class CategoryDataSource extends BaseDataSource {
@@ -20,7 +23,8 @@ public class CategoryDataSource extends BaseDataSource {
 
     public Category getById(long id) {
         Cursor cursor = database.query(CategoryContract.TABLE_NAME,
-                allColumns, CategoryContract.Columns._ID + " = " + id, null, null, null, null);
+                                       allColumns, CategoryContract.Columns._ID + " = " + id, null,
+                                       null, null, null);
 
         cursor.moveToFirst();
 
@@ -50,6 +54,25 @@ public class CategoryDataSource extends BaseDataSource {
         return category;
     }
 
+    public List<Category> getAll() {
+        List<Category> categories = new ArrayList<>();
+
+        Cursor cursor = database
+                .query(CategoryContract.TABLE_NAME, allColumns, null, null, null, null, null);
+
+        cursor.moveToFirst();
+
+        while (!cursor.isAfterLast()) {
+            Category category = cursorToCategory(cursor);
+            categories.add(category);
+            cursor.moveToNext();
+        }
+
+        cursor.close();
+
+        return categories;
+    }
+
     public Category save(Category category) {
         boolean isCreate = category.getId() <= 0;
 
@@ -64,7 +87,8 @@ public class CategoryDataSource extends BaseDataSource {
         } else {
             id = category.getId();
             addUpdateTimestamp(values);
-            int rowsAffected = database.update(CategoryContract.TABLE_NAME, values, CategoryContract.Columns._ID + " = " + id, null);
+            int rowsAffected = database.update(CategoryContract.TABLE_NAME, values,
+                                               CategoryContract.Columns._ID + " = " + id, null);
 
             if (rowsAffected == 0) {
                 throw new SQLNoRowsAffectedException();

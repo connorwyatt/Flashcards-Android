@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name" translatable="false">Flashcards</string>
     <string name="action_delete">Delete</string>
+    <string name="flashcard_cards_list_all_category">All</string>
     <string name="flashcard_details_title">Title</string>
     <string name="flashcard_details_text">Text</string>
     <string name="flashcard_details_categories">Categories</string>
