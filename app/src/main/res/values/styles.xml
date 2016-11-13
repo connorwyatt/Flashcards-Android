@@ -9,11 +9,18 @@
         <item name="subtitleTextColor">?android:attr/textColorPrimaryInverse</item>
         <item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
         <item name="colorControlNormal">?android:attr/textColorPrimaryInverse</item>
-        <item name="spinnerDropDownItemStyle">@style/AppTheme.AppBar.Popup</item>
-        <item name="android:spinnerDropDownItemStyle">@style/AppTheme.AppBar.Popup</item>
+        <item name="android:popupTheme">@style/AppTheme.AppBar.Popup</item>
+        <item name="popupTheme">@style/AppTheme.AppBar.Popup</item>
+        <item name="spinnerDropDownItemStyle">@style/AppTheme.AppBar.SpinnerDropdownItem</item>
+        <item name="android:spinnerDropDownItemStyle">@style/AppTheme.AppBar.SpinnerDropdownItem</item>
     </style>
 
-    <style name="AppTheme.AppBar.Popup" parent="Widget.AppCompat.Light.DropDownItem.Spinner">
+    <style name="AppTheme.AppBar.Popup" parent="Base.Widget.AppCompat.Light.PopupMenu">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="colorControlNormal">?android:attr/textColorPrimary</item>
+    </style>
+
+    <style name="AppTheme.AppBar.SpinnerDropdownItem" parent="Widget.AppCompat.Light.DropDownItem.Spinner">
         <item name="android:textColor">?android:attr/textColorPrimary</item>
         <item name="colorControlNormal">?android:attr/textColorPrimary</item>
     </style>
