@@ -25,7 +25,7 @@ public class FlashcardCategoryDataSource extends BaseDataSource {
             categoryIds = new ArrayList<>();
         }
 
-        List<Long> previousCategoryIds = getLinkedCategoryIdsForFlashcardId(flashcardId);
+        List<Long> previousCategoryIds = getCategoryIdsForFlashcardId(flashcardId);
         List<Long> addedCategoryIds = ListUtils.difference(categoryIds, previousCategoryIds);
         List<Long> removedCategoryIds = ListUtils.difference(previousCategoryIds, categoryIds);
 
@@ -38,7 +38,7 @@ public class FlashcardCategoryDataSource extends BaseDataSource {
         }
     }
 
-    public List<Long> getLinkedCategoryIdsForFlashcardId(long flashcardId) {
+    public List<Long> getCategoryIdsForFlashcardId(long flashcardId) {
         List<Long> categoryIds = new ArrayList<>();
 
         Cursor cursor = database.query(FlashcardCategoryContract.TABLE_NAME,
@@ -57,6 +57,27 @@ public class FlashcardCategoryDataSource extends BaseDataSource {
         cursor.close();
 
         return categoryIds;
+    }
+
+    public List<Long> getFlashcardIdsForCategoryId(long categoryId) {
+        List<Long> flashcardIds = new ArrayList<>();
+
+        Cursor cursor = database.query(FlashcardCategoryContract.TABLE_NAME,
+                                       new String[]{FlashcardCategoryContract.Columns.FLASHCARD_ID},
+                                       FlashcardCategoryContract.Columns.CATEGORY_ID + " = " +
+                                               categoryId,
+                                       null, null, null, null);
+
+        cursor.moveToFirst();
+
+        while (!cursor.isAfterLast()) {
+            flashcardIds.add(cursor.getLong(0));
+            cursor.moveToNext();
+        }
+
+        cursor.close();
+
+        return flashcardIds;
     }
 
     private void addLink(long flashcardId, long categoryId) {

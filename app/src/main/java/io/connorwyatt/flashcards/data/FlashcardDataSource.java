@@ -34,6 +34,19 @@ public class FlashcardDataSource extends BaseDataSource {
         return flashcard;
     }
 
+    public List<Flashcard> getByCategory(long categoryId) {
+        FlashcardCategoryDataSource fcds = new FlashcardCategoryDataSource(database);
+        List<Long> flashcardIds = fcds.getFlashcardIdsForCategoryId(categoryId);
+
+        List<Flashcard> flashcards = new ArrayList<>();
+
+        for (Long flashcardId : flashcardIds) {
+            flashcards.add(getById(flashcardId));
+        }
+
+        return flashcards;
+    }
+
     public List<Flashcard> getAll() {
         List<Flashcard> flashcards = new ArrayList<>();
 
@@ -141,7 +154,7 @@ public class FlashcardDataSource extends BaseDataSource {
 
     private void populateCategories(Flashcard flashcard) {
         FlashcardCategoryDataSource fcds = new FlashcardCategoryDataSource(database);
-        List<Long> categoryIds = fcds.getLinkedCategoryIdsForFlashcardId(flashcard.getId());
+        List<Long> categoryIds = fcds.getCategoryIdsForFlashcardId(flashcard.getId());
         List<Category> categories = new ArrayList<>();
 
         CategoryDataSource cds = new CategoryDataSource(database);
