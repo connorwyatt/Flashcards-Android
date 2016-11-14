@@ -34,6 +34,19 @@ public class FlashcardDataSource extends BaseDataSource {
         return flashcard;
     }
 
+    public List<Flashcard> getByCategory(long categoryId) {
+        FlashcardCategoryDataSource fcds = new FlashcardCategoryDataSource(database);
+        List<Long> flashcardIds = fcds.getFlashcardIdsForCategoryId(categoryId);
+
+        List<Flashcard> flashcards = new ArrayList<>();
+
+        for (Long flashcardId : flashcardIds) {
+            flashcards.add(getById(flashcardId));
+        }
+
+        return flashcards;
+    }
+
     public List<Flashcard> getAll() {
         List<Flashcard> flashcards = new ArrayList<>();
 
@@ -99,11 +112,26 @@ public class FlashcardDataSource extends BaseDataSource {
     }
 
     public void deleteById(long id) {
-        int rowsAffected = database.delete(FlashcardContract.TABLE_NAME, FlashcardContract.Columns._ID + " = " + id, null);
+        try {
+            database.beginTransaction();
 
-        if (rowsAffected == 0) {
-            throw new SQLNoRowsAffectedException();
+            int rowsAffected = database.delete(FlashcardContract.TABLE_NAME,
+                                               FlashcardContract.Columns._ID + " = " + id, null);
+
+            if (rowsAffected == 0) {
+                throw new SQLNoRowsAffectedException();
+            }
+
+            FlashcardCategoryDataSource fcds = new FlashcardCategoryDataSource(database);
+            fcds.removeLinksByFlashcardId(id);
+
+            database.setTransactionSuccessful();
+        } catch (Exception e) {
+            database.endTransaction();
+            throw e;
         }
+
+        database.endTransaction();
     }
 
     private Flashcard cursorToFlashcard(Cursor cursor) {
@@ -141,7 +169,7 @@ public class FlashcardDataSource extends BaseDataSource {
 
     private void populateCategories(Flashcard flashcard) {
         FlashcardCategoryDataSource fcds = new FlashcardCategoryDataSource(database);
-        List<Long> categoryIds = fcds.getLinkedCategoryIdsForFlashcardId(flashcard.getId());
+        List<Long> categoryIds = fcds.getCategoryIdsForFlashcardId(flashcard.getId());
         List<Category> categories = new ArrayList<>();
 
         CategoryDataSource cds = new CategoryDataSource(database);

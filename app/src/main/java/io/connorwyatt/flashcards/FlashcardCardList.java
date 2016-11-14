@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -24,6 +26,7 @@ import io.connorwyatt.flashcards.data.FlashcardDataSource;
 public class FlashcardCardList extends AppCompatActivity {
     private FlashcardCardListAdapter adapter;
     private Category allCategory;
+    private Category filterCategory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +36,33 @@ public class FlashcardCardList extends AppCompatActivity {
         setUpToolbar();
 
         setUpListRecyclerView();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_flashcard_card_list_menu, menu);
+
+        if (adapter.getItemCount() == 0) {
+            menu.findItem(R.id.action_test).setEnabled(false);
+            menu.findItem(R.id.action_test).getIcon().mutate().setAlpha(100);
+        }
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_test:
+                if (allCategory == filterCategory) {
+                    FlashcardTest.startActivity(this);
+                } else {
+                    FlashcardTest.startActivityWithCategoryFilter(this, filterCategory.getId());
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void setUpListRecyclerView() {
@@ -71,11 +101,15 @@ public class FlashcardCardList extends AppCompatActivity {
                                        long id) {
                 Category category = (Category) adapterView.getItemAtPosition(position);
 
+                filterCategory = category;
+
                 if (category == allCategory) {
                     adapter.removeFilter();
                 } else {
                     adapter.applyCategoryFilter(category.getId());
                 }
+
+                invalidateOptionsMenu();
             }
 
             @Override public void onNothingSelected(AdapterView<?> adapterView) {
@@ -86,7 +120,7 @@ public class FlashcardCardList extends AppCompatActivity {
     }
 
     private void setUpToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.flashcard_details_toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.flashcard_card_list_toolbar);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
@@ -113,6 +147,7 @@ public class FlashcardCardList extends AppCompatActivity {
         fds.close();
 
         adapter.setItems(flashcards);
+        invalidateOptionsMenu();
     }
 
     private void navigateToFlashcardDetails(Flashcard flashcard) {
