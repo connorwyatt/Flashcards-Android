@@ -80,6 +80,11 @@ public class FlashcardCategoryDataSource extends BaseDataSource {
         return flashcardIds;
     }
 
+    public void removeLinksByFlashcardId(long flashcardId) {
+        database.delete(FlashcardCategoryContract.TABLE_NAME,
+                        FlashcardCategoryContract.Columns.FLASHCARD_ID + " = " + flashcardId, null);
+    }
+
     private void addLink(long flashcardId, long categoryId) {
         ContentValues values = new ContentValues();
         values.put(FlashcardCategoryContract.Columns.FLASHCARD_ID, flashcardId);

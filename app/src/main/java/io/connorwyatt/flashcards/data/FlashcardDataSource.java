@@ -112,11 +112,26 @@ public class FlashcardDataSource extends BaseDataSource {
     }
 
     public void deleteById(long id) {
-        int rowsAffected = database.delete(FlashcardContract.TABLE_NAME, FlashcardContract.Columns._ID + " = " + id, null);
+        try {
+            database.beginTransaction();
 
-        if (rowsAffected == 0) {
-            throw new SQLNoRowsAffectedException();
+            int rowsAffected = database.delete(FlashcardContract.TABLE_NAME,
+                                               FlashcardContract.Columns._ID + " = " + id, null);
+
+            if (rowsAffected == 0) {
+                throw new SQLNoRowsAffectedException();
+            }
+
+            FlashcardCategoryDataSource fcds = new FlashcardCategoryDataSource(database);
+            fcds.removeLinksByFlashcardId(id);
+
+            database.setTransactionSuccessful();
+        } catch (Exception e) {
+            database.endTransaction();
+            throw e;
         }
+
+        database.endTransaction();
     }
 
     private Flashcard cursorToFlashcard(Cursor cursor) {
