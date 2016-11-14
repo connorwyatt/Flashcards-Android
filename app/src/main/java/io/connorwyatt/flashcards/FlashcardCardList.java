@@ -44,7 +44,7 @@ public class FlashcardCardList extends AppCompatActivity {
 
         if (adapter.getItemCount() == 0) {
             menu.findItem(R.id.action_test).setEnabled(false);
-            menu.findItem(R.id.action_test).getIcon().setAlpha(100);
+            menu.findItem(R.id.action_test).getIcon().mutate().setAlpha(100);
         }
 
         return super.onCreateOptionsMenu(menu);
