@@ -26,6 +26,7 @@ import io.connorwyatt.flashcards.data.FlashcardDataSource;
 public class FlashcardCardList extends AppCompatActivity {
     private FlashcardCardListAdapter adapter;
     private Category allCategory;
+    private Category filterCategory;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +42,11 @@ public class FlashcardCardList extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_flashcard_card_list_menu, menu);
 
+        if (adapter.getItemCount() == 0) {
+            menu.findItem(R.id.action_test).setEnabled(false);
+            menu.findItem(R.id.action_test).getIcon().setAlpha(100);
+        }
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -48,6 +54,11 @@ public class FlashcardCardList extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_test:
+                if (allCategory == filterCategory) {
+                    FlashcardTest.startActivity(this);
+                } else {
+                    FlashcardTest.startActivityWithCategoryFilter(this, filterCategory.getId());
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -90,11 +101,15 @@ public class FlashcardCardList extends AppCompatActivity {
                                        long id) {
                 Category category = (Category) adapterView.getItemAtPosition(position);
 
+                filterCategory = category;
+
                 if (category == allCategory) {
                     adapter.removeFilter();
                 } else {
                     adapter.applyCategoryFilter(category.getId());
                 }
+
+                invalidateOptionsMenu();
             }
 
             @Override public void onNothingSelected(AdapterView<?> adapterView) {
@@ -132,6 +147,7 @@ public class FlashcardCardList extends AppCompatActivity {
         fds.close();
 
         adapter.setItems(flashcards);
+        invalidateOptionsMenu();
     }
 
     private void navigateToFlashcardDetails(Flashcard flashcard) {
