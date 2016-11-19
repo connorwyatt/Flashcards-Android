@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/activity_flashcard_details"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:context="io.connorwyatt.flashcards.FlashcardDetails">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_flashcard_details"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="io.connorwyatt.flashcards.FlashcardDetails">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/flashcard_details_toolbar"
@@ -12,7 +12,7 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
-        android:theme="@style/AppTheme.AppBar"/>
+        android:theme="@style/AppTheme.AppBar" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -42,32 +42,49 @@
                 android:orientation="vertical"
                 android:padding="8dp">
 
-                <AutoCompleteTextView
-                    android:id="@+id/flashcard_details_title"
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/flashcard_details_title_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/flashcard_details_title"
-                    android:textSize="30sp"/>
+                    android:layout_height="wrap_content">
 
-                <MultiAutoCompleteTextView
-                    android:id="@+id/flashcard_details_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/flashcard_details_text"/>
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/flashcard_details_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/flashcard_details_title" />
+                </android.support.design.widget.TextInputLayout>
 
-                <MultiAutoCompleteTextView
-                    android:id="@+id/flashcard_details_categories"
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/flashcard_details_text_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/flashcard_details_categories"/>
+                    android:layout_height="wrap_content">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/flashcard_details_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/flashcard_details_text" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/flashcard_details_categories_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/flashcard_details_categories"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/flashcard_details_categories" />
+                </android.support.design.widget.TextInputLayout>
 
                 <Button
-                    android:layout_width="wrap_content"
+                    android:id="@+id/flashcard_details_save_button"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="0dp"
-                    android:layout_marginRight="0dp"
                     android:onClick="onSaveClick"
-                    android:text="@string/flashcard_details_save"/>
+                    android:text="@string/flashcard_details_save"
+                    style="@style/Base.Widget.AppCompat.Button.Colored"/>
 
             </LinearLayout>
 
