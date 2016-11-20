@@ -9,7 +9,7 @@ public class FlashcardTestContract {
             + Columns._CREATED_ON + " integer not null, "
             + Columns._LAST_MODIFIED_ON + " integer not null, "
             + Columns.FLASHCARD_ID + " integer not null, "
-            + Columns.RATING + " decimal(2,2) not null, "
+            + Columns.RATING + " integer not null, "
             + "FOREIGN KEY(" + Columns.FLASHCARD_ID + ")"
             + " REFERENCES " + FlashcardContract.TABLE_NAME
             + "(" + FlashcardContract.Columns._ID + ")"
