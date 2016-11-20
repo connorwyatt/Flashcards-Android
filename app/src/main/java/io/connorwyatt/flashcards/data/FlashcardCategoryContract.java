@@ -9,7 +9,13 @@ public class FlashcardCategoryContract {
             + Columns._CREATED_ON + " integer not null, "
             + Columns._LAST_MODIFIED_ON + " integer not null, "
             + Columns.FLASHCARD_ID + " integer not null, "
-            + Columns.CATEGORY_ID + " integer not null"
+            + Columns.CATEGORY_ID + " integer not null, "
+            + "FOREIGN KEY(" + Columns.FLASHCARD_ID + ")"
+            + " REFERENCES " + FlashcardContract.TABLE_NAME
+            + "(" + FlashcardContract.Columns._ID + "), "
+            + "FOREIGN KEY(" + Columns.CATEGORY_ID + ")"
+            + " REFERENCES " + CategoryContract.TABLE_NAME
+            + "(" + CategoryContract.Columns._ID + ")"
             + ");";
 
     private FlashcardCategoryContract() {
