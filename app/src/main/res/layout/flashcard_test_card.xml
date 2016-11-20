@@ -37,21 +37,24 @@
                 <ImageButton
                     style="@style/Widget.AppCompat.Button.Borderless"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="72dp"
+                    android:scaleType="fitCenter"
                     android:layout_weight="1"
                     android:src="@drawable/ic_negative_rating" />
 
                 <ImageButton
                     style="@style/Widget.AppCompat.Button.Borderless"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="72dp"
+                    android:scaleType="fitCenter"
                     android:layout_weight="1"
                     android:src="@drawable/ic_neutral_rating" />
 
                 <ImageButton
                     style="@style/Widget.AppCompat.Button.Borderless"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="72dp"
+                    android:scaleType="fitCenter"
                     android:layout_weight="1"
                     android:src="@drawable/ic_positive_rating" />
             </LinearLayout>
