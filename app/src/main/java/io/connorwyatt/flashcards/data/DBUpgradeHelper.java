@@ -60,4 +60,13 @@ public class DBUpgradeHelper {
                 + tempTableName + ";");
         db.execSQL("DROP TABLE " + tempTableName + ";");
     }
+
+    /**
+     * Changes in between these versions were:
+     * <p>
+     * - FlashcardTest table was created.
+     */
+    private static void upgrade7to8(SQLiteDatabase db) {
+        db.execSQL(FlashcardTestContract.TABLE_CREATE);
+    }
 }
