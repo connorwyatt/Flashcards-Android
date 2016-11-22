@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import io.connorwyatt.flashcards.data.FlashcardTest;
+import io.connorwyatt.flashcards.data.FlashcardTestDataSource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,6 +76,11 @@ public class FlashcardTestCardFragment extends Fragment {
         currentlySelectedButton = button;
 
         currentlySelectedButton.setImageAlpha(255);
+
+        FlashcardTestDataSource ftds = new FlashcardTestDataSource(getActivity());
+        ftds.open();
+        flashcardTest = ftds.save(flashcardTest);
+        ftds.close();
     }
 
     public static class ARGUMENT_KEYS {

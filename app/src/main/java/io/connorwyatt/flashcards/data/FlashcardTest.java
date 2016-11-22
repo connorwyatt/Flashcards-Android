@@ -15,16 +15,20 @@ public class FlashcardTest extends BaseEntity {
         this.rating = rating;
     }
 
+    public void setRatingInt(int rating) {
+        setRating(Rating.values()[rating]);
+    }
+
     public void setRatingPositive() {
-        this.setRating(Rating.POSITIVE);
+        setRating(Rating.POSITIVE);
     }
 
     public void setRatingNeutral() {
-        this.setRating(Rating.NEUTRAL);
+        setRating(Rating.NEUTRAL);
     }
 
     public void setRatingNegative() {
-        this.setRating(Rating.NEGATIVE);
+        setRating(Rating.NEGATIVE);
     }
 
     public Long getFlashcardId() {
