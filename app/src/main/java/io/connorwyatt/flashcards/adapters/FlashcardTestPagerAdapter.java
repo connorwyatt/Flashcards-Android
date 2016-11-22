@@ -25,6 +25,7 @@ public class FlashcardTestPagerAdapter extends FragmentStatePagerAdapter {
         Fragment fragment = new FlashcardTestCardFragment();
 
         Bundle arguments = new Bundle();
+        arguments.putLong(FlashcardTestCardFragment.ARGUMENT_KEYS.ID, currentFlashcard.getId());
         arguments.putString(FlashcardTestCardFragment.ARGUMENT_KEYS.TITLE, currentFlashcard.getTitle());
         arguments.putString(FlashcardTestCardFragment.ARGUMENT_KEYS.TEXT, currentFlashcard.getText());
         fragment.setArguments(arguments);
