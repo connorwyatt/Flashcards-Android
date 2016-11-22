@@ -60,4 +60,36 @@ public class DBUpgradeHelper {
                 + tempTableName + ";");
         db.execSQL("DROP TABLE " + tempTableName + ";");
     }
+
+    /**
+     * Changes in between these versions were:
+     * <p>
+     * - FlashcardTest table was created.
+     */
+    private static void upgrade7to8(SQLiteDatabase db) {
+        db.execSQL(FlashcardTestContract.TABLE_CREATE);
+    }
+
+    /**
+     * Changes in between these versions were:
+     * <p>
+     * - The rating column in FlashcardTest has been changed to an integer.
+     */
+    private static void upgrade8to9(SQLiteDatabase db) {
+        String tempTableName = FlashcardTestContract.TABLE_NAME + "_old";
+        db.execSQL("ALTER TABLE " + FlashcardTestContract.TABLE_NAME
+                + " RENAME TO " + tempTableName + ";");
+        db.execSQL(FlashcardTestContract.TABLE_CREATE);
+        db.execSQL("INSERT INTO " + FlashcardTestContract.TABLE_NAME +
+                " SELECT "
+                + FlashcardTestContract.Columns._ID + ", "
+                + FlashcardTestContract.Columns._CREATED_ON + ", "
+                + FlashcardTestContract.Columns._LAST_MODIFIED_ON + ", "
+                + FlashcardTestContract.Columns.FLASHCARD_ID + ", "
+                + FlashcardTestContract.Columns.RATING
+                + " FROM "
+                + tempTableName + ";");
+        db.execSQL("DROP TABLE " + tempTableName + ";");
+
+    }
 }
