@@ -76,28 +76,26 @@ public class CategoryDataSource extends BaseDataSource {
     }
 
     public Category save(Category category) {
-        boolean isCreate = category.getId() <= 0;
-
         ContentValues values = new ContentValues();
         values.put(CategoryContract.Columns.NAME, category.getName());
 
-        long id;
+        Long savedCategoryId;
 
-        if (isCreate) {
+        if (!category.existsInDatabase()) {
             addCreateTimestamp(values);
-            id = database.insertOrThrow(CategoryContract.TABLE_NAME, null, values);
+            savedCategoryId = database.insertOrThrow(CategoryContract.TABLE_NAME, null, values);
         } else {
-            id = category.getId();
+            savedCategoryId = category.getId();
             addUpdateTimestamp(values);
             int rowsAffected = database.update(CategoryContract.TABLE_NAME, values,
-                                               CategoryContract.Columns._ID + " = " + id, null);
+                                               CategoryContract.Columns._ID + " = " + savedCategoryId, null);
 
             if (rowsAffected == 0) {
                 throw new SQLNoRowsAffectedException();
             }
         }
 
-        return getById(id);
+        return getById(savedCategoryId);
     }
 
     private Category cursorToCategory(Cursor cursor) {
