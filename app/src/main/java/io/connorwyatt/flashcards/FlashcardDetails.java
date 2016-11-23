@@ -16,9 +16,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-import io.connorwyatt.flashcards.data.Category;
-import io.connorwyatt.flashcards.data.Flashcard;
-import io.connorwyatt.flashcards.data.FlashcardDataSource;
+import io.connorwyatt.flashcards.data.entities.Category;
+import io.connorwyatt.flashcards.data.entities.Flashcard;
+import io.connorwyatt.flashcards.data.datasources.FlashcardDataSource;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,9 +1,11 @@
-package io.connorwyatt.flashcards.data;
+package io.connorwyatt.flashcards.data.datasources;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import io.connorwyatt.flashcards.data.entities.FlashcardTest;
+import io.connorwyatt.flashcards.data.contracts.FlashcardTestContract;
 import io.connorwyatt.flashcards.exceptions.SQLNoRowsAffectedException;
 
 public class FlashcardTestDataSource extends BaseDataSource {

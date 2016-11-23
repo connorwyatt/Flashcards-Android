@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.connorwyatt.flashcards.R;
-import io.connorwyatt.flashcards.data.Category;
-import io.connorwyatt.flashcards.data.Flashcard;
+import io.connorwyatt.flashcards.data.entities.Category;
+import io.connorwyatt.flashcards.data.entities.Flashcard;
 import io.connorwyatt.flashcards.utils.ListUtils;
 
 public class FlashcardCardListAdapter extends RecyclerView.Adapter<FlashcardCardListAdapter

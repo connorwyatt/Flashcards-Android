@@ -1,4 +1,4 @@
-package io.connorwyatt.flashcards.data;
+package io.connorwyatt.flashcards.data.entities;
 
 public abstract class BaseEntity {
     protected long id = -1;

@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import io.connorwyatt.flashcards.FlashcardTestCardFragment;
-import io.connorwyatt.flashcards.data.Flashcard;
+import io.connorwyatt.flashcards.data.entities.Flashcard;
 
 import java.util.List;
 

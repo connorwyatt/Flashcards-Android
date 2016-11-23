@@ -18,10 +18,10 @@ import java.util.List;
 
 import io.connorwyatt.flashcards.adapters.CategoryNameArrayAdapter;
 import io.connorwyatt.flashcards.adapters.FlashcardCardListAdapter;
-import io.connorwyatt.flashcards.data.Category;
-import io.connorwyatt.flashcards.data.CategoryDataSource;
-import io.connorwyatt.flashcards.data.Flashcard;
-import io.connorwyatt.flashcards.data.FlashcardDataSource;
+import io.connorwyatt.flashcards.data.entities.Category;
+import io.connorwyatt.flashcards.data.datasources.CategoryDataSource;
+import io.connorwyatt.flashcards.data.entities.Flashcard;
+import io.connorwyatt.flashcards.data.datasources.FlashcardDataSource;
 
 public class FlashcardCardList extends AppCompatActivity {
     private FlashcardCardListAdapter adapter;

@@ -1,4 +1,4 @@
-package io.connorwyatt.flashcards.data;
+package io.connorwyatt.flashcards.data.entities;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package io.connorwyatt.flashcards.data;
+package io.connorwyatt.flashcards.data.datasources;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.connorwyatt.flashcards.data.contracts.FlashcardCategoryContract;
 import io.connorwyatt.flashcards.exceptions.SQLNoRowsAffectedException;
 import io.connorwyatt.flashcards.utils.ListUtils;
 
