@@ -8,8 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import io.connorwyatt.flashcards.data.FlashcardTest;
-import io.connorwyatt.flashcards.data.FlashcardTestDataSource;
+import io.connorwyatt.flashcards.data.entities.FlashcardTest;
+import io.connorwyatt.flashcards.data.datasources.FlashcardTestDataSource;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,8 +1,12 @@
-package io.connorwyatt.flashcards.data;
+package io.connorwyatt.flashcards.data.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import io.connorwyatt.flashcards.data.contracts.CategoryContract;
+import io.connorwyatt.flashcards.data.contracts.FlashcardCategoryContract;
+import io.connorwyatt.flashcards.data.contracts.FlashcardContract;
+import io.connorwyatt.flashcards.data.contracts.FlashcardTestContract;
 
 public class DBHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "flashcards.db";

@@ -1,4 +1,4 @@
-package io.connorwyatt.flashcards.data;
+package io.connorwyatt.flashcards.data.datasources;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.connorwyatt.flashcards.data.entities.Category;
+import io.connorwyatt.flashcards.data.contracts.CategoryContract;
 import io.connorwyatt.flashcards.exceptions.SQLNoRowsAffectedException;
 
 public class CategoryDataSource extends BaseDataSource {

@@ -1,9 +1,12 @@
-package io.connorwyatt.flashcards.data;
+package io.connorwyatt.flashcards.data.datasources;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import io.connorwyatt.flashcards.data.entities.BaseColumnsTimeline;
+import io.connorwyatt.flashcards.data.entities.BaseEntity;
+import io.connorwyatt.flashcards.data.database.DBHelper;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -9,8 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import java.util.List;
 
 import io.connorwyatt.flashcards.adapters.FlashcardTestPagerAdapter;
-import io.connorwyatt.flashcards.data.Flashcard;
-import io.connorwyatt.flashcards.data.FlashcardDataSource;
+import io.connorwyatt.flashcards.data.entities.Flashcard;
+import io.connorwyatt.flashcards.data.datasources.FlashcardDataSource;
 
 public class FlashcardTest extends AppCompatActivity {
     public static void startActivity(Context context) {

@@ -1,6 +1,9 @@
-package io.connorwyatt.flashcards.data;
+package io.connorwyatt.flashcards.data.database;
 
 import android.database.sqlite.SQLiteDatabase;
+import io.connorwyatt.flashcards.data.contracts.CategoryContract;
+import io.connorwyatt.flashcards.data.contracts.FlashcardCategoryContract;
+import io.connorwyatt.flashcards.data.contracts.FlashcardTestContract;
 import io.connorwyatt.flashcards.exceptions.DBUpgradeException;
 
 import java.lang.reflect.Method;

@@ -1,22 +1,23 @@
-package io.connorwyatt.flashcards.data;
+package io.connorwyatt.flashcards.data.contracts;
 
-public final class FlashcardContract {
-    public static final String TABLE_NAME = "flashcard";
+import io.connorwyatt.flashcards.data.entities.BaseColumnsTimeline;
+
+public class CategoryContract {
+    public static final String TABLE_NAME = "category";
 
     public static final String TABLE_CREATE = "create table "
             + TABLE_NAME + "( "
             + Columns._ID + " integer primary key autoincrement, "
             + Columns._CREATED_ON + " integer not null, "
             + Columns._LAST_MODIFIED_ON + " integer not null, "
-            + Columns.TITLE + " text not null, "
-            + Columns.TEXT + " text not null"
+            + Columns.NAME + " text not null"
             + ");";
 
-    private FlashcardContract() {
+    private CategoryContract() {
     }
 
     public static class Columns implements BaseColumnsTimeline {
-        public static final String TITLE = "title";
-        public static final String TEXT = "text";
+        public static final String NAME = "name";
     }
+
 }

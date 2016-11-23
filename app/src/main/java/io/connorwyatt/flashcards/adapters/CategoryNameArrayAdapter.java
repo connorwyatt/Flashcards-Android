@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import io.connorwyatt.flashcards.data.Category;
+import io.connorwyatt.flashcards.data.entities.Category;
 
 public class CategoryNameArrayAdapter extends ArrayAdapter<Category> {
     public CategoryNameArrayAdapter(Context context, List<Category> categories) {

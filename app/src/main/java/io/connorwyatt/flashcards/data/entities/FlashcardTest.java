@@ -1,4 +1,4 @@
-package io.connorwyatt.flashcards.data;
+package io.connorwyatt.flashcards.data.entities;
 
 public class FlashcardTest extends BaseEntity {
     private Rating rating;
