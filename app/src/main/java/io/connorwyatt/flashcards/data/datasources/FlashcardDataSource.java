@@ -75,13 +75,11 @@ public class FlashcardDataSource extends BaseDataSource {
         try {
             database.beginTransaction();
 
-            boolean isCreate = flashcard.getId() <= 0;
-
             ContentValues values = new ContentValues();
             values.put(FlashcardContract.Columns.TITLE, flashcard.getTitle());
             values.put(FlashcardContract.Columns.TEXT, flashcard.getText());
 
-            if (isCreate) {
+            if (!flashcard.existsInDatabase()) {
                 addCreateTimestamp(values);
                 savedFlashcardId = database.insertOrThrow(FlashcardContract.TABLE_NAME, null, values);
             } else {
