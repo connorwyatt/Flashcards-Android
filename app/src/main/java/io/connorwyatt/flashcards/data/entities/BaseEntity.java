@@ -1,9 +1,9 @@
 package io.connorwyatt.flashcards.data.entities;
 
 public abstract class BaseEntity {
-    protected long id = -1;
+    protected Long id;
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
@@ -12,6 +12,6 @@ public abstract class BaseEntity {
     }
 
     public boolean existsInDatabase() {
-        return id != -1;
+        return id != null;
     }
 }
