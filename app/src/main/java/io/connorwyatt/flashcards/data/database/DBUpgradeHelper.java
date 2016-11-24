@@ -38,8 +38,11 @@ public class DBUpgradeHelper {
      * - FlashcardCategory table was created.
      */
     private static void upgrade5to6(SQLiteDatabase db) {
+        db.beginTransaction();
         db.execSQL(CategoryContract.TABLE_CREATE);
         db.execSQL(FlashcardCategoryContract.TABLE_CREATE);
+        db.setTransactionSuccessful();
+        db.endTransaction();
     }
 
     /**
@@ -49,6 +52,7 @@ public class DBUpgradeHelper {
      */
     private static void upgrade6to7(SQLiteDatabase db) {
         String tempTableName = FlashcardCategoryContract.TABLE_NAME + "_old";
+        db.beginTransaction();
         db.execSQL("ALTER TABLE " + FlashcardCategoryContract.TABLE_NAME
                 + " RENAME TO " + tempTableName + ";");
         db.execSQL(FlashcardCategoryContract.TABLE_CREATE);
@@ -62,6 +66,8 @@ public class DBUpgradeHelper {
                 + " FROM "
                 + tempTableName + ";");
         db.execSQL("DROP TABLE " + tempTableName + ";");
+        db.setTransactionSuccessful();
+        db.endTransaction();
     }
 
     /**
@@ -70,7 +76,10 @@ public class DBUpgradeHelper {
      * - FlashcardTest table was created.
      */
     private static void upgrade7to8(SQLiteDatabase db) {
+        db.beginTransaction();
         db.execSQL(FlashcardTestContract.TABLE_CREATE);
+        db.setTransactionSuccessful();
+        db.endTransaction();
     }
 
     /**
@@ -80,6 +89,7 @@ public class DBUpgradeHelper {
      */
     private static void upgrade8to9(SQLiteDatabase db) {
         String tempTableName = FlashcardTestContract.TABLE_NAME + "_old";
+        db.beginTransaction();
         db.execSQL("ALTER TABLE " + FlashcardTestContract.TABLE_NAME
                 + " RENAME TO " + tempTableName + ";");
         db.execSQL(FlashcardTestContract.TABLE_CREATE);
@@ -93,6 +103,7 @@ public class DBUpgradeHelper {
                 + " FROM "
                 + tempTableName + ";");
         db.execSQL("DROP TABLE " + tempTableName + ";");
-
+        db.setTransactionSuccessful();
+        db.endTransaction();
     }
 }
