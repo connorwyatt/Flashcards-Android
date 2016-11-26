@@ -1,16 +1,16 @@
 package io.connorwyatt.flashcards.data.datasources;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import io.connorwyatt.flashcards.data.contracts.FlashcardContract;
 import io.connorwyatt.flashcards.data.entities.Category;
 import io.connorwyatt.flashcards.data.entities.Flashcard;
-import io.connorwyatt.flashcards.data.contracts.FlashcardContract;
 import io.connorwyatt.flashcards.exceptions.SQLNoRowsAffectedException;
 
 public class FlashcardDataSource extends BaseDataSource {
@@ -22,6 +22,25 @@ public class FlashcardDataSource extends BaseDataSource {
 
     FlashcardDataSource(SQLiteDatabase database) {
         super(database);
+    }
+
+    public List<Flashcard> getAll() {
+        List<Flashcard> flashcards = new ArrayList<>();
+
+        Cursor cursor = database.query(FlashcardContract.TABLE_NAME,
+                allColumns, null, null, null, null, null);
+
+        cursor.moveToFirst();
+
+        while (!cursor.isAfterLast()) {
+            Flashcard flashcard = cursorToFlashcard(cursor);
+            flashcards.add(flashcard);
+            cursor.moveToNext();
+        }
+
+        cursor.close();
+
+        return flashcards;
     }
 
     public Flashcard getById(long id) {
@@ -46,25 +65,6 @@ public class FlashcardDataSource extends BaseDataSource {
         for (Long flashcardId : flashcardIds) {
             flashcards.add(getById(flashcardId));
         }
-
-        return flashcards;
-    }
-
-    public List<Flashcard> getAll() {
-        List<Flashcard> flashcards = new ArrayList<>();
-
-        Cursor cursor = database.query(FlashcardContract.TABLE_NAME,
-                allColumns, null, null, null, null, null);
-
-        cursor.moveToFirst();
-
-        while (!cursor.isAfterLast()) {
-            Flashcard flashcard = cursorToFlashcard(cursor);
-            flashcards.add(flashcard);
-            cursor.moveToNext();
-        }
-
-        cursor.close();
 
         return flashcards;
     }
@@ -122,9 +122,6 @@ public class FlashcardDataSource extends BaseDataSource {
             if (rowsAffected == 0) {
                 throw new SQLNoRowsAffectedException();
             }
-
-            FlashcardCategoryDataSource fcds = new FlashcardCategoryDataSource(database);
-            fcds.removeLinksByFlashcardId(id);
 
             database.setTransactionSuccessful();
         } catch (Exception e) {

@@ -15,6 +15,7 @@ public class FlashcardTestContract {
             + "FOREIGN KEY(" + Columns.FLASHCARD_ID + ")"
             + " REFERENCES " + FlashcardContract.TABLE_NAME
             + "(" + FlashcardContract.Columns._ID + ")"
+            + " ON DELETE CASCADE"
             + ");";
 
     private FlashcardTestContract() {

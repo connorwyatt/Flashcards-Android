@@ -14,10 +14,12 @@ public class FlashcardCategoryContract {
             + Columns.CATEGORY_ID + " integer not null, "
             + "FOREIGN KEY(" + Columns.FLASHCARD_ID + ")"
             + " REFERENCES " + FlashcardContract.TABLE_NAME
-            + "(" + FlashcardContract.Columns._ID + "), "
+            + "(" + FlashcardContract.Columns._ID + ")"
+            + " ON DELETE CASCADE, "
             + "FOREIGN KEY(" + Columns.CATEGORY_ID + ")"
             + " REFERENCES " + CategoryContract.TABLE_NAME
             + "(" + CategoryContract.Columns._ID + ")"
+            + " ON DELETE CASCADE"
             + ");";
 
     private FlashcardCategoryContract() {
@@ -27,5 +29,4 @@ public class FlashcardCategoryContract {
         public static final String FLASHCARD_ID = "flashcard_id";
         public static final String CATEGORY_ID = "category_id";
     }
-
 }
