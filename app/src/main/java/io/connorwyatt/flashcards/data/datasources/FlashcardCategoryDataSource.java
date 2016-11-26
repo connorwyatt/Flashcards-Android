@@ -1,12 +1,12 @@
 package io.connorwyatt.flashcards.data.datasources;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import io.connorwyatt.flashcards.data.contracts.FlashcardCategoryContract;
 import io.connorwyatt.flashcards.exceptions.SQLNoRowsAffectedException;
@@ -43,10 +43,10 @@ public class FlashcardCategoryDataSource extends BaseDataSource {
         List<Long> categoryIds = new ArrayList<>();
 
         Cursor cursor = database.query(FlashcardCategoryContract.TABLE_NAME,
-                                       new String[]{FlashcardCategoryContract.Columns.CATEGORY_ID},
-                                       FlashcardCategoryContract.Columns.FLASHCARD_ID + " = " +
-                                               flashcardId,
-                                       null, null, null, null);
+                new String[]{FlashcardCategoryContract.Columns.CATEGORY_ID},
+                FlashcardCategoryContract.Columns.FLASHCARD_ID + " = " +
+                        flashcardId,
+                null, null, null, null);
 
         cursor.moveToFirst();
 
@@ -64,10 +64,10 @@ public class FlashcardCategoryDataSource extends BaseDataSource {
         List<Long> flashcardIds = new ArrayList<>();
 
         Cursor cursor = database.query(FlashcardCategoryContract.TABLE_NAME,
-                                       new String[]{FlashcardCategoryContract.Columns.FLASHCARD_ID},
-                                       FlashcardCategoryContract.Columns.CATEGORY_ID + " = " +
-                                               categoryId,
-                                       null, null, null, null);
+                new String[]{FlashcardCategoryContract.Columns.FLASHCARD_ID},
+                FlashcardCategoryContract.Columns.CATEGORY_ID + " = " +
+                        categoryId,
+                null, null, null, null);
 
         cursor.moveToFirst();
 
@@ -79,11 +79,6 @@ public class FlashcardCategoryDataSource extends BaseDataSource {
         cursor.close();
 
         return flashcardIds;
-    }
-
-    public void removeLinksByFlashcardId(long flashcardId) {
-        database.delete(FlashcardCategoryContract.TABLE_NAME,
-                        FlashcardCategoryContract.Columns.FLASHCARD_ID + " = " + flashcardId, null);
     }
 
     private void addLink(long flashcardId, long categoryId) {
