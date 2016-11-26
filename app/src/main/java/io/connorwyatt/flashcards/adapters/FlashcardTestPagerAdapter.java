@@ -19,6 +19,16 @@ public class FlashcardTestPagerAdapter extends FragmentStatePagerAdapter {
     }
 
     @Override
+    public int getCount() {
+        return flashcards.size();
+    }
+
+    @Override
+    public int getItemPosition(Object object) {
+        return POSITION_NONE;
+    }
+
+    @Override
     public Fragment getItem(int position) {
         Flashcard currentFlashcard = flashcards.get(position);
 
@@ -33,8 +43,9 @@ public class FlashcardTestPagerAdapter extends FragmentStatePagerAdapter {
         return fragment;
     }
 
-    @Override
-    public int getCount() {
-        return flashcards.size();
+    public Flashcard removeItem(int position) {
+        Flashcard removedFlashcard = flashcards.remove(position);
+        notifyDataSetChanged();
+        return removedFlashcard;
     }
 }
