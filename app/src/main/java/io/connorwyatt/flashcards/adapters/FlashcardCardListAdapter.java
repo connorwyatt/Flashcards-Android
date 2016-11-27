@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.android.internal.util.Predicate;
@@ -27,9 +28,13 @@ public class FlashcardCardListAdapter extends RecyclerView.Adapter<FlashcardCard
     public FlashcardCardListAdapter() {
     }
 
-    @Override
-    public int getItemCount() {
-        return viewFlashcards.size();
+    public void setItems(List<Flashcard> flashcards) {
+        this.flashcards = flashcards;
+        updateViewFlashcards();
+    }
+
+    public void setOnCardClickListener(OnCardClickListener onCardClickListener) {
+        this.onCardClickListener = onCardClickListener;
     }
 
     @Override
@@ -56,7 +61,18 @@ public class FlashcardCardListAdapter extends RecyclerView.Adapter<FlashcardCard
 
         holder.title.setText(currentFlashcard.getTitle());
         holder.text.setText(currentFlashcard.getText());
-        holder.categories.setText(currentFlashcard.getCategoriesString());
+
+        String categoriesString = currentFlashcard.getCategoriesString();
+        if (categoriesString.length() > 0) {
+            holder.categories.setText(categoriesString);
+        } else {
+            holder.layout.removeView(holder.categories);
+        }
+    }
+
+    @Override
+    public int getItemCount() {
+        return viewFlashcards.size();
     }
 
     @Override
@@ -64,8 +80,13 @@ public class FlashcardCardListAdapter extends RecyclerView.Adapter<FlashcardCard
         super.onAttachedToRecyclerView(recyclerView);
     }
 
-    public void setItems(List<Flashcard> flashcards) {
-        this.flashcards = flashcards;
+    public void applyCategoryFilter(long categoryId) {
+        categoryFilter = categoryId;
+        updateViewFlashcards();
+    }
+
+    public void removeFilter() {
+        categoryFilter = 0;
         updateViewFlashcards();
     }
 
@@ -82,9 +103,11 @@ public class FlashcardCardListAdapter extends RecyclerView.Adapter<FlashcardCard
 
         if (categoryFilter > 0) {
             filteredList = ListUtils.filter(filteredList, new Predicate<Flashcard>() {
-                @Override public boolean apply(Flashcard flashcard) {
+                @Override
+                public boolean apply(Flashcard flashcard) {
                     return ListUtils.contains(flashcard.getCategories(), new Predicate<Category>() {
-                        @Override public boolean apply(Category category) {
+                        @Override
+                        public boolean apply(Category category) {
                             return category.getId() == categoryFilter;
                         }
                     });
@@ -95,26 +118,13 @@ public class FlashcardCardListAdapter extends RecyclerView.Adapter<FlashcardCard
         return filteredList;
     }
 
-    public void applyCategoryFilter(long categoryId) {
-        categoryFilter = categoryId;
-        updateViewFlashcards();
-    }
-
-    public void removeFilter() {
-        categoryFilter = 0;
-        updateViewFlashcards();
-    }
-
-    public void setOnCardClickListener(OnCardClickListener onCardClickListener) {
-        this.onCardClickListener = onCardClickListener;
-    }
-
     public interface OnCardClickListener {
         void onClick(Flashcard flashcard);
     }
 
     public static class FlashcardCardViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
+        LinearLayout layout;
         TextView title;
         TextView text;
         TextView categories;
@@ -122,6 +132,7 @@ public class FlashcardCardListAdapter extends RecyclerView.Adapter<FlashcardCard
         FlashcardCardViewHolder(View itemView) {
             super(itemView);
             cv = (CardView) itemView.findViewById(R.id.flashcard_card);
+            layout = (LinearLayout) itemView.findViewById(R.id.flashcard_card_layout);
             title = (TextView) itemView.findViewById(R.id.flashcard_card_title);
             text = (TextView) itemView.findViewById(R.id.flashcard_card_text);
             categories = (TextView) itemView.findViewById(R.id.flashcard_card_categories);
