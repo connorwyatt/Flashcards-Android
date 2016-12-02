@@ -21,7 +21,6 @@ public class FlashcardTestActivity extends AppCompatActivity {
 
         setUpViewPager();
     }
-
     public static void startActivity(Context context) {
         Intent intent = new Intent(context, FlashcardTestActivity.class);
 
@@ -52,7 +51,7 @@ public class FlashcardTestActivity extends AppCompatActivity {
         fds.close();
 
         FlashcardTestPagerAdapter adapter = new FlashcardTestPagerAdapter(
-                getSupportFragmentManager(), flashcards);
+                getFragmentManager(), flashcards);
 
         DirectionalViewPager viewPager = (DirectionalViewPager) findViewById(R.id.activity_flashcard_test_view_pager);
         viewPager.setAdapter(adapter);
