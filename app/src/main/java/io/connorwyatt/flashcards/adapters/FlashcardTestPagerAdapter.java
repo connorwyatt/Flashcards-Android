@@ -25,12 +25,6 @@ public class FlashcardTestPagerAdapter extends FixedFragmentStatePagerAdapter {
 
     @Override
     public int getItemPosition(Object object) {
-        Flashcard flashcard = (Flashcard) object;
-
-        if (flashcards.contains(flashcard)) {
-            return flashcards.indexOf(flashcard);
-        }
-
         return POSITION_NONE;
     }
 
