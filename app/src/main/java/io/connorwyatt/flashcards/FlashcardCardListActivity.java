@@ -18,15 +18,31 @@ import java.util.List;
 
 import io.connorwyatt.flashcards.adapters.CategoryNameArrayAdapter;
 import io.connorwyatt.flashcards.adapters.FlashcardCardListAdapter;
-import io.connorwyatt.flashcards.data.entities.Category;
 import io.connorwyatt.flashcards.data.datasources.CategoryDataSource;
-import io.connorwyatt.flashcards.data.entities.Flashcard;
 import io.connorwyatt.flashcards.data.datasources.FlashcardDataSource;
+import io.connorwyatt.flashcards.data.entities.Category;
+import io.connorwyatt.flashcards.data.entities.Flashcard;
 
-public class FlashcardCardList extends AppCompatActivity {
+public class FlashcardCardListActivity extends AppCompatActivity {
     private FlashcardCardListAdapter adapter;
     private Category allCategory;
     private Category filterCategory;
+
+    private List<Category> getAllCategories() {
+        CategoryDataSource cds = new CategoryDataSource(this);
+        cds.open();
+        List<Category> categories = cds.getAll();
+        cds.close();
+
+        if (allCategory == null) {
+            allCategory = new Category();
+            allCategory.setName(getString(R.string.flashcard_cards_list_all_category));
+        }
+
+        categories.add(0, allCategory);
+
+        return categories;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,14 +71,26 @@ public class FlashcardCardList extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_test:
                 if (allCategory == filterCategory) {
-                    FlashcardTest.startActivity(this);
+                    FlashcardTestActivity.startActivity(this);
                 } else {
-                    FlashcardTest.startActivityWithCategoryFilter(this, filterCategory.getId());
+                    FlashcardTestActivity.startActivityWithCategoryFilter(this, filterCategory
+                            .getId());
                 }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        updateAdapterData();
+    }
+
+    public void addNewFlashcard(View view) {
+        navigateToFlashcardDetails(null);
     }
 
     private void setUpListRecyclerView() {
@@ -129,17 +157,6 @@ public class FlashcardCardList extends AppCompatActivity {
         setUpSpinner();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        updateAdapterData();
-    }
-
-    public void addNewFlashcard(View view) {
-        navigateToFlashcardDetails(null);
-    }
-
     private void updateAdapterData() {
         FlashcardDataSource fds = new FlashcardDataSource(this);
         fds.open();
@@ -154,31 +171,15 @@ public class FlashcardCardList extends AppCompatActivity {
         Bundle extras = new Bundle();
 
         if (flashcard != null) {
-            extras.putLong(FlashcardDetails.INTENT_EXTRAS.FLASHCARD_ID, flashcard.getId());
+            extras.putLong(FlashcardDetailsActivity.INTENT_EXTRAS.FLASHCARD_ID, flashcard.getId());
         }
 
         startFlashcardDetailsActivity(extras);
     }
 
     private void startFlashcardDetailsActivity(Bundle extras) {
-        Intent intent = new Intent(this, FlashcardDetails.class);
+        Intent intent = new Intent(this, FlashcardDetailsActivity.class);
         intent.putExtras(extras);
         startActivity(intent);
-    }
-
-    private List<Category> getAllCategories() {
-        CategoryDataSource cds = new CategoryDataSource(this);
-        cds.open();
-        List<Category> categories = cds.getAll();
-        cds.close();
-
-        if (allCategory == null) {
-            allCategory = new Category();
-            allCategory.setName(getString(R.string.flashcard_cards_list_all_category));
-        }
-
-        categories.add(0, allCategory);
-
-        return categories;
     }
 }

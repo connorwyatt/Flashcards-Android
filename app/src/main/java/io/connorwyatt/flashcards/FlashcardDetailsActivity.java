@@ -16,14 +16,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-import io.connorwyatt.flashcards.data.entities.Category;
-import io.connorwyatt.flashcards.data.entities.Flashcard;
-import io.connorwyatt.flashcards.data.datasources.FlashcardDataSource;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FlashcardDetails extends AppCompatActivity {
+import io.connorwyatt.flashcards.data.datasources.FlashcardDataSource;
+import io.connorwyatt.flashcards.data.entities.Category;
+import io.connorwyatt.flashcards.data.entities.Flashcard;
+
+public class FlashcardDetailsActivity extends AppCompatActivity {
     private Flashcard flashcard;
     private TextInputLayout titleLayout;
     private TextInputEditText title;
@@ -33,6 +34,42 @@ public class FlashcardDetails extends AppCompatActivity {
     private boolean textTouched = false;
     private TextInputEditText categories;
     private Button saveButton;
+
+    private String getTextError() {
+        String value = text.getText().toString();
+
+        if (value.length() == 0) {
+            return getString(R.string.validation_required);
+        } else {
+            return null;
+        }
+    }
+
+    private String getTitleError() {
+        String value = title.getText().toString();
+
+        if (value.length() == 0) {
+            return getString(R.string.validation_required);
+        } else if (value.length() > 80) {
+            return getString(R.string.validation_max_length, value.length(), 80);
+        } else {
+            return null;
+        }
+    }
+
+    private boolean isCreate() {
+        return flashcard == null;
+    }
+
+    private boolean isValid() {
+        return getTitleError() == null && getTextError() == null;
+    }
+
+    private void setViewFromFlashcard(Flashcard flashcard) {
+        title.setText(flashcard.getTitle());
+        text.setText(flashcard.getText());
+        categories.setText(flashcard.getCategoriesString());
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,12 +178,6 @@ public class FlashcardDetails extends AppCompatActivity {
         toast.show();
     }
 
-    private void setViewFromFlashcard(Flashcard flashcard) {
-        title.setText(flashcard.getTitle());
-        text.setText(flashcard.getText());
-        categories.setText(flashcard.getCategoriesString());
-    }
-
     private void setInputListeners() {
         title.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -231,42 +262,12 @@ public class FlashcardDetails extends AppCompatActivity {
         });
     }
 
-    private String getTitleError() {
-        String value = title.getText().toString();
-
-        if (value.length() == 0) {
-            return getString(R.string.validation_required);
-        } else if (value.length() > 80) {
-            return getString(R.string.validation_max_length, value.length(), 80);
-        } else {
-            return null;
-        }
-    }
-
-    private String getTextError() {
-        String value = text.getText().toString();
-
-        if (value.length() == 0) {
-            return getString(R.string.validation_required);
-        } else {
-            return null;
-        }
-    }
-
     private void updateButton() {
         if (isValid()) {
             saveButton.setEnabled(true);
         } else {
             saveButton.setEnabled(false);
         }
-    }
-
-    private boolean isCreate() {
-        return flashcard == null;
-    }
-
-    private boolean isValid() {
-        return getTitleError() == null && getTextError() == null;
     }
 
     private List<Category> processCategoriesString(String categoriesString) {
