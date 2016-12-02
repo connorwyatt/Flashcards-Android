@@ -1,7 +1,7 @@
 package io.connorwyatt.flashcards;
 
+import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +30,8 @@ public class FlashcardTestCardFragment extends Fragment {
         if (!isFlipped) {
             getChildFragmentManager()
                     .beginTransaction()
+                    .setCustomAnimations(R.animator.card_flip_in,
+                            R.animator.card_flip_out)
                     .replace(R.id.flashcard_test_card_frame, new CardBackFragment())
                     .commit();
 

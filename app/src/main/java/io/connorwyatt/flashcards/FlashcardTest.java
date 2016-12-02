@@ -5,14 +5,23 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
+
+import java.util.List;
+
 import io.connorwyatt.flashcards.adapters.FlashcardTestPagerAdapter;
 import io.connorwyatt.flashcards.data.datasources.FlashcardDataSource;
 import io.connorwyatt.flashcards.data.entities.Flashcard;
 import io.connorwyatt.flashcards.views.directionalviewpager.DirectionalViewPager;
 
-import java.util.List;
-
 public class FlashcardTest extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_flashcard_test);
+
+        setUpViewPager();
+    }
+
     public static void startActivity(Context context) {
         Intent intent = new Intent(context, FlashcardTest.class);
 
@@ -29,14 +38,6 @@ public class FlashcardTest extends AppCompatActivity {
         context.startActivity(intent);
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_flashcard_test);
-
-        setUpViewPager();
-    }
-
     private void setUpViewPager() {
         List<Flashcard> flashcards;
         Intent intent = getIntent();
@@ -51,7 +52,7 @@ public class FlashcardTest extends AppCompatActivity {
         fds.close();
 
         FlashcardTestPagerAdapter adapter = new FlashcardTestPagerAdapter(
-                getSupportFragmentManager(), flashcards);
+                getFragmentManager(), flashcards);
 
         DirectionalViewPager viewPager = (DirectionalViewPager) findViewById(R.id.activity_flashcard_test_view_pager);
         viewPager.setAdapter(adapter);
