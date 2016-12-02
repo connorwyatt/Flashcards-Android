@@ -5,7 +5,7 @@
                 android:id="@+id/activity_flashcard_card_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context="io.connorwyatt.flashcards.FlashcardCardList">
+    tools:context="io.connorwyatt.flashcards.FlashcardCardListActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/flashcard_card_list_toolbar"

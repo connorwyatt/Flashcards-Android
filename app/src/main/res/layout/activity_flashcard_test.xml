@@ -5,4 +5,4 @@
     android:id="@+id/activity_flashcard_test_view_pager"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="io.connorwyatt.flashcards.FlashcardTest"/>
+    tools:context="io.connorwyatt.flashcards.FlashcardTestActivity" />

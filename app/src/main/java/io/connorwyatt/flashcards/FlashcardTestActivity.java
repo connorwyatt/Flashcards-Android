@@ -13,7 +13,7 @@ import io.connorwyatt.flashcards.data.datasources.FlashcardDataSource;
 import io.connorwyatt.flashcards.data.entities.Flashcard;
 import io.connorwyatt.flashcards.views.directionalviewpager.DirectionalViewPager;
 
-public class FlashcardTest extends AppCompatActivity {
+public class FlashcardTestActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,9 +21,8 @@ public class FlashcardTest extends AppCompatActivity {
 
         setUpViewPager();
     }
-
     public static void startActivity(Context context) {
-        Intent intent = new Intent(context, FlashcardTest.class);
+        Intent intent = new Intent(context, FlashcardTestActivity.class);
 
         context.startActivity(intent);
     }
@@ -32,7 +31,7 @@ public class FlashcardTest extends AppCompatActivity {
         Bundle extras = new Bundle();
         extras.putLong(EXTRA_KEYS.CATEGORY_ID, categoryId);
 
-        Intent intent = new Intent(context, FlashcardTest.class);
+        Intent intent = new Intent(context, FlashcardTestActivity.class);
         intent.putExtras(extras);
 
         context.startActivity(intent);
@@ -63,7 +62,7 @@ public class FlashcardTest extends AppCompatActivity {
             public void onPageSkip(Object skippedItem) {
                 String flashcardTitle = ((Flashcard) skippedItem).getTitle();
                 String skipMessage = getString(R.string.flashcard_test_skip_toast, flashcardTitle);
-                Toast.makeText(FlashcardTest.this, skipMessage, Toast.LENGTH_SHORT).show();
+                Toast.makeText(FlashcardTestActivity.this, skipMessage, Toast.LENGTH_SHORT).show();
             }
         });
     }
