@@ -47,23 +47,26 @@
             android:gravity="center">
 
             <ImageButton
+                android:id="@+id/flashcard_test_card_negative_button"
                 style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_negative_rating" />
 
             <ImageButton
+                android:id="@+id/flashcard_test_card_neutral_button"
                 style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_neutral_rating" />
 
             <ImageButton
+                android:id="@+id/flashcard_test_card_positive_button"
                 style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_positive_rating" />
         </LinearLayout>
