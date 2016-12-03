@@ -13,10 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.connorwyatt.flashcards.R;
+import io.connorwyatt.flashcards.activities.FlashcardTestActivity;
 import io.connorwyatt.flashcards.data.datasources.FlashcardTestDataSource;
 import io.connorwyatt.flashcards.data.entities.FlashcardTest;
 
 public class FlashcardTestCardFragment extends Fragment {
+    private FlashcardTest flashcardTest = new FlashcardTest();
     private boolean isFlipped = false;
 
     @Override
@@ -44,6 +46,21 @@ public class FlashcardTestCardFragment extends Fragment {
 
             isFlipped = !isFlipped;
         }
+    }
+
+    private void saveFlashcardTest() {
+        FlashcardTestDataSource ftds = new FlashcardTestDataSource(getActivity());
+        ftds.open();
+        flashcardTest = ftds.save(flashcardTest);
+        ftds.close();
+
+        updateFlashcardTestInActivity();
+    }
+
+    private void updateFlashcardTestInActivity() {
+        FlashcardTestActivity flashcardTestActivity = (FlashcardTestActivity) getActivity();
+
+        flashcardTestActivity.updateFlashcardTest(flashcardTest);
     }
 
     public static class ARGUMENT_KEYS {
@@ -82,7 +99,7 @@ public class FlashcardTestCardFragment extends Fragment {
     }
 
     public static class CardBackFragment extends Fragment {
-        FlashcardTest flashcardTest = new FlashcardTest();
+        FlashcardTestCardFragment testCardFragment;
         List<ImageButton> buttons = new ArrayList<>();
         ImageButton currentlySelectedButton;
 
@@ -103,17 +120,17 @@ public class FlashcardTestCardFragment extends Fragment {
 
             switch (buttonId) {
                 case R.id.flashcard_test_card_positive_button:
-                    flashcardTest.setRatingPositive();
+                    testCardFragment.flashcardTest.setRatingPositive();
                     break;
                 case R.id.flashcard_test_card_neutral_button:
-                    flashcardTest.setRatingNeutral();
+                    testCardFragment.flashcardTest.setRatingNeutral();
                     break;
                 case R.id.flashcard_test_card_negative_button:
-                    flashcardTest.setRatingNegative();
+                    testCardFragment.flashcardTest.setRatingNegative();
                     break;
             }
 
-            saveFlashcardTest();
+            testCardFragment.saveFlashcardTest();
 
             if (currentlySelectedButton != null) {
                 currentlySelectedButton.setImageAlpha(100);
@@ -127,6 +144,8 @@ public class FlashcardTestCardFragment extends Fragment {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
+            testCardFragment = (FlashcardTestCardFragment) getParentFragment();
+
             CardView card = (CardView) inflater.inflate(R.layout.fragment_flashcard_test_card_back,
                     container, false);
 
@@ -137,8 +156,9 @@ public class FlashcardTestCardFragment extends Fragment {
             String titleText = arguments.getString(FlashcardTestCardFragment.ARGUMENT_KEYS.TITLE);
             String textText = arguments.getString(FlashcardTestCardFragment.ARGUMENT_KEYS.TEXT);
 
-            flashcardTest.setFlashcardId(arguments.getLong(FlashcardTestCardFragment
-                    .ARGUMENT_KEYS.ID));
+            testCardFragment.flashcardTest.setFlashcardId(arguments.getLong
+                    (FlashcardTestCardFragment
+                            .ARGUMENT_KEYS.ID));
 
             TextView title = (TextView) card.findViewById(R.id.flashcard_test_card_title);
             title.setText(titleText);
@@ -153,14 +173,5 @@ public class FlashcardTestCardFragment extends Fragment {
 
             return card;
         }
-
-        private void saveFlashcardTest() {
-            FlashcardTestDataSource ftds = new FlashcardTestDataSource(getActivity());
-            ftds.open();
-            flashcardTest = ftds.save(flashcardTest);
-            ftds.close();
-        }
-
-
     }
 }
