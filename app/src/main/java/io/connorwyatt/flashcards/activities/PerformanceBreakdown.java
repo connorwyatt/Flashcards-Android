@@ -1,6 +1,6 @@
 package io.connorwyatt.flashcards.activities;
 
-interface PerformanceBreakdown {
+public interface PerformanceBreakdown {
     int getNegativeCount();
 
     double getNegativePercent();

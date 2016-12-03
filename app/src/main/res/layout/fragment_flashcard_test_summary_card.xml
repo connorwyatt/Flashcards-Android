@@ -49,20 +49,20 @@
                         android:src="@drawable/ic_positive_rating" />
 
                     <TextView
+                        android:id="@+id/flashcard_test_summary_positive_percent"
                         android:layout_width="96dp"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
-                        android:text="%"
                         android:textAlignment="center"
                         android:textColor="@color/colorTextInvert"
                         android:textSize="18dp" />
 
                     <TextView
+                        android:id="@+id/flashcard_test_summary_positive_count"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
                         android:layout_weight="1"
-                        android:text="Type"
                         android:textAlignment="center"
                         android:textColor="@color/colorTextInvert" />
                 </LinearLayout>
@@ -78,20 +78,20 @@
                         android:src="@drawable/ic_neutral_rating" />
 
                     <TextView
+                        android:id="@+id/flashcard_test_summary_neutral_percent"
                         android:layout_width="96dp"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
-                        android:text="%"
                         android:textAlignment="center"
                         android:textColor="@color/colorTextInvert"
                         android:textSize="18dp" />
 
                     <TextView
+                        android:id="@+id/flashcard_test_summary_neutral_count"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
                         android:layout_weight="1"
-                        android:text="Type"
                         android:textAlignment="center"
                         android:textColor="@color/colorTextInvert" />
                 </LinearLayout>
@@ -107,20 +107,20 @@
                         android:src="@drawable/ic_negative_rating" />
 
                     <TextView
+                        android:id="@+id/flashcard_test_summary_negative_percent"
                         android:layout_width="96dp"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
-                        android:text="%"
                         android:textAlignment="center"
                         android:textColor="@color/colorTextInvert"
                         android:textSize="18dp" />
 
                     <TextView
+                        android:id="@+id/flashcard_test_summary_negative_count"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
                         android:layout_weight="1"
-                        android:text="Type"
                         android:textAlignment="center"
                         android:textColor="@color/colorTextInvert" />
                 </LinearLayout>
