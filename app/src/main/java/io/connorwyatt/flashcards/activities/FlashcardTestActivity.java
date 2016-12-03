@@ -27,6 +27,10 @@ public class FlashcardTestActivity extends AppCompatActivity {
     private PerformanceBreakdown performanceBreakdown = createPerformanceBreakdown();
     private HashMap<Long, FlashcardTest> flashcardTestMap = new HashMap<>();
 
+    public PerformanceBreakdown getPerformanceBreakdown() {
+        return performanceBreakdown;
+    }
+
     @Override
     public void onBackPressed() {
         new AlertDialog.Builder(this)
@@ -119,7 +123,7 @@ public class FlashcardTestActivity extends AppCompatActivity {
 
             @Override
             public double getNegativePercent() {
-                return getPercentage(getNegativeCount());
+                return getPercentage(getNegativeCount(), getRatedTotal());
             }
 
             @Override
@@ -129,7 +133,7 @@ public class FlashcardTestActivity extends AppCompatActivity {
 
             @Override
             public double getNeutralPercent() {
-                return getPercentage(getNeutralCount());
+                return getPercentage(getNeutralCount(), getRatedTotal());
             }
 
             @Override
@@ -139,7 +143,7 @@ public class FlashcardTestActivity extends AppCompatActivity {
 
             @Override
             public double getPositivePercent() {
-                return getPercentage(getPositiveCount());
+                return getPercentage(getPositiveCount(), getRatedTotal());
             }
 
             @Override
@@ -154,7 +158,7 @@ public class FlashcardTestActivity extends AppCompatActivity {
 
             @Override
             public double getSkipPercent() {
-                return getPercentage(getSkipCount());
+                return getPercentage(getSkipCount(), getTotal());
             }
 
             @Override
@@ -172,8 +176,12 @@ public class FlashcardTestActivity extends AppCompatActivity {
                         }).size();
             }
 
-            private double getPercentage(int count) {
-                return (double) count / (double) getRatedTotal();
+            private double getPercentage(int count, int total) {
+                double percentage = ((double) count / (double) total);
+
+                if (Double.isNaN(percentage)) percentage = 0;
+
+                return percentage;
             }
         };
     }
