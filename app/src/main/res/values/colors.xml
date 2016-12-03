@@ -6,5 +6,6 @@
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorText">#DE000000</color>
     <color name="colorTextInvert">#FFFFFFFF</color>
-    <color name="backgroundDark">#AA000000</color>
+    <color name="colorBackgroundDark">#444444</color>
+    <color name="colorBackgroundDarker">#333333</color>
 </resources>
