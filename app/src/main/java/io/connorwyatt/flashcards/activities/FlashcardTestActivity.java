@@ -1,6 +1,8 @@
 package io.connorwyatt.flashcards.activities;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,12 +18,35 @@ import io.connorwyatt.flashcards.views.directionalviewpager.DirectionalViewPager
 
 public class FlashcardTestActivity extends AppCompatActivity {
     @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.flashcard_test_confirmation_title)
+                .setMessage(R.string.flashcard_test_confirmation_message)
+                .setPositiveButton(R.string.flashcard_test_confirmation_yes, new DialogInterface
+                        .OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        FlashcardTestActivity.this.finish();
+                    }
+                })
+                .setNegativeButton(R.string.flashcard_test_confirmation_no, new DialogInterface
+                        .OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                    }
+                })
+                .create()
+                .show();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_flashcard_test);
 
         setUpViewPager();
     }
+
     public static void startActivity(Context context) {
         Intent intent = new Intent(context, FlashcardTestActivity.class);
 
@@ -54,7 +79,8 @@ public class FlashcardTestActivity extends AppCompatActivity {
         FlashcardTestPagerAdapter adapter = new FlashcardTestPagerAdapter(
                 getFragmentManager(), flashcards);
 
-        DirectionalViewPager viewPager = (DirectionalViewPager) findViewById(R.id.activity_flashcard_test_view_pager);
+        DirectionalViewPager viewPager = (DirectionalViewPager) findViewById(R.id
+                .activity_flashcard_test_view_pager);
         viewPager.setAdapter(adapter);
 
         viewPager.setAllowLeftSwipe(false);

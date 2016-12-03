@@ -4,6 +4,10 @@
         <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
+    <style name="AppTheme.Dialog" parent="Base.Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
     <style name="AppTheme.AppBar">
         <item name="titleTextColor">?android:attr/textColorPrimaryInverse</item>
         <item name="subtitleTextColor">?android:attr/textColorPrimaryInverse</item>
@@ -31,6 +35,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:alertDialogTheme">@style/AppTheme.Dialog</item>
     </style>
 
 </resources>
