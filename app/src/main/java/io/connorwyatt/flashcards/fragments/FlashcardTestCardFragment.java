@@ -1,4 +1,4 @@
-package io.connorwyatt.flashcards;
+package io.connorwyatt.flashcards.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -12,6 +12,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.connorwyatt.flashcards.R;
 import io.connorwyatt.flashcards.data.datasources.FlashcardTestDataSource;
 import io.connorwyatt.flashcards.data.entities.FlashcardTest;
 
@@ -21,7 +22,7 @@ public class FlashcardTestCardFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.flashcard_test_card,
+        ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_flashcard_test_card,
                 container, false);
 
         getChildFragmentManager()
@@ -55,7 +56,7 @@ public class FlashcardTestCardFragment extends Fragment {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            CardView card = (CardView) inflater.inflate(R.layout.flashcard_test_card_front,
+            CardView card = (CardView) inflater.inflate(R.layout.fragment_flashcard_test_card_front,
                     container, false);
 
             final FlashcardTestCardFragment parentFragment = (FlashcardTestCardFragment)
@@ -97,36 +98,6 @@ public class FlashcardTestCardFragment extends Fragment {
             }
         }
 
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            CardView card = (CardView) inflater.inflate(R.layout.flashcard_test_card_back,
-                    container, false);
-
-            final FlashcardTestCardFragment parentFragment = (FlashcardTestCardFragment)
-                    getParentFragment();
-
-            Bundle arguments = parentFragment.getArguments();
-            String titleText = arguments.getString(FlashcardTestCardFragment.ARGUMENT_KEYS.TITLE);
-            String textText = arguments.getString(FlashcardTestCardFragment.ARGUMENT_KEYS.TEXT);
-
-            flashcardTest.setFlashcardId(arguments.getLong(FlashcardTestCardFragment
-                    .ARGUMENT_KEYS.ID));
-
-            TextView title = (TextView) card.findViewById(R.id.flashcard_test_card_title);
-            title.setText(titleText);
-            TextView text = (TextView) card.findViewById(R.id.flashcard_test_card_text);
-            text.setText(textText);
-
-            buttons.add((ImageButton) card.findViewById(R.id.flashcard_test_card_negative_button));
-            buttons.add((ImageButton) card.findViewById(R.id.flashcard_test_card_neutral_button));
-            buttons.add((ImageButton) card.findViewById(R.id.flashcard_test_card_positive_button));
-
-            setButtonClickHandlers();
-
-            return card;
-        }
-
         private void onButtonClick(ImageButton button) {
             int buttonId = button.getId();
 
@@ -151,6 +122,36 @@ public class FlashcardTestCardFragment extends Fragment {
             currentlySelectedButton = button;
 
             currentlySelectedButton.setImageAlpha(255);
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            CardView card = (CardView) inflater.inflate(R.layout.fragment_flashcard_test_card_back,
+                    container, false);
+
+            final FlashcardTestCardFragment parentFragment = (FlashcardTestCardFragment)
+                    getParentFragment();
+
+            Bundle arguments = parentFragment.getArguments();
+            String titleText = arguments.getString(FlashcardTestCardFragment.ARGUMENT_KEYS.TITLE);
+            String textText = arguments.getString(FlashcardTestCardFragment.ARGUMENT_KEYS.TEXT);
+
+            flashcardTest.setFlashcardId(arguments.getLong(FlashcardTestCardFragment
+                    .ARGUMENT_KEYS.ID));
+
+            TextView title = (TextView) card.findViewById(R.id.flashcard_test_card_title);
+            title.setText(titleText);
+            TextView text = (TextView) card.findViewById(R.id.flashcard_test_card_text);
+            text.setText(textText);
+
+            buttons.add((ImageButton) card.findViewById(R.id.flashcard_test_card_negative_button));
+            buttons.add((ImageButton) card.findViewById(R.id.flashcard_test_card_neutral_button));
+            buttons.add((ImageButton) card.findViewById(R.id.flashcard_test_card_positive_button));
+
+            setButtonClickHandlers();
+
+            return card;
         }
 
         private void saveFlashcardTest() {

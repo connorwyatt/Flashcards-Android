@@ -40,7 +40,7 @@ public class FlashcardCardListAdapter extends RecyclerView.Adapter<FlashcardCard
     @Override
     public FlashcardCardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View inflatedView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.flashcard_card, parent, false);
+                .inflate(R.layout.fragment_flashcard_card, parent, false);
         return new FlashcardCardViewHolder(inflatedView);
     }
 

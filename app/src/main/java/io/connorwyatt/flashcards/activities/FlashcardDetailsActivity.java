@@ -1,4 +1,4 @@
-package io.connorwyatt.flashcards;
+package io.connorwyatt.flashcards.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +20,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.connorwyatt.flashcards.R;
 import io.connorwyatt.flashcards.data.datasources.FlashcardDataSource;
 import io.connorwyatt.flashcards.data.entities.Category;
 import io.connorwyatt.flashcards.data.entities.Flashcard;

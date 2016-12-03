@@ -1,4 +1,4 @@
-package io.connorwyatt.flashcards;
+package io.connorwyatt.flashcards.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +16,7 @@ import android.widget.Spinner;
 
 import java.util.List;
 
+import io.connorwyatt.flashcards.R;
 import io.connorwyatt.flashcards.adapters.CategoryNameArrayAdapter;
 import io.connorwyatt.flashcards.adapters.FlashcardCardListAdapter;
 import io.connorwyatt.flashcards.data.datasources.CategoryDataSource;
