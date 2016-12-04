@@ -78,7 +78,7 @@ public class FlashcardTestActivity extends AppCompatActivity {
     }
 
     public void updateFlashcardTest(FlashcardTest flashcardTest) {
-        flashcardTestMap.put(flashcardTest.getId(), flashcardTest);
+        flashcardTestMap.put(flashcardTest.getFlashcardId(), flashcardTest);
     }
 
     private void setUpViewPager() {
@@ -107,9 +107,14 @@ public class FlashcardTestActivity extends AppCompatActivity {
         viewPager.addOnPageSkipListener(new DirectionalViewPager.OnPageSkipListener() {
             @Override
             public void onPageSkip(Object skippedItem) {
-                String flashcardTitle = ((Flashcard) skippedItem).getTitle();
-                String skipMessage = getString(R.string.flashcard_test_skip_toast, flashcardTitle);
-                Toast.makeText(FlashcardTestActivity.this, skipMessage, Toast.LENGTH_SHORT).show();
+                Flashcard flashcard = ((Flashcard) skippedItem);
+
+                if (!flashcardTestMap.containsKey(flashcard.getId())) {
+                    String skipMessage = getString(R.string.flashcard_test_skip_toast, flashcard
+                            .getTitle());
+                    Toast.makeText(FlashcardTestActivity.this, skipMessage, Toast.LENGTH_SHORT)
+                            .show();
+                }
             }
         });
     }
