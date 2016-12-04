@@ -19,7 +19,10 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="8dp">
+                android:paddingBottom="8dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="8dp">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -36,7 +39,14 @@
                 android:layout_weight="1"
                 android:background="@color/colorBackgroundDark"
                 android:orientation="vertical"
-                android:padding="8dp">
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:text="@string/flashcard_test_summary_breakdown_explanation"
+                    android:textColor="@color/colorTextInvert" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -124,13 +134,23 @@
                         android:textAlignment="center"
                         android:textColor="@color/colorTextInvert" />
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/flashcard_test_summary_skip_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:textColor="@color/colorTextInvert" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="right"
-                android:padding="8dp">
+                android:paddingBottom="8dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="8dp">
 
                 <Button
                     android:id="@+id/flashcard_test_summary_finish_button"
