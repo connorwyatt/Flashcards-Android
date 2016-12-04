@@ -6,9 +6,9 @@ import android.os.Bundle;
 
 import java.util.List;
 
-import io.connorwyatt.flashcards.FlashcardTestSummaryFragment;
 import io.connorwyatt.flashcards.data.entities.Flashcard;
 import io.connorwyatt.flashcards.fragments.FlashcardTestCardFragment;
+import io.connorwyatt.flashcards.fragments.FlashcardTestSummaryFragment;
 
 public class FlashcardTestPagerAdapter extends FixedFragmentStatePagerAdapter {
     private List<Flashcard> flashcards;

@@ -1,4 +1,4 @@
-package io.connorwyatt.flashcards;
+package io.connorwyatt.flashcards.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -8,15 +8,62 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import io.connorwyatt.flashcards.R;
 import io.connorwyatt.flashcards.activities.FlashcardTestActivity;
-import io.connorwyatt.flashcards.activities.PerformanceBreakdown;
+import io.connorwyatt.flashcards.interfaces.IPerformanceBreakdown;
 
 public class FlashcardTestSummaryFragment extends Fragment {
-    private FlashcardTestActivity testActivity;
+    private ViewGroup viewGroup;
+    private IPerformanceBreakdown performanceBreakdown;
+    private IPerformanceBreakdown.OnPerformanceBreakdownChangeListener changeListener;
 
-    private void setUpView(ViewGroup viewGroup) {
-        PerformanceBreakdown performanceBreakdown = testActivity.getPerformanceBreakdown();
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
 
+        viewGroup = (ViewGroup) inflater
+                .inflate(R.layout.fragment_flashcard_test_summary_card, container, false);
+
+        FlashcardTestFragment testFragment = ((FlashcardTestActivity) getActivity())
+                .getFlashcardTestFragment();
+
+        performanceBreakdown = testFragment.getPerformanceBreakdown();
+
+        setUpView();
+
+        return viewGroup;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        performanceBreakdown.removeOnPerformanceBreakdownChangeListener(changeListener);
+    }
+
+    private void setUpView() {
+        updateValues();
+
+        changeListener = new IPerformanceBreakdown.OnPerformanceBreakdownChangeListener() {
+            @Override
+            public void onChange() {
+                updateValues();
+            }
+        };
+        performanceBreakdown.addOnPerformanceBreakdownChangeListener(changeListener);
+
+        Button finishButton = (Button) viewGroup.findViewById(R.id
+                .flashcard_test_summary_finish_button);
+        finishButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().finish();
+            }
+        });
+    }
+
+    private void updateValues() {
         ((TextView) viewGroup.findViewById(R.id.flashcard_test_summary_positive_percent))
                 .setText(getString(R.string.percentage, toPercent(performanceBreakdown
                         .getPositivePercent())));
@@ -35,29 +82,6 @@ public class FlashcardTestSummaryFragment extends Fragment {
         ((TextView) viewGroup.findViewById(R.id.flashcard_test_summary_skip_count)).setText
                 (getResources().getQuantityString(R.plurals.flashcard_test_summary_skip_count,
                         performanceBreakdown.getSkipCount(), performanceBreakdown.getSkipCount()));
-
-        Button finishButton = (Button) viewGroup.findViewById(R.id
-                .flashcard_test_summary_finish_button);
-        finishButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                testActivity.finish();
-            }
-        });
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        ViewGroup viewGroup = (ViewGroup) inflater
-                .inflate(R.layout.fragment_flashcard_test_summary_card, container, false);
-
-        testActivity = (FlashcardTestActivity)
-                FlashcardTestSummaryFragment.this.getActivity();
-
-        setUpView(viewGroup);
-
-        return viewGroup;
     }
 
     private long toPercent(double decimal) {
