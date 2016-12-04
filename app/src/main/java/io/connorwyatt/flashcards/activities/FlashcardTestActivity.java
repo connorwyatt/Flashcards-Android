@@ -26,6 +26,7 @@ public class FlashcardTestActivity extends AppCompatActivity {
     private int initialCount;
     private PerformanceBreakdown performanceBreakdown = createPerformanceBreakdown();
     private HashMap<Long, FlashcardTest> flashcardTestMap = new HashMap<>();
+    private ArrayList<Long> skippedFlashcards = new ArrayList<>();
 
     public PerformanceBreakdown getPerformanceBreakdown() {
         return performanceBreakdown;
@@ -33,24 +34,32 @@ public class FlashcardTestActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.flashcard_test_confirmation_title)
-                .setMessage(R.string.flashcard_test_confirmation_message)
-                .setPositiveButton(R.string.flashcard_test_confirmation_yes, new DialogInterface
-                        .OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        FlashcardTestActivity.this.finish();
-                    }
-                })
-                .setNegativeButton(R.string.flashcard_test_confirmation_no, new DialogInterface
-                        .OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                    }
-                })
-                .create()
-                .show();
+        int totalCompleted = performanceBreakdown.getRatedTotal() + performanceBreakdown
+                .getSkipCount();
+        boolean isComplete = totalCompleted >= initialCount;
+
+        if (isComplete) {
+            super.onBackPressed();
+        } else {
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.flashcard_test_confirmation_title)
+                    .setMessage(R.string.flashcard_test_confirmation_message)
+                    .setPositiveButton(R.string.flashcard_test_confirmation_yes, new DialogInterface
+                            .OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            FlashcardTestActivity.this.finish();
+                        }
+                    })
+                    .setNegativeButton(R.string.flashcard_test_confirmation_no, new DialogInterface
+                            .OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                        }
+                    })
+                    .create()
+                    .show();
+        }
     }
 
     @Override
@@ -110,6 +119,7 @@ public class FlashcardTestActivity extends AppCompatActivity {
                 Flashcard flashcard = ((Flashcard) skippedItem);
 
                 if (!flashcardTestMap.containsKey(flashcard.getId())) {
+                    skippedFlashcards.add(flashcard.getId());
                     String skipMessage = getString(R.string.flashcard_test_skip_toast, flashcard
                             .getTitle());
                     Toast.makeText(FlashcardTestActivity.this, skipMessage, Toast.LENGTH_SHORT)
@@ -153,12 +163,12 @@ public class FlashcardTestActivity extends AppCompatActivity {
 
             @Override
             public int getRatedTotal() {
-                return getTotal() - getSkipCount();
+                return flashcardTestMap.size();
             }
 
             @Override
             public int getSkipCount() {
-                return initialCount - flashcardTestMap.size();
+                return skippedFlashcards.size();
             }
 
             @Override
