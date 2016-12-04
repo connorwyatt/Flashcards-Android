@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="flashcard_test_summary_skip_count">
+        <item quantity="one">You skipped %1$d flashcard.</item>
+        <item quantity="other">You skipped %1$d flashcards.</item>
+    </plurals>
+</resources>

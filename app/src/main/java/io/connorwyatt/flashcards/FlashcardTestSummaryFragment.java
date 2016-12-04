@@ -31,6 +31,9 @@ public class FlashcardTestSummaryFragment extends Fragment {
                         "%");
         ((TextView) viewGroup.findViewById(R.id.flashcard_test_summary_negative_count))
                 .setText(String.valueOf(performanceBreakdown.getNegativeCount()));
+        ((TextView) viewGroup.findViewById(R.id.flashcard_test_summary_skip_count)).setText
+                (getResources().getQuantityString(R.plurals.flashcard_test_summary_skip_count,
+                        performanceBreakdown.getSkipCount(), performanceBreakdown.getSkipCount()));
 
         Button finishButton = (Button) viewGroup.findViewById(R.id
                 .flashcard_test_summary_finish_button);
