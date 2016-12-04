@@ -33,115 +33,121 @@
                     android:textSize="30sp" />
             </LinearLayout>
 
-            <LinearLayout
+            <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:background="@color/colorBackgroundDark"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:text="@string/flashcard_test_summary_breakdown_explanation"
-                    android:textColor="@color/colorTextInvert" />
+                android:background="@color/colorBackgroundDark">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical">
-
-                    <ImageView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:src="@drawable/ic_positive_rating" />
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
                     <TextView
-                        android:id="@+id/flashcard_test_summary_positive_percent"
-                        android:layout_width="96dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
-                        android:textAlignment="center"
-                        android:textColor="@color/colorTextInvert"
-                        android:textSize="18dp" />
+                        android:layout_marginBottom="16dp"
+                        android:text="@string/flashcard_test_summary_breakdown_explanation"
+                        android:textColor="@color/colorTextInvert" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:src="@drawable/ic_positive_rating" />
+
+                        <TextView
+                            android:id="@+id/flashcard_test_summary_positive_percent"
+                            android:layout_width="96dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:textAlignment="center"
+                            android:textColor="@color/colorTextInvert"
+                            android:textSize="18dp" />
+
+                        <TextView
+                            android:id="@+id/flashcard_test_summary_positive_count"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:layout_weight="1"
+                            android:textAlignment="center"
+                            android:textColor="@color/colorTextInvert" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:src="@drawable/ic_neutral_rating" />
+
+                        <TextView
+                            android:id="@+id/flashcard_test_summary_neutral_percent"
+                            android:layout_width="96dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:textAlignment="center"
+                            android:textColor="@color/colorTextInvert"
+                            android:textSize="18dp" />
+
+                        <TextView
+                            android:id="@+id/flashcard_test_summary_neutral_count"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:layout_weight="1"
+                            android:textAlignment="center"
+                            android:textColor="@color/colorTextInvert" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            android:src="@drawable/ic_negative_rating" />
+
+                        <TextView
+                            android:id="@+id/flashcard_test_summary_negative_percent"
+                            android:layout_width="96dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:textAlignment="center"
+                            android:textColor="@color/colorTextInvert"
+                            android:textSize="18dp" />
+
+                        <TextView
+                            android:id="@+id/flashcard_test_summary_negative_count"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:layout_weight="1"
+                            android:textAlignment="center"
+                            android:textColor="@color/colorTextInvert" />
+                    </LinearLayout>
 
                     <TextView
-                        android:id="@+id/flashcard_test_summary_positive_count"
-                        android:layout_width="0dp"
+                        android:id="@+id/flashcard_test_summary_skip_count"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
-                        android:layout_weight="1"
-                        android:textAlignment="center"
+                        android:layout_marginTop="16dp"
                         android:textColor="@color/colorTextInvert" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical">
-
-                    <ImageView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:src="@drawable/ic_neutral_rating" />
-
-                    <TextView
-                        android:id="@+id/flashcard_test_summary_neutral_percent"
-                        android:layout_width="96dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
-                        android:textAlignment="center"
-                        android:textColor="@color/colorTextInvert"
-                        android:textSize="18dp" />
-
-                    <TextView
-                        android:id="@+id/flashcard_test_summary_neutral_count"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
-                        android:layout_weight="1"
-                        android:textAlignment="center"
-                        android:textColor="@color/colorTextInvert" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical">
-
-                    <ImageView
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:src="@drawable/ic_negative_rating" />
-
-                    <TextView
-                        android:id="@+id/flashcard_test_summary_negative_percent"
-                        android:layout_width="96dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
-                        android:textAlignment="center"
-                        android:textColor="@color/colorTextInvert"
-                        android:textSize="18dp" />
-
-                    <TextView
-                        android:id="@+id/flashcard_test_summary_negative_count"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
-                        android:layout_weight="1"
-                        android:textAlignment="center"
-                        android:textColor="@color/colorTextInvert" />
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/flashcard_test_summary_skip_count"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:textColor="@color/colorTextInvert" />
-            </LinearLayout>
+            </ScrollView>
 
             <LinearLayout
                 android:layout_width="match_parent"
