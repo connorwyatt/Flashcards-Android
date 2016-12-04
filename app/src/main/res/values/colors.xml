@@ -8,4 +8,5 @@
     <color name="colorTextInvert">#FFFFFFFF</color>
     <color name="colorBackgroundDark">#444444</color>
     <color name="colorBackgroundDarker">#333333</color>
+    <color name="colorFadedEdge">#11000000</color>
 </resources>
