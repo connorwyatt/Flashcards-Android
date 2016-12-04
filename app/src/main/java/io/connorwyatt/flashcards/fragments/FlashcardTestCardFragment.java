@@ -22,18 +22,25 @@ public class FlashcardTestCardFragment extends Fragment {
     private boolean isFlipped = false;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
         setRetainInstance(true);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
+            savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
 
         ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_flashcard_test_card,
                 container, false);
 
+        Fragment cardFragment = !isFlipped ? new CardFrontFragment() : new CardBackFragment();
+
         getChildFragmentManager()
                 .beginTransaction()
-                .add(R.id.flashcard_test_card_frame, new CardFrontFragment())
+                .add(R.id.flashcard_test_card_frame, cardFragment)
                 .commit();
 
         return viewGroup;
@@ -102,9 +109,10 @@ public class FlashcardTestCardFragment extends Fragment {
     }
 
     public static class CardBackFragment extends Fragment {
-        FlashcardTestCardFragment testCardFragment;
-        List<ImageButton> buttons = new ArrayList<>();
-        ImageButton currentlySelectedButton;
+        private FlashcardTestCardFragment testCardFragment;
+        private List<ImageButton> buttons = new ArrayList<>();
+        private ImageButton currentlySelectedButton;
+        private CardView cardView;
 
         private void setButtonClickHandlers() {
             for (final ImageButton currentButton : buttons) {
@@ -135,6 +143,27 @@ public class FlashcardTestCardFragment extends Fragment {
 
             testCardFragment.saveFlashcardTest();
 
+            setCurrentButton();
+        }
+
+        private void setCurrentButton() {
+            ImageButton button = null;
+
+            switch (testCardFragment.flashcardTest.getRating()) {
+                case POSITIVE:
+                    button = (ImageButton) cardView.findViewById(R.id
+                            .flashcard_test_card_positive_button);
+                    break;
+                case NEUTRAL:
+                    button = (ImageButton) cardView.findViewById(R.id
+                            .flashcard_test_card_neutral_button);
+                    break;
+                case NEGATIVE:
+                    button = (ImageButton) cardView.findViewById(R.id
+                            .flashcard_test_card_negative_button);
+                    break;
+            }
+
             if (currentlySelectedButton != null) {
                 currentlySelectedButton.setImageAlpha(100);
             }
@@ -151,7 +180,7 @@ public class FlashcardTestCardFragment extends Fragment {
 
             testCardFragment = (FlashcardTestCardFragment) getParentFragment();
 
-            CardView card = (CardView) inflater.inflate(R.layout.fragment_flashcard_test_card_back,
+            cardView = (CardView) inflater.inflate(R.layout.fragment_flashcard_test_card_back,
                     container, false);
 
             Bundle arguments = testCardFragment.getArguments();
@@ -161,18 +190,25 @@ public class FlashcardTestCardFragment extends Fragment {
             testCardFragment.flashcardTest.setFlashcardId(arguments.getLong
                     (FlashcardTestCardFragment.ARGUMENT_KEYS.ID));
 
-            TextView title = (TextView) card.findViewById(R.id.flashcard_test_card_title);
+            TextView title = (TextView) cardView.findViewById(R.id.flashcard_test_card_title);
             title.setText(titleText);
-            TextView text = (TextView) card.findViewById(R.id.flashcard_test_card_text);
+            TextView text = (TextView) cardView.findViewById(R.id.flashcard_test_card_text);
             text.setText(textText);
 
-            buttons.add((ImageButton) card.findViewById(R.id.flashcard_test_card_negative_button));
-            buttons.add((ImageButton) card.findViewById(R.id.flashcard_test_card_neutral_button));
-            buttons.add((ImageButton) card.findViewById(R.id.flashcard_test_card_positive_button));
+            buttons.add((ImageButton) cardView.findViewById(R.id
+                    .flashcard_test_card_negative_button));
+            buttons.add((ImageButton) cardView.findViewById(R.id
+                    .flashcard_test_card_neutral_button));
+            buttons.add((ImageButton) cardView.findViewById(R.id
+                    .flashcard_test_card_positive_button));
 
             setButtonClickHandlers();
 
-            return card;
+            if (testCardFragment.flashcardTest.getRating() != null) {
+                setCurrentButton();
+            }
+
+            return cardView;
         }
     }
 }
