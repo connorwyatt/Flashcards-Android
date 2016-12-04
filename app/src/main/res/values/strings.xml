@@ -17,6 +17,7 @@
     <string name="flashcard_test_summary_title">Summary</string>
     <string name="flashcard_test_summary_breakdown_explanation">Below is the breakdown of the flashcards that you rated your confidence level on:</string>
     <string name="flashcard_test_summary_finish_button">Finish</string>
+    <string name="percentage">%1$d%%</string>
     <string name="validation_required">This field is required</string>
     <string name="validation_max_length">Exceeded max length: %1$d/%2$d</string>
 </resources>

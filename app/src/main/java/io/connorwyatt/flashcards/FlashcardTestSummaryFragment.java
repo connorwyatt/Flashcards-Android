@@ -18,17 +18,18 @@ public class FlashcardTestSummaryFragment extends Fragment {
         PerformanceBreakdown performanceBreakdown = testActivity.getPerformanceBreakdown();
 
         ((TextView) viewGroup.findViewById(R.id.flashcard_test_summary_positive_percent))
-                .setText(String.valueOf(toPercent(performanceBreakdown.getPositivePercent())) +
-                        "%");
+                .setText(getString(R.string.percentage, toPercent(performanceBreakdown
+                        .getPositivePercent())));
         ((TextView) viewGroup.findViewById(R.id.flashcard_test_summary_positive_count))
                 .setText(String.valueOf(performanceBreakdown.getPositiveCount()));
         ((TextView) viewGroup.findViewById(R.id.flashcard_test_summary_neutral_percent))
-                .setText(String.valueOf(toPercent(performanceBreakdown.getNeutralPercent())) + "%");
+                .setText(getString(R.string.percentage, toPercent(performanceBreakdown
+                        .getNeutralPercent())));
         ((TextView) viewGroup.findViewById(R.id.flashcard_test_summary_neutral_count))
                 .setText(String.valueOf(performanceBreakdown.getNeutralCount()));
         ((TextView) viewGroup.findViewById(R.id.flashcard_test_summary_negative_percent))
-                .setText(String.valueOf(toPercent(performanceBreakdown.getNegativePercent())) +
-                        "%");
+                .setText(getString(R.string.percentage, toPercent(performanceBreakdown
+                        .getNegativePercent())));
         ((TextView) viewGroup.findViewById(R.id.flashcard_test_summary_negative_count))
                 .setText(String.valueOf(performanceBreakdown.getNegativeCount()));
         ((TextView) viewGroup.findViewById(R.id.flashcard_test_summary_skip_count)).setText
