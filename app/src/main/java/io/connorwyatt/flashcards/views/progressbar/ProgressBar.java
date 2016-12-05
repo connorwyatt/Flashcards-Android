@@ -1,5 +1,6 @@
 package io.connorwyatt.flashcards.views.progressbar;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -8,6 +9,7 @@ import android.graphics.Paint;
 import android.support.annotation.ColorRes;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 
 import io.connorwyatt.flashcards.R;
 
@@ -16,6 +18,7 @@ public class ProgressBar extends View {
     private double progress;
     private int barColor;
     private int unfilledBarColor;
+    private ValueAnimator animator;
 
     public ProgressBar(Context context) {
         super(context);
@@ -72,6 +75,38 @@ public class ProgressBar extends View {
 
         paint.setColor(unfilledBarColor);
         canvas.drawRect(barWidth, 0, width, height, paint);
+    }
+
+    public void setProgress(final double progress, boolean animate) {
+        if (!animate) {
+            setProgress(progress);
+        } else {
+            final double oldProgress = this.progress;
+            double targetProgress = clampProgress(progress, 0, 1);
+            final double difference = targetProgress - oldProgress;
+
+            if (animator != null) {
+                animator.cancel();
+            }
+
+            animator = ValueAnimator.ofFloat(0, 1);
+
+            animator.setDuration(700);
+
+            animator.setInterpolator(new AccelerateDecelerateInterpolator());
+
+            animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    double animatedValue = (double) (float) animation.getAnimatedValue();
+                    setProgress(oldProgress + animatedValue * difference, false);
+                }
+            });
+
+            if (!animator.isStarted()) {
+                animator.start();
+            }
+        }
     }
 
     private double clampProgress(double progress, double min, double max) {
