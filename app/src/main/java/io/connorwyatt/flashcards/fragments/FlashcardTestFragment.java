@@ -22,6 +22,7 @@ import io.connorwyatt.flashcards.data.entities.FlashcardTest;
 import io.connorwyatt.flashcards.interfaces.IPerformanceBreakdown;
 import io.connorwyatt.flashcards.utils.ListUtils;
 import io.connorwyatt.flashcards.views.directionalviewpager.DirectionalViewPager;
+import io.connorwyatt.flashcards.views.progressbar.ProgressBar;
 
 public class FlashcardTestFragment extends Fragment {
     private int initialCount;
@@ -29,17 +30,38 @@ public class FlashcardTestFragment extends Fragment {
     private HashMap<Long, FlashcardTest> flashcardTestMap = new HashMap<>();
     private ArrayList<Long> skippedFlashcards = new ArrayList<>();
     private FlashcardTestPagerAdapter flashcardTestPagerAdapter;
+    private ProgressBar progressBar;
     private List<Flashcard> flashcards;
     private ArrayList<IPerformanceBreakdown.OnPerformanceBreakdownChangeListener> changeListeners
             = new ArrayList<>();
+
+    private int getCompletedCardsCount() {
+        return performanceBreakdown.getRatedTotal() + performanceBreakdown.getSkipCount();
+    }
 
     public IPerformanceBreakdown getPerformanceBreakdown() {
         return performanceBreakdown;
     }
 
+    private void setUpProgressBar(ViewGroup viewGroup) {
+        progressBar = (ProgressBar) viewGroup.findViewById(R.id
+                .flashcard_test_progress_bar);
+        DirectionalViewPager viewPager = (DirectionalViewPager) viewGroup.findViewById(R.id
+                .flashcard_test_view_pager);
+
+        viewPager.addOnPageSkipListener(new DirectionalViewPager.OnPageSkipListener() {
+            @Override
+            public void onPageSkip(Object skippedItem) {
+                updateProgressBar();
+            }
+        });
+
+        updateProgressBar();
+    }
+
     private void setUpViewPager(ViewGroup viewGroup) {
         DirectionalViewPager viewPager = (DirectionalViewPager) viewGroup.findViewById(R.id
-                .activity_flashcard_test_view_pager);
+                .flashcard_test_view_pager);
         viewPager.setAdapter(flashcardTestPagerAdapter);
 
         viewPager.setAllowLeftSwipe(false);
@@ -92,12 +114,20 @@ public class FlashcardTestFragment extends Fragment {
 
         setUpViewPager(viewGroup);
 
+        setUpProgressBar(viewGroup);
+
         return viewGroup;
     }
 
     public void updateFlashcardTest(FlashcardTest flashcardTest) {
         flashcardTestMap.put(flashcardTest.getFlashcardId(), flashcardTest);
         dispatchOnPerformanceBreakdownChangeEvent();
+    }
+
+    private void updateProgressBar() {
+        double percent = (double) getCompletedCardsCount() / (double) initialCount;
+
+        progressBar.setProgress(percent, true);
     }
 
     private void dispatchOnPerformanceBreakdownChangeEvent() {
