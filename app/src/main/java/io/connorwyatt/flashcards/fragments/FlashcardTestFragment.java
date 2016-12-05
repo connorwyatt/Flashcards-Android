@@ -127,7 +127,7 @@ public class FlashcardTestFragment extends Fragment {
     private void updateProgressBar() {
         double percent = (double) getCompletedCardsCount() / (double) initialCount;
 
-        progressBar.setProgress(percent);
+        progressBar.setProgress(percent, true);
     }
 
     private void dispatchOnPerformanceBreakdownChangeEvent() {
