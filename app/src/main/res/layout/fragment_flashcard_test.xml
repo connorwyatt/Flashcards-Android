@@ -10,8 +10,8 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="4dp"
-        app:barColor="@color/progressBarColor"
-        app:unfilledBarColor="@color/progressBackground" />
+        app:barColor="@color/colorPositive"
+        app:unfilledBarColor="@color/colorGrey" />
 
     <io.connorwyatt.flashcards.views.directionalviewpager.DirectionalViewPager
         android:id="@+id/flashcard_test_view_pager"
