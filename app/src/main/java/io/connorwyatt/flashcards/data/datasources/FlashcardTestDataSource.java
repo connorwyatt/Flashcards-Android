@@ -4,12 +4,17 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import io.connorwyatt.flashcards.data.entities.FlashcardTest;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import io.connorwyatt.flashcards.data.contracts.FlashcardTestContract;
+import io.connorwyatt.flashcards.data.entities.FlashcardTest;
 import io.connorwyatt.flashcards.exceptions.SQLNoRowsAffectedException;
 
 public class FlashcardTestDataSource extends BaseDataSource {
-    private String[] allColumns = {FlashcardTestContract.Columns._ID, FlashcardTestContract.Columns.FLASHCARD_ID, FlashcardTestContract.Columns.RATING};
+    private String[] allColumns = {FlashcardTestContract.Columns._ID, FlashcardTestContract
+            .Columns.FLASHCARD_ID, FlashcardTestContract.Columns.RATING};
 
     public FlashcardTestDataSource(Context context) {
         super(context);
@@ -32,6 +37,23 @@ public class FlashcardTestDataSource extends BaseDataSource {
         return flashcardTest;
     }
 
+    public List<FlashcardTest> getByFlashcardId(long flashcardId) {
+        Cursor cursor = database.query(FlashcardTestContract.TABLE_NAME,
+                allColumns, FlashcardTestContract.Columns.FLASHCARD_ID + " = " + flashcardId,
+                null, null, null, null);
+        ArrayList<FlashcardTest> flashcardTests = new ArrayList<>();
+
+        if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+
+            flashcardTests.add(cursorToFlashcardTest(cursor));
+
+            cursor.close();
+        }
+
+        return flashcardTests;
+    }
+
     public FlashcardTest save(FlashcardTest flashcardTest) {
         long savedFlashcardTestId;
 
@@ -44,7 +66,8 @@ public class FlashcardTestDataSource extends BaseDataSource {
 
             if (!flashcardTest.existsInDatabase()) {
                 addCreateTimestamp(values);
-                savedFlashcardTestId = database.insertOrThrow(FlashcardTestContract.TABLE_NAME, null, values);
+                savedFlashcardTestId = database.insertOrThrow(FlashcardTestContract.TABLE_NAME,
+                        null, values);
             } else {
                 savedFlashcardTestId = flashcardTest.getId();
                 addUpdateTimestamp(values);
