@@ -18,6 +18,16 @@ public class FlashcardTestActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        flashcardTestFragment.onBackPressed(new Runnable() {
+            @Override
+            public void run() {
+                FlashcardTestActivity.super.onBackPressed();
+            }
+        });
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_flashcard_test);
