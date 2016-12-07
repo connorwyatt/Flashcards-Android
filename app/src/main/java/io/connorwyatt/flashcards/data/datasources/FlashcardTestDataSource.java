@@ -43,13 +43,15 @@ public class FlashcardTestDataSource extends BaseDataSource {
                 null, null, null, null);
         ArrayList<FlashcardTest> flashcardTests = new ArrayList<>();
 
-        if (cursor.getCount() > 0) {
-            cursor.moveToFirst();
+        cursor.moveToFirst();
 
+        while (!cursor.isLast()) {
             flashcardTests.add(cursorToFlashcardTest(cursor));
 
-            cursor.close();
+            cursor.moveToNext();
         }
+
+        cursor.close();
 
         return flashcardTests;
     }
