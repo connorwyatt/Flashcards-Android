@@ -76,6 +76,14 @@ public class ProgressBar extends View {
 
         paint.setColor(unfilledBarColor);
         canvas.drawRect(barWidth, 0, width, height, paint);
+
+        int notchWidth = (int) ((double) height / (double) 2);
+        int notchPosition = barWidth - notchWidth;
+
+        if (notchPosition < 0) notchPosition = 0;
+
+        paint.setColor(Color.argb(25, 0, 0, 0));
+        canvas.drawRect(notchPosition, 0, notchPosition + notchWidth, height, paint);
     }
 
     public void setProgress(final double progress, boolean animate) {
