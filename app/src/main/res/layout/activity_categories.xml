@@ -14,4 +14,9 @@
         android:elevation="4dp"
         android:theme="@style/AppTheme.AppBar" />
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/categories_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
 </LinearLayout>
