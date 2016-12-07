@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -14,32 +15,56 @@
             android:id="@+id/flashcard_card_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="8dp">
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/flashcard_card_title"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:lines="1"
-                android:textSize="30sp" />
+                android:background="@color/colorPrimary"
+                android:padding="8dp">
 
-            <TextView
-                android:id="@+id/flashcard_card_text"
+                <TextView
+                    android:id="@+id/flashcard_card_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:lines="1"
+                    android:textColor="@color/colorTextInvert"
+                    android:textSize="30sp" />
+
+            </LinearLayout>
+
+            <io.connorwyatt.flashcards.views.progressbar.ProgressBar
+                android:id="@+id/flashcard_card_rating"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                app:barColor="@color/colorPositive"
+                app:unfilledBarColor="@color/colorGrey" />
+
+            <LinearLayout
+                android:id="@+id/flashcard_card_body_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:ellipsize="end"
-                android:maxLines="3" />
+                android:orientation="vertical"
+                android:padding="8dp">
 
-            <TextView
-                android:id="@+id/flashcard_card_categories"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:ellipsize="end"
-                android:maxLines="1" />
+                <TextView
+                    android:id="@+id/flashcard_card_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:ellipsize="end"
+                    android:maxLines="3" />
+
+                <TextView
+                    android:id="@+id/flashcard_card_categories"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:ellipsize="end"
+                    android:maxLines="1" />
+
+            </LinearLayout>
 
         </LinearLayout>
 

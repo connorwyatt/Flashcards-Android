@@ -1,5 +1,8 @@
 package io.connorwyatt.flashcards.adapters;
 
+import android.content.Context;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.ColorUtils;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,7 +19,9 @@ import java.util.List;
 import io.connorwyatt.flashcards.R;
 import io.connorwyatt.flashcards.data.entities.Category;
 import io.connorwyatt.flashcards.data.entities.Flashcard;
+import io.connorwyatt.flashcards.services.FlashcardTestService;
 import io.connorwyatt.flashcards.utils.ListUtils;
+import io.connorwyatt.flashcards.views.progressbar.ProgressBar;
 
 public class FlashcardCardListAdapter extends RecyclerView.Adapter<FlashcardCardListAdapter
         .FlashcardCardViewHolder> {
@@ -59,6 +64,34 @@ public class FlashcardCardListAdapter extends RecyclerView.Adapter<FlashcardCard
             });
         }
 
+        Context context = holder.layout.getContext();
+
+        FlashcardTestService fts = new FlashcardTestService(context);
+        Double averageRating = fts.getAverageRatingForFlashcard(currentFlashcard.getId());
+
+        if (averageRating == null) {
+            holder.rating.setProgress(0);
+        } else {
+            Integer color = null;
+
+            if (averageRating > 2.0 / 3.0) {
+                int colorId = R.color.colorPositive;
+                color = ContextCompat.getColor(context, colorId);
+            } else if (averageRating < 1.0 / 3.0) {
+                int colorId = R.color.colorNegative;
+                color = ContextCompat.getColor(context, colorId);
+            } else {
+                int colorId = R.color.colorNeutral;
+                color = ContextCompat.getColor(context, colorId);
+            }
+
+            int backgroundColor = ColorUtils.setAlphaComponent(color, 128);
+
+            holder.rating.setBarColor(color);
+            holder.rating.setUnfilledBarColor(backgroundColor);
+            holder.rating.setProgress(averageRating);
+        }
+
         holder.title.setText(currentFlashcard.getTitle());
         holder.text.setText(currentFlashcard.getText());
 
@@ -66,7 +99,7 @@ public class FlashcardCardListAdapter extends RecyclerView.Adapter<FlashcardCard
         if (categoriesString.length() > 0) {
             holder.categories.setText(categoriesString);
         } else {
-            holder.layout.removeView(holder.categories);
+            holder.bodyLayout.removeView(holder.categories);
         }
     }
 
@@ -125,6 +158,8 @@ public class FlashcardCardListAdapter extends RecyclerView.Adapter<FlashcardCard
     public static class FlashcardCardViewHolder extends RecyclerView.ViewHolder {
         CardView cv;
         LinearLayout layout;
+        LinearLayout bodyLayout;
+        ProgressBar rating;
         TextView title;
         TextView text;
         TextView categories;
@@ -133,6 +168,8 @@ public class FlashcardCardListAdapter extends RecyclerView.Adapter<FlashcardCard
             super(itemView);
             cv = (CardView) itemView.findViewById(R.id.flashcard_card);
             layout = (LinearLayout) itemView.findViewById(R.id.flashcard_card_layout);
+            bodyLayout = (LinearLayout) itemView.findViewById(R.id.flashcard_card_body_layout);
+            rating = (ProgressBar) itemView.findViewById(R.id.flashcard_card_rating);
             title = (TextView) itemView.findViewById(R.id.flashcard_card_title);
             text = (TextView) itemView.findViewById(R.id.flashcard_card_text);
             categories = (TextView) itemView.findViewById(R.id.flashcard_card_categories);
