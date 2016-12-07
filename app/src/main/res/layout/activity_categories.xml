@@ -6,4 +6,12 @@
     android:orientation="vertical"
     tools:context=".activities.CategoriesActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/categories_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/AppTheme.AppBar" />
+
 </LinearLayout>
