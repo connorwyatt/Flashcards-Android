@@ -78,6 +78,9 @@ public class FlashcardCardListActivity extends AppCompatActivity {
                             .getId());
                 }
                 return true;
+            case R.id.action_navigate_to_categories:
+                CategoriesActivity.Activities.startActivity(this);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
