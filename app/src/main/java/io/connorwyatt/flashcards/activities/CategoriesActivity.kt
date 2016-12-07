@@ -14,18 +14,33 @@ import io.connorwyatt.flashcards.services.CategoryService
 
 class CategoriesActivity : AppCompatActivity()
 {
-    private var categories: List<Category>? = null
+    private var categoryItems: List<CategoryListAdapter.ListItem>? = null
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_categories)
 
-        categories = CategoryService(this).getAll()
+        categoryItems = getCategoryListItems()
 
         setUpToolbar()
 
-        setUpRecycler(categories as List<Category>)
+        setUpRecycler(categoryItems as List<CategoryListAdapter.ListItem>)
+    }
+
+    private fun getCategoryListItems(): List<CategoryListAdapter.ListItem>
+    {
+        val categoryService = CategoryService(this)
+        val categories = categoryService.getAll()
+
+        val categoryListItems: List<CategoryListAdapter.ListItem> = categories.map(fun(category: Category): CategoryListAdapter.ListItem
+        {
+            val flashcardCountForCategory = categoryService.getFlashcardsForCategory(category.id).size
+
+            return CategoryListAdapter.ListItem(category, flashcardCountForCategory)
+        })
+
+        return categoryListItems
     }
 
     private fun setUpToolbar()
@@ -35,9 +50,9 @@ class CategoriesActivity : AppCompatActivity()
         setSupportActionBar(toolbar)
     }
 
-    private fun setUpRecycler(categories: List<Category>)
+    private fun setUpRecycler(categoryListItems: List<CategoryListAdapter.ListItem>)
     {
-        val categoryListAdapter = CategoryListAdapter(categories)
+        val categoryListAdapter = CategoryListAdapter(categoryListItems)
 
         val recycler = findViewById(R.id.categories_recycler) as RecyclerView
         recycler.adapter = categoryListAdapter

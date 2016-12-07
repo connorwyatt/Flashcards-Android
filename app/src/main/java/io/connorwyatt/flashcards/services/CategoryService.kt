@@ -2,24 +2,36 @@ package io.connorwyatt.flashcards.services
 
 import android.content.Context
 import io.connorwyatt.flashcards.data.datasources.CategoryDataSource
+import io.connorwyatt.flashcards.data.datasources.FlashcardDataSource
 import io.connorwyatt.flashcards.data.entities.Category
+import io.connorwyatt.flashcards.data.entities.Flashcard
 
-class CategoryService(context: Context)
+class CategoryService(private val context: Context)
 {
-    private val dataSource: CategoryDataSource
-
-    init
-    {
-        dataSource = CategoryDataSource(context)
-    }
-
     fun getAll(): List<Category>
     {
+        val dataSource = CategoryDataSource(context)
+
         try
         {
             dataSource.open()
 
             return dataSource.all
+        } finally
+        {
+            dataSource.close()
+        }
+    }
+
+    fun getFlashcardsForCategory(categoryId: Long): List<Flashcard>
+    {
+        val dataSource = FlashcardDataSource(context)
+
+        try
+        {
+            dataSource.open()
+
+            return dataSource.getByCategory(categoryId)
         } finally
         {
             dataSource.close()

@@ -4,4 +4,8 @@
         <item quantity="one">You skipped %1$d flashcard.</item>
         <item quantity="other">You skipped %1$d flashcards.</item>
     </plurals>
+    <plurals name="flashcard_count">
+        <item quantity="one">%1$d flashcard</item>
+        <item quantity="other">%1$d flashcards</item>
+    </plurals>
 </resources>
