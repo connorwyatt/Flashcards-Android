@@ -6,7 +6,6 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.support.annotation.ColorRes;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -44,8 +43,9 @@ public class ProgressBar extends View {
         init(attrs);
     }
 
-    public void setBarColor(@ColorRes int color) {
+    public void setBarColor(int color) {
         barColor = color;
+        invalidate();
     }
 
     /**
@@ -59,8 +59,9 @@ public class ProgressBar extends View {
         invalidate();
     }
 
-    public void setUnfilledBarColor(@ColorRes int color) {
+    public void setUnfilledBarColor(int color) {
         unfilledBarColor = color;
+        invalidate();
     }
 
     @Override
