@@ -30,7 +30,7 @@ class FlashcardTestService {
                 }
             }
 
-            averageRating = total / flashcardTests.size
+            averageRating = total / flashcardTests.size.toDouble()
         }
 
         return averageRating
