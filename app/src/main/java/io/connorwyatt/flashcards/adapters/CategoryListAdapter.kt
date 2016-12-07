@@ -8,18 +8,11 @@ import android.widget.TextView
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.data.entities.Category
 
-class CategoryListAdapter(categories: List<Category>) : RecyclerView.Adapter<CategoryListAdapter.ViewHolder>()
+class CategoryListAdapter(private val categoryListItems: List<ListItem>) : RecyclerView.Adapter<CategoryListAdapter.ViewHolder>()
 {
-    private val categories: List<Category>
-
-    init
-    {
-        this.categories = categories
-    }
-
     override fun getItemCount(): Int
     {
-        return categories.size
+        return categoryListItems.size
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder
@@ -33,18 +26,26 @@ class CategoryListAdapter(categories: List<Category>) : RecyclerView.Adapter<Cat
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int)
     {
-        val category = categories[position];
+        val categoryListItem = categoryListItems[position];
+        val resources = holder.itemView.context.resources
 
-        holder.title.text = category.name
+        holder.title.text = categoryListItem.category.name
+        holder.count.text = resources.getQuantityString(R.plurals.flashcard_count,
+                categoryListItem.flashcardCount,
+                categoryListItem.flashcardCount)
     }
 
     class ViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView)
     {
         internal val title: TextView;
+        internal val count: TextView;
 
         init
         {
             title = itemView.findViewById(R.id.fragment_category_list_item_category_title) as TextView
+            count = itemView.findViewById(R.id.fragment_category_list_item_category_flashcard_count) as TextView
         }
     }
+
+    data class ListItem(val category: Category, val flashcardCount: Int)
 }
