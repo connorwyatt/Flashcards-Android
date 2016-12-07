@@ -1,6 +1,8 @@
 package io.connorwyatt.flashcards.fragments;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -117,6 +119,35 @@ public class FlashcardTestFragment extends Fragment {
         setUpProgressBar(viewGroup);
 
         return viewGroup;
+    }
+
+    public void onBackPressed(final Runnable runnable) {
+        int totalCompleted = performanceBreakdown.getRatedTotal() + performanceBreakdown
+                .getSkipCount();
+        boolean isComplete = totalCompleted >= initialCount;
+
+        if (isComplete) {
+            runnable.run();
+        } else {
+            new AlertDialog.Builder(getActivity())
+                    .setTitle(R.string.flashcard_test_confirmation_title)
+                    .setMessage(R.string.flashcard_test_confirmation_message)
+                    .setPositiveButton(R.string.flashcard_test_confirmation_yes, new DialogInterface
+                            .OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            runnable.run();
+                        }
+                    })
+                    .setNegativeButton(R.string.flashcard_test_confirmation_no, new DialogInterface
+                            .OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                        }
+                    })
+                    .create()
+                    .show();
+        }
     }
 
     public void updateFlashcardTest(FlashcardTest flashcardTest) {
