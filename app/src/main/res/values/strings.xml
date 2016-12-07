@@ -3,6 +3,7 @@
     <string name="action_delete">Delete</string>
     <string name="action_navigate_to_categories">Category manager</string>
     <string name="action_test">Test</string>
+    <string name="categories_title">Categories</string>
     <string name="flashcard_cards_list_all_category">All</string>
     <string name="flashcard_details_title">Title</string>
     <string name="flashcard_details_text">Text</string>
