@@ -45,7 +45,7 @@ public class FlashcardTestDataSource extends BaseDataSource {
 
         cursor.moveToFirst();
 
-        while (!cursor.isLast()) {
+        while (!cursor.isAfterLast()) {
             flashcardTests.add(cursorToFlashcardTest(cursor));
 
             cursor.moveToNext();
