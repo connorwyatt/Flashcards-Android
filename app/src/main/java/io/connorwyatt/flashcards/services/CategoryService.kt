@@ -37,4 +37,22 @@ class CategoryService(private val context: Context)
             dataSource.close()
         }
     }
+
+    fun getAverageRatingForCategory(categoryId: Long): Double?
+    {
+        val flashcardTestService = FlashcardTestService(context)
+        val flashcards = getFlashcardsForCategory(categoryId)
+
+        val ratings = flashcards.mapNotNull { flashcard ->
+            flashcardTestService.getAverageRatingForFlashcard(flashcard.id)
+        }
+
+        if (ratings.size > 0)
+        {
+            return ratings.sum() / ratings.size.toDouble()
+        } else
+        {
+            return null
+        }
+    }
 }
