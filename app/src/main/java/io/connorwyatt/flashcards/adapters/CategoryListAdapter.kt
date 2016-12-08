@@ -5,7 +5,9 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.PopupMenu
 import android.widget.TextView
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.data.entities.Category
@@ -69,6 +71,14 @@ class CategoryListAdapter(private val categoryListItems: List<ListItem>) : Recyc
         holder.status.text = statusText
         holder.statusBar.setBackgroundColor(statusBarColor)
         if (statusTextColor != null) holder.status.setTextColor(statusTextColor)
+
+        holder.menuButton.setOnClickListener { view ->
+            val popup = PopupMenu(context, view)
+
+            popup.menuInflater.inflate(R.menu.fragment_category_list_item_menu, popup.menu)
+
+            popup.show()
+        }
     }
 
     class ViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView)
@@ -77,6 +87,7 @@ class CategoryListAdapter(private val categoryListItems: List<ListItem>) : Recyc
         internal val count: TextView
         internal val status: TextView
         internal val statusBar: LinearLayout
+        internal val menuButton: ImageButton
 
         init
         {
@@ -84,6 +95,7 @@ class CategoryListAdapter(private val categoryListItems: List<ListItem>) : Recyc
             count = itemView.findViewById(R.id.fragment_category_list_item_category_flashcard_count) as TextView
             status = itemView.findViewById(R.id.fragment_category_list_item_category_status) as TextView
             statusBar = itemView.findViewById(R.id.fragment_category_list_item_category_status_bar) as LinearLayout
+            menuButton = itemView.findViewById(R.id.fragment_category_list_item_category_menu) as ImageButton
         }
     }
 
