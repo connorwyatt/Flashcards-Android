@@ -2,6 +2,7 @@ package io.connorwyatt.flashcards.adapters
 
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,7 +29,6 @@ class CategoryListAdapter(private var categoryListItems: List<ListItem>) : Recyc
                 .inflate(R.layout.fragment_category_list_item, parent, false)
 
         return ViewHolder(inflatedView)
-
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int)
@@ -76,7 +76,7 @@ class CategoryListAdapter(private var categoryListItems: List<ListItem>) : Recyc
         if (statusTextColor != null) holder.status.setTextColor(statusTextColor)
 
         holder.menuButton.setOnClickListener { view ->
-            val popup = PopupMenu(context, view)
+            val popup = PopupMenu(context, view, Gravity.RIGHT)
 
             popup.menuInflater.inflate(R.menu.fragment_category_list_item_menu, popup.menu)
 
