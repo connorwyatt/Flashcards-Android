@@ -13,7 +13,7 @@ import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.data.entities.Category
 import java.util.*
 
-class CategoryListAdapter(private val categoryListItems: List<ListItem>) : RecyclerView.Adapter<CategoryListAdapter.ViewHolder>()
+class CategoryListAdapter(private var categoryListItems: List<ListItem>) : RecyclerView.Adapter<CategoryListAdapter.ViewHolder>()
 {
     private val onDeleteListeners = ArrayList<(Category) -> Unit>()
 
@@ -96,6 +96,13 @@ class CategoryListAdapter(private val categoryListItems: List<ListItem>) : Recyc
 
             popup.show()
         }
+    }
+
+    fun updateData(categoryListItems: List<ListItem>)
+    {
+        this.categoryListItems = categoryListItems
+
+        notifyDataSetChanged()
     }
 
     fun addOnDeleteListener(listener: (Category) -> Unit)
