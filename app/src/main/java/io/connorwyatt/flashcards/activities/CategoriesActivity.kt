@@ -36,8 +36,9 @@ class CategoriesActivity : AppCompatActivity()
         val categoryListItems: List<CategoryListAdapter.ListItem> = categories.map(fun(category: Category): CategoryListAdapter.ListItem
         {
             val flashcardCountForCategory = categoryService.getFlashcardsForCategory(category.id).size
+            val averageRating = categoryService.getAverageRatingForCategory(category.id)
 
-            return CategoryListAdapter.ListItem(category, flashcardCountForCategory)
+            return CategoryListAdapter.ListItem(category, flashcardCountForCategory, averageRating)
         })
 
         return categoryListItems
