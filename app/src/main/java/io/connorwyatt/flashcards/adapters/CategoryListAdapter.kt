@@ -11,9 +11,12 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.data.entities.Category
+import java.util.*
 
 class CategoryListAdapter(private val categoryListItems: List<ListItem>) : RecyclerView.Adapter<CategoryListAdapter.ViewHolder>()
 {
+    private val onDeleteListeners = ArrayList<(Category) -> Unit>()
+
     override fun getItemCount(): Int
     {
         return categoryListItems.size
@@ -77,7 +80,43 @@ class CategoryListAdapter(private val categoryListItems: List<ListItem>) : Recyc
 
             popup.menuInflater.inflate(R.menu.fragment_category_list_item_menu, popup.menu)
 
+            popup.setOnMenuItemClickListener { menuItem ->
+                when (menuItem.itemId)
+                {
+                    R.id.fragment_category_list_item_menu_action_delete ->
+                    {
+                        dispatchOnDeleteEvent(categoryListItem.category)
+                    }
+                    else                                                ->
+                    {
+                    }
+                }
+                true
+            }
+
             popup.show()
+        }
+    }
+
+    fun addOnDeleteListener(listener: (Category) -> Unit)
+    {
+        onDeleteListeners.add(listener)
+    }
+
+    fun removeOnDeleteListener(listener: (Category) -> Unit)
+    {
+        onDeleteListeners.remove(listener)
+    }
+
+    fun clearOnDeleteListeners()
+    {
+        onDeleteListeners.clear()
+    }
+
+    private fun dispatchOnDeleteEvent(category: Category)
+    {
+        onDeleteListeners.forEach { listener ->
+            listener(category)
         }
     }
 
