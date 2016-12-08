@@ -14,6 +14,7 @@ import io.connorwyatt.flashcards.services.CategoryService
 
 class CategoriesActivity : AppCompatActivity()
 {
+    private val categoryService = CategoryService(this)
     private var categoryItems: List<CategoryListAdapter.ListItem>? = null
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -30,7 +31,6 @@ class CategoriesActivity : AppCompatActivity()
 
     private fun getCategoryListItems(): List<CategoryListAdapter.ListItem>
     {
-        val categoryService = CategoryService(this)
         val categories = categoryService.getAll()
 
         val categoryListItems: List<CategoryListAdapter.ListItem> = categories.map(fun(category: Category): CategoryListAdapter.ListItem
@@ -54,6 +54,12 @@ class CategoriesActivity : AppCompatActivity()
     private fun setUpRecycler(categoryListItems: List<CategoryListAdapter.ListItem>)
     {
         val categoryListAdapter = CategoryListAdapter(categoryListItems)
+
+        categoryListAdapter.addOnDeleteListener { category ->
+            categoryService.delete(category)
+
+            categoryListAdapter.updateData(getCategoryListItems())
+        }
 
         val recycler = findViewById(R.id.categories_recycler) as RecyclerView
         recycler.adapter = categoryListAdapter
