@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.CoordinatorLayout
+import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
@@ -30,6 +31,8 @@ class CategoriesActivity : AppCompatActivity()
         setUpToolbar()
 
         setUpRecycler(categoryItems.toList())
+
+        setUpFloatingActionButton()
     }
 
     private fun getCategoryListItems(): List<CategoryListAdapter.ListItem>
@@ -105,6 +108,15 @@ class CategoriesActivity : AppCompatActivity()
         val recycler = findViewById(R.id.categories_recycler) as RecyclerView
         recycler.adapter = categoryListAdapter
         recycler.layoutManager = LinearLayoutManager(this)
+    }
+
+    private fun setUpFloatingActionButton()
+    {
+        val fab = findViewById(R.id.categories_add_button) as FloatingActionButton
+
+        fab.setOnClickListener { view ->
+            CategoryDetailsActivity.startActivity(this)
+        }
     }
 
     companion object Activities
