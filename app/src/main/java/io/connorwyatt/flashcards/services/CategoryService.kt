@@ -17,7 +17,24 @@ class CategoryService(private val context: Context)
             dataSource.open()
 
             return dataSource.all
-        } finally
+        }
+        finally
+        {
+            dataSource.close()
+        }
+    }
+
+    fun save(category: Category): Category
+    {
+        val dataSource = CategoryDataSource(context)
+
+        try
+        {
+            dataSource.open()
+
+            return dataSource.save(category)
+        }
+        finally
         {
             dataSource.close()
         }
@@ -32,7 +49,8 @@ class CategoryService(private val context: Context)
             dataSource.open()
 
             dataSource.deleteById(category.id)
-        } finally
+        }
+        finally
         {
             dataSource.close()
         }
@@ -47,7 +65,8 @@ class CategoryService(private val context: Context)
             dataSource.open()
 
             return dataSource.getByCategory(categoryId)
-        } finally
+        }
+        finally
         {
             dataSource.close()
         }
@@ -65,7 +84,8 @@ class CategoryService(private val context: Context)
         if (ratings.size > 0)
         {
             return ratings.sum() / ratings.size.toDouble()
-        } else
+        }
+        else
         {
             return null
         }
