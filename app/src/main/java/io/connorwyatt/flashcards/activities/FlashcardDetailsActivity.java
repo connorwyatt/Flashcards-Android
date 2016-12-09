@@ -33,8 +33,21 @@ public class FlashcardDetailsActivity extends AppCompatActivity {
     private TextInputLayout textLayout;
     private TextInputEditText text;
     private boolean textTouched = false;
+    private TextInputLayout categoriesLayout;
     private TextInputEditText categories;
     private Button saveButton;
+
+    private String getCategoriesError() {
+        List<String> categoryNames = splitCategoriesString(categories.getText().toString());
+
+        for (String value : categoryNames) {
+            if (value.length() > 40) {
+                return getString(R.string.validation_tags_max_length, 40);
+            }
+        }
+
+        return null;
+    }
 
     private String getTextError() {
         String value = text.getText().toString();
@@ -63,7 +76,7 @@ public class FlashcardDetailsActivity extends AppCompatActivity {
     }
 
     private boolean isValid() {
-        return getTitleError() == null && getTextError() == null;
+        return getTitleError() == null && getTextError() == null && getCategoriesError() == null;
     }
 
     private void setViewFromFlashcard(Flashcard flashcard) {
@@ -89,6 +102,7 @@ public class FlashcardDetailsActivity extends AppCompatActivity {
         text = (TextInputEditText) findViewById(R.id.flashcard_details_text);
         textLayout = (TextInputLayout) findViewById(R.id.flashcard_details_text_layout);
         categories = (TextInputEditText) findViewById(R.id.flashcard_details_categories);
+        categoriesLayout = (TextInputLayout) findViewById(R.id.flashcard_details_categories_layout);
         saveButton = (Button) findViewById(R.id.flashcard_details_save_button);
 
         setInputListeners();
@@ -261,6 +275,44 @@ public class FlashcardDetailsActivity extends AppCompatActivity {
                 updateButton();
             }
         });
+
+        categories.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean isFocused) {
+                if (!isFocused) {
+                    String error = getCategoriesError();
+
+                    if (error != null) {
+                        categoriesLayout.setError(error);
+                    } else {
+                        categoriesLayout.setErrorEnabled(false);
+                    }
+                }
+            }
+        });
+
+        categories.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                String error = getCategoriesError();
+
+                if (error != null) {
+                    categoriesLayout.setError(error);
+                } else {
+                    categoriesLayout.setErrorEnabled(false);
+                }
+
+                updateButton();
+            }
+        });
     }
 
     private void updateButton() {
@@ -271,8 +323,8 @@ public class FlashcardDetailsActivity extends AppCompatActivity {
         }
     }
 
-    private List<Category> processCategoriesString(String categoriesString) {
-        List<Category> categories = new ArrayList<>();
+    private List<String> splitCategoriesString(String categoriesString) {
+        List<String> categories = new ArrayList<>();
 
         String[] categoryNames = categoriesString.split(",");
 
@@ -280,10 +332,22 @@ public class FlashcardDetailsActivity extends AppCompatActivity {
             String trimmedString = categoryName.trim();
 
             if (trimmedString.length() > 0) {
-                Category category = new Category();
-                category.setName(categoryName.trim());
-                categories.add(category);
+                categories.add(trimmedString);
             }
+        }
+
+        return categories;
+    }
+
+    private List<Category> processCategoriesString(String categoriesString) {
+        List<Category> categories = new ArrayList<>();
+
+        List<String> categoryNames = splitCategoriesString(categoriesString);
+
+        for (String categoryName : categoryNames) {
+            Category category = new Category();
+            category.setName(categoryName);
+            categories.add(category);
         }
 
         return categories;
