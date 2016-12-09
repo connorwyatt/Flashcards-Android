@@ -153,7 +153,7 @@ public class FlashcardDetailsActivity extends AppCompatActivity {
         flashcard = fds.save(flashcardToSave);
         fds.close();
 
-        showToast(R.string.flashcard_details_save_toast);
+        showToast(R.string.save_toast);
 
         setViewFromFlashcard(flashcard);
         this.invalidateOptionsMenu();
