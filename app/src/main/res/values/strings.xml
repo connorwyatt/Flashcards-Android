@@ -3,7 +3,13 @@
     <string name="action_delete">Delete</string>
     <string name="action_navigate_to_categories">Category manager</string>
     <string name="action_test">Test</string>
+    <string name="action_undo">Undo</string>
     <string name="categories_title">Categories</string>
+    <string name="category_status_negative">You need to learn more about this category!</string>
+    <string name="category_status_neutral">Your knowledge on this category could do with some improvement!</string>
+    <string name="category_status_no_data">There is no data for this category.</string>
+    <string name="category_status_positive">Your knowledge on this category seems very good!</string>
+    <string name="deleted_category_snackbar">Deleted category \"%1$s\"</string>
     <string name="flashcard_cards_list_all_category">All</string>
     <string name="flashcard_details_title">Title</string>
     <string name="flashcard_details_text">Text</string>
@@ -22,8 +28,4 @@
     <string name="percentage">%1$d%%</string>
     <string name="validation_required">This field is required</string>
     <string name="validation_max_length">Exceeded max length: %1$d/%2$d</string>
-    <string name="category_status_no_data">There is no data for this category.</string>
-    <string name="category_status_negative">You need to learn more about this category!</string>
-    <string name="category_status_positive">Your knowledge on this category seems very good!</string>
-    <string name="category_status_neutral">Your knowledge on this category could do with some improvement!</string>
 </resources>
