@@ -72,6 +72,22 @@ class CategoryService(private val context: Context)
         }
     }
 
+    fun isCategoryNameTaken(name: String): Boolean
+    {
+        val dataSource = CategoryDataSource(context)
+
+        try
+        {
+            dataSource.open()
+
+            return dataSource.getByName(name) !== null
+        }
+        finally
+        {
+            dataSource.close()
+        }
+    }
+
     fun getAverageRatingForCategory(categoryId: Long): Double?
     {
         val flashcardTestService = FlashcardTestService(context)
