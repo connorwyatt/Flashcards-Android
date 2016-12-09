@@ -4,8 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TextInputEditText
+import android.support.v4.app.NavUtils
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Button
 import android.widget.Toast
 import io.connorwyatt.flashcards.R
@@ -16,7 +19,7 @@ class CategoryDetailsActivity : AppCompatActivity()
 {
     private var category: Category = Category()
     private var name: TextInputEditText? = null
-
+    private val categoryService = CategoryService(this)
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -36,11 +39,37 @@ class CategoryDetailsActivity : AppCompatActivity()
         actionBar.setDisplayHomeAsUpEnabled(true)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean
+    {
+        menuInflater.inflate(R.menu.activity_category_details_menu, menu)
+
+        if (!category.existsInDatabase())
+        {
+            menu.findItem(R.id.action_delete).isEnabled = false
+        }
+
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean
+    {
+        when (item.itemId)
+        {
+            R.id.action_delete ->
+            {
+                delete()
+                return true
+            }
+            else               ->
+            {
+                return super.onOptionsItemSelected(item)
+            }
+        }
+    }
+
     private fun save()
     {
         category.name = name!!.text.toString()
-
-        val categoryService = CategoryService(this)
 
         val nameTaken = categoryService.isCategoryNameTaken(category.name)
 
@@ -54,6 +83,16 @@ class CategoryDetailsActivity : AppCompatActivity()
         category = categoryService.save(category)
 
         showToast(R.string.save_toast)
+        invalidateOptionsMenu()
+    }
+
+    private fun delete()
+    {
+        categoryService.delete(category)
+
+        showToast(R.string.flashcard_details_delete_toast)
+
+        NavUtils.navigateUpFromSameTask(this)
     }
 
     private fun showToast(messageStringId: Int, vararg values: String)
