@@ -4,9 +4,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TextInputEditText
+import android.support.design.widget.TextInputLayout
 import android.support.v4.app.NavUtils
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
@@ -19,6 +22,8 @@ class CategoryDetailsActivity : AppCompatActivity()
 {
     private var category: Category = Category()
     private var name: TextInputEditText? = null
+    private var nameLayout: TextInputLayout? = null
+    private var saveButton: Button? = null
     private val categoryService = CategoryService(this)
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -27,9 +32,15 @@ class CategoryDetailsActivity : AppCompatActivity()
         setContentView(R.layout.activity_category_details)
 
         name = findViewById(R.id.category_details_name) as TextInputEditText
-        val saveButton = findViewById(R.id.category_details_save_button) as Button
+        nameLayout = findViewById(R.id.category_details_name_layout) as TextInputLayout
 
-        saveButton.setOnClickListener { save() }
+        setUpTextListeners()
+
+        saveButton = findViewById(R.id.category_details_save_button) as Button
+
+        saveButton!!.setOnClickListener { save() }
+
+        updateButton()
 
         val toolbar = findViewById(R.id.category_details_toolbar) as Toolbar
         setSupportActionBar(toolbar)
@@ -84,6 +95,7 @@ class CategoryDetailsActivity : AppCompatActivity()
 
         showToast(R.string.save_toast)
         invalidateOptionsMenu()
+        updateButton()
     }
 
     private fun delete()
@@ -102,6 +114,85 @@ class CategoryDetailsActivity : AppCompatActivity()
 
         val toast = Toast.makeText(this, toastMessage, duration)
         toast.show()
+    }
+
+    private fun updateButton()
+    {
+        saveButton!!.isEnabled = isValid()
+    }
+
+    private fun isValid(): Boolean
+    {
+        return getNameError() === null
+    }
+
+    private fun getNameError(): String?
+    {
+        val value = name!!.text.toString()
+        val maxLength = 40
+
+        when
+        {
+            value.length === 0       ->
+            {
+                return getString(R.string.validation_required)
+            }
+            value.length > maxLength ->
+            {
+                return getString(R.string.validation_max_length, value.length, maxLength)
+            }
+        }
+
+        return null
+    }
+
+    private fun setUpTextListeners()
+    {
+        fun updateNameError()
+        {
+            val error = getNameError()
+
+            if (error !== null)
+            {
+                nameLayout!!.error = error
+            }
+            else
+            {
+                nameLayout!!.isErrorEnabled = false
+            }
+        }
+
+        name!!.setOnFocusChangeListener { view, isFocused ->
+            if (!isFocused)
+            {
+                updateNameError()
+            }
+        }
+
+        name!!.addTextChangedListener(
+            object : TextWatcher
+            {
+                override fun afterTextChanged(s: Editable?)
+                {
+                }
+
+                override fun beforeTextChanged(s: CharSequence?,
+                                               start: Int,
+                                               count: Int,
+                                               after: Int)
+                {
+                }
+
+                override fun onTextChanged(s: CharSequence?,
+                                           start: Int,
+                                           before: Int,
+                                           count: Int)
+                {
+                    updateNameError()
+                    updateButton()
+                }
+            }
+        )
     }
 
     companion object Activities
