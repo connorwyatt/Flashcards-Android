@@ -33,4 +33,9 @@
     <string name="category_details_save">Save</string>
     <string name="category_name_taken">A category with the name \"%1$s\" already exists</string>
     <string name="action_edit">Edit</string>
+    <string name="delete_category_dialog_title">Delete category</string>
+    <string name="delete_category_dialog_message">Do you want to delete the flashcards in this category as well?</string>
+    <string name="delete_category_dialog_yes">Yes</string>
+    <string name="delete_category_dialog_no">No</string>
+    <string name="delete_category_dialog_cancel">Cancel</string>
 </resources>

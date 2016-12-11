@@ -1,5 +1,6 @@
 package io.connorwyatt.flashcards.activities
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -82,7 +83,7 @@ class CategoriesActivity : AppCompatActivity()
         }
 
         categoryListAdapter!!.addOnDeleteListener { category ->
-            deleteCategory(category)
+            showDeleteCategoryDialog(category)
         }
 
         val recycler = findViewById(R.id.categories_recycler) as RecyclerView
@@ -95,7 +96,28 @@ class CategoriesActivity : AppCompatActivity()
         CategoryDetailsActivity.startActivity(this, category)
     }
 
-    private fun deleteCategory(category: Category)
+    private fun showDeleteCategoryDialog(category: Category)
+    {
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.delete_category_dialog_title))
+            .setMessage(getString(R.string.delete_category_dialog_message))
+            .setPositiveButton(
+                getString(R.string.delete_category_dialog_yes),
+                { dialogInterface, i -> deleteCategory(category, true) }
+            )
+            .setNegativeButton(
+                getString(R.string.delete_category_dialog_no),
+                { dialogInterface, i -> deleteCategory(category) }
+            )
+            .setNeutralButton(
+                getString(R.string.delete_category_dialog_cancel),
+                { dialogInterface, i -> }
+            )
+            .create()
+            .show()
+    }
+
+    private fun deleteCategory(category: Category, deleteFlashcards: Boolean = false)
     {
         removedCategoryIds.add(category.id)
 
@@ -116,7 +138,12 @@ class CategoriesActivity : AppCompatActivity()
                                  if (removedCategoryIds.contains(category.id))
                                  {
                                      removedCategoryIds.remove(category.id)
-                                     categoryService.delete(category)
+
+                                     if (deleteFlashcards)
+                                         categoryService.deleteWithFlashcards(category)
+                                     else
+                                         categoryService.delete(category)
+
                                      categoryItems.removeAll { categoryItem -> categoryItem.category.id === category.id }
                                      categoryListAdapter!!.updateData(
                                          getFilteredCategoryListItems())
