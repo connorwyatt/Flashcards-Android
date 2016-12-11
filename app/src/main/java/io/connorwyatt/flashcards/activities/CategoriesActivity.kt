@@ -13,7 +13,7 @@ import android.support.v7.widget.Toolbar
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.adapters.CategoryListAdapter
 import io.connorwyatt.flashcards.data.entities.Category
-import io.connorwyatt.flashcards.services.CategoryService
+import io.connorwyatt.flashcards.data.services.CategoryService
 
 class CategoriesActivity : AppCompatActivity()
 {

@@ -24,7 +24,7 @@ import io.connorwyatt.flashcards.R;
 import io.connorwyatt.flashcards.data.datasources.FlashcardDataSource;
 import io.connorwyatt.flashcards.data.entities.Category;
 import io.connorwyatt.flashcards.data.entities.Flashcard;
-import io.connorwyatt.flashcards.services.CategoryService;
+import io.connorwyatt.flashcards.data.services.CategoryService;
 
 public class FlashcardDetailsActivity extends AppCompatActivity {
     private Flashcard flashcard = new Flashcard();

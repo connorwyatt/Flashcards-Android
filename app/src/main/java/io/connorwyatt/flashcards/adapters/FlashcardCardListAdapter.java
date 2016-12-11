@@ -19,7 +19,7 @@ import java.util.List;
 import io.connorwyatt.flashcards.R;
 import io.connorwyatt.flashcards.data.entities.Category;
 import io.connorwyatt.flashcards.data.entities.Flashcard;
-import io.connorwyatt.flashcards.services.FlashcardTestService;
+import io.connorwyatt.flashcards.data.services.FlashcardTestService;
 import io.connorwyatt.flashcards.utils.ListUtils;
 import io.connorwyatt.flashcards.views.progressbar.ProgressBar;
 

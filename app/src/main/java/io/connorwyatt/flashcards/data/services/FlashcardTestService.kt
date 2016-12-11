@@ -1,4 +1,4 @@
-package io.connorwyatt.flashcards.services
+package io.connorwyatt.flashcards.data.services
 
 import android.content.Context
 import io.connorwyatt.flashcards.data.datasources.FlashcardTestDataSource
