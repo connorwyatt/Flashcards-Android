@@ -31,6 +31,11 @@ class CategoryDetailsActivity : AppCompatActivity()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_category_details)
 
+        if (intent.hasExtra(CATEGORY_ID))
+        {
+            category = categoryService.getById(intent.getLongExtra(CATEGORY_ID, -1))
+        }
+
         name = findViewById(R.id.category_details_name) as TextInputEditText
         nameLayout = findViewById(R.id.category_details_name_layout) as TextInputLayout
 
@@ -40,6 +45,7 @@ class CategoryDetailsActivity : AppCompatActivity()
 
         saveButton!!.setOnClickListener { save() }
 
+        updateViewFromCategory(category)
         updateButton()
 
         val toolbar = findViewById(R.id.category_details_toolbar) as Toolbar
@@ -95,6 +101,7 @@ class CategoryDetailsActivity : AppCompatActivity()
 
         showToast(R.string.save_toast)
         invalidateOptionsMenu()
+        updateViewFromCategory(category)
         updateButton()
     }
 
@@ -114,6 +121,11 @@ class CategoryDetailsActivity : AppCompatActivity()
 
         val toast = Toast.makeText(this, toastMessage, duration)
         toast.show()
+    }
+
+    private fun updateViewFromCategory(category: Category)
+    {
+        name!!.setText(category.name)
     }
 
     private fun updateButton()
