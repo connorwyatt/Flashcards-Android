@@ -31,10 +31,6 @@ class CategoryDetailsActivity : AppCompatActivity()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_category_details)
 
-        if (intent.hasExtra(CATEGORY_ID))
-        {
-            category = categoryService.getById(intent.getLongExtra(CATEGORY_ID, -1))
-        }
 
         name = findViewById(R.id.category_details_name) as TextInputEditText
         nameLayout = findViewById(R.id.category_details_name_layout) as TextInputLayout
@@ -45,7 +41,12 @@ class CategoryDetailsActivity : AppCompatActivity()
 
         saveButton!!.setOnClickListener { save() }
 
-        updateViewFromCategory(category)
+        if (intent.hasExtra(CATEGORY_ID))
+        {
+            category = categoryService.getById(intent.getLongExtra(CATEGORY_ID, -1))
+            updateViewFromCategory(category)
+        }
+
         updateButton()
 
         val toolbar = findViewById(R.id.category_details_toolbar) as Toolbar
@@ -215,7 +216,8 @@ class CategoryDetailsActivity : AppCompatActivity()
         {
             val intent = Intent(context, CategoryDetailsActivity::class.java)
 
-            if (category !== null) {
+            if (category !== null)
+            {
                 intent.putExtra(CATEGORY_ID, category.id)
             }
 
