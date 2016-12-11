@@ -14,8 +14,8 @@ import java.util.List;
 
 import io.connorwyatt.flashcards.R;
 import io.connorwyatt.flashcards.activities.FlashcardTestActivity;
-import io.connorwyatt.flashcards.data.datasources.FlashcardTestDataSource;
 import io.connorwyatt.flashcards.data.entities.FlashcardTest;
+import io.connorwyatt.flashcards.data.services.FlashcardTestService;
 
 public class FlashcardTestCardFragment extends Fragment {
     private FlashcardTest flashcardTest = new FlashcardTest();
@@ -60,10 +60,8 @@ public class FlashcardTestCardFragment extends Fragment {
     }
 
     private void saveFlashcardTest() {
-        FlashcardTestDataSource ftds = new FlashcardTestDataSource(getActivity());
-        ftds.open();
-        flashcardTest = ftds.save(flashcardTest);
-        ftds.close();
+        FlashcardTestService flashcardTestService = new FlashcardTestService(getActivity());
+        flashcardTestService.save(flashcardTest);
 
         FlashcardTestFragment flashcardTestFragment = ((FlashcardTestActivity) getActivity())
                 .getFlashcardTestFragment();

@@ -4,28 +4,36 @@ import android.content.Context
 import io.connorwyatt.flashcards.data.datasources.FlashcardTestDataSource
 import io.connorwyatt.flashcards.data.entities.FlashcardTest
 
-class FlashcardTestService {
-    private var context: Context?
+class FlashcardTestService(private val context: Context)
+{
+    fun getAverageRatingForFlashcard(id: Long): Double?
+    {
+        val dataSource = FlashcardTestDataSource(context)
+        val flashcardTests: List<FlashcardTest>
 
-    constructor(context: Context) {
-        this.context = context
-    }
+        try
+        {
+            dataSource.open()
 
-    fun getAverageRatingForFlashcard(id: Long): Double? {
-        val ftds = FlashcardTestDataSource(context)
-        ftds.open()
-        val flashcardTests = ftds.getByFlashcardId(id)
-        ftds.close()
+            flashcardTests = dataSource.getByFlashcardId(id)
+        }
+        finally
+        {
+            dataSource.close()
+        }
 
         var averageRating: Double? = null
 
-        if (flashcardTests.size > 0) {
+        if (flashcardTests.isNotEmpty())
+        {
             var total = 0.0
 
-            for (flashcardTest in flashcardTests) {
-                when (flashcardTest.rating) {
+            for (flashcardTest in flashcardTests)
+            {
+                when (flashcardTest.rating)
+                {
                     FlashcardTest.Rating.POSITIVE -> total += 1.0
-                    FlashcardTest.Rating.NEUTRAL -> total += 0.5
+                    FlashcardTest.Rating.NEUTRAL  -> total += 0.5
                     FlashcardTest.Rating.NEGATIVE -> total += 0.0
                 }
             }
@@ -34,5 +42,21 @@ class FlashcardTestService {
         }
 
         return averageRating
+    }
+
+    fun save(flashcardTest: FlashcardTest): FlashcardTest
+    {
+        val dataSource = FlashcardTestDataSource(context)
+
+        try
+        {
+            dataSource.open()
+
+            return dataSource.save(flashcardTest)
+        }
+        finally
+        {
+            dataSource.close()
+        }
     }
 }

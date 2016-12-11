@@ -19,10 +19,10 @@ import java.util.List;
 import io.connorwyatt.flashcards.R;
 import io.connorwyatt.flashcards.adapters.CategoryNameArrayAdapter;
 import io.connorwyatt.flashcards.adapters.FlashcardCardListAdapter;
-import io.connorwyatt.flashcards.data.datasources.CategoryDataSource;
-import io.connorwyatt.flashcards.data.datasources.FlashcardDataSource;
 import io.connorwyatt.flashcards.data.entities.Category;
 import io.connorwyatt.flashcards.data.entities.Flashcard;
+import io.connorwyatt.flashcards.data.services.CategoryService;
+import io.connorwyatt.flashcards.data.services.FlashcardService;
 
 public class FlashcardCardListActivity extends AppCompatActivity {
     private FlashcardCardListAdapter adapter;
@@ -30,10 +30,8 @@ public class FlashcardCardListActivity extends AppCompatActivity {
     private Category filterCategory;
 
     private List<Category> getAllCategories() {
-        CategoryDataSource cds = new CategoryDataSource(this);
-        cds.open();
-        List<Category> categories = cds.getAll();
-        cds.close();
+        CategoryService categoryService = new CategoryService(this);
+        List<Category> categories = categoryService.getAll();
 
         if (allCategory == null) {
             allCategory = new Category();
@@ -144,7 +142,8 @@ public class FlashcardCardListActivity extends AppCompatActivity {
                 invalidateOptionsMenu();
             }
 
-            @Override public void onNothingSelected(AdapterView<?> adapterView) {
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
             }
         });
 
@@ -162,10 +161,8 @@ public class FlashcardCardListActivity extends AppCompatActivity {
     }
 
     private void updateAdapterData() {
-        FlashcardDataSource fds = new FlashcardDataSource(this);
-        fds.open();
-        List<Flashcard> flashcards = fds.getAll();
-        fds.close();
+        FlashcardService flashcardService = new FlashcardService(this);
+        List<Flashcard> flashcards = flashcardService.getAll();
 
         adapter.setItems(flashcards);
         invalidateOptionsMenu();

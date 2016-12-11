@@ -21,10 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.connorwyatt.flashcards.R;
-import io.connorwyatt.flashcards.data.datasources.FlashcardDataSource;
 import io.connorwyatt.flashcards.data.entities.Category;
 import io.connorwyatt.flashcards.data.entities.Flashcard;
 import io.connorwyatt.flashcards.data.services.CategoryService;
+import io.connorwyatt.flashcards.data.services.FlashcardService;
 
 public class FlashcardDetailsActivity extends AppCompatActivity {
     private Flashcard flashcard = new Flashcard();
@@ -118,16 +118,10 @@ public class FlashcardDetailsActivity extends AppCompatActivity {
         if (intent.hasExtra(INTENT_EXTRAS.FLASHCARD_ID)) {
             long id = intent.getLongExtra(INTENT_EXTRAS.FLASHCARD_ID, -1);
 
-            FlashcardDataSource fds = new FlashcardDataSource(this);
-            fds.open();
-            Flashcard dbFlashcard = fds.getById(id);
-            fds.close();
+            FlashcardService flashcardService = new FlashcardService(this);
+            flashcard = flashcardService.getById(id);
 
-            if (dbFlashcard != null) {
-                flashcard = dbFlashcard;
-
-                setViewFromFlashcard(flashcard);
-            }
+            setViewFromFlashcard(flashcard);
         } else if (intent.hasExtra(INTENT_EXTRAS.CATEGORY_ID)) {
             long categoryId = intent.getLongExtra(INTENT_EXTRAS.CATEGORY_ID, -1);
 
@@ -175,10 +169,8 @@ public class FlashcardDetailsActivity extends AppCompatActivity {
         flashcard.setText(text.getText().toString());
         flashcard.setCategories(processCategoriesString(categories.getText().toString()));
 
-        FlashcardDataSource fds = new FlashcardDataSource(this);
-        fds.open();
-        flashcard = fds.save(flashcard);
-        fds.close();
+        FlashcardService flashcardService = new FlashcardService(this);
+        flashcard = flashcardService.save(flashcard);
 
         showToast(R.string.save_toast);
 
@@ -187,10 +179,8 @@ public class FlashcardDetailsActivity extends AppCompatActivity {
     }
 
     private void delete() {
-        FlashcardDataSource fds = new FlashcardDataSource(this);
-        fds.open();
-        fds.deleteById(flashcard.getId());
-        fds.close();
+        FlashcardService flashcardService = new FlashcardService(this);
+        flashcardService.delete(flashcard);
 
         showToast(R.string.flashcard_details_delete_toast);
 

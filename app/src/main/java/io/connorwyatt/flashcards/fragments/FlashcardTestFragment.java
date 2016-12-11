@@ -18,9 +18,9 @@ import java.util.List;
 
 import io.connorwyatt.flashcards.R;
 import io.connorwyatt.flashcards.adapters.FlashcardTestPagerAdapter;
-import io.connorwyatt.flashcards.data.datasources.FlashcardDataSource;
 import io.connorwyatt.flashcards.data.entities.Flashcard;
 import io.connorwyatt.flashcards.data.entities.FlashcardTest;
+import io.connorwyatt.flashcards.data.services.FlashcardService;
 import io.connorwyatt.flashcards.interfaces.IPerformanceBreakdown;
 import io.connorwyatt.flashcards.utils.ListUtils;
 import io.connorwyatt.flashcards.views.directionalviewpager.DirectionalViewPager;
@@ -92,14 +92,13 @@ public class FlashcardTestFragment extends Fragment {
 
         Intent intent = getActivity().getIntent();
 
-        FlashcardDataSource fds = new FlashcardDataSource(getActivity());
-        fds.open();
+        FlashcardService flashcardService = new FlashcardService(getActivity());
         if (intent.hasExtra(EXTRA_KEYS.CATEGORY_ID)) {
-            flashcards = fds.getByCategory(intent.getLongExtra(EXTRA_KEYS.CATEGORY_ID, -1));
+            flashcards = flashcardService.getByCategory(intent.getLongExtra(EXTRA_KEYS
+                    .CATEGORY_ID, -1));
         } else {
-            flashcards = fds.getAll();
+            flashcards = flashcardService.getAll();
         }
-        fds.close();
 
         initialCount = flashcards.size();
     }
