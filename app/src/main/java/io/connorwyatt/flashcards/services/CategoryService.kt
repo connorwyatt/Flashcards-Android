@@ -8,6 +8,22 @@ import io.connorwyatt.flashcards.data.entities.Flashcard
 
 class CategoryService(private val context: Context)
 {
+    fun getById(categoryId: Long): Category
+    {
+        val dataSource = CategoryDataSource(context)
+
+        try
+        {
+            dataSource.open()
+
+            return dataSource.getById(categoryId)
+        }
+        finally
+        {
+            dataSource.close()
+        }
+    }
+
     fun getAll(): List<Category>
     {
         val dataSource = CategoryDataSource(context)
