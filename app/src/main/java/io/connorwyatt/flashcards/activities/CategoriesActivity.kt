@@ -21,6 +21,9 @@ class CategoriesActivity : AppCompatActivity()
     private var categoryItems: MutableList<CategoryListAdapter.ListItem> = mutableListOf()
     private val removedCategoryIds: MutableList<Long> = mutableListOf()
 
+    private var categoryListAdapter: CategoryListAdapter? = null
+    private var coordinatorLayout: CoordinatorLayout? = null
+
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
@@ -71,43 +74,57 @@ class CategoriesActivity : AppCompatActivity()
 
     private fun setUpRecycler(categoryListItems: List<CategoryListAdapter.ListItem>)
     {
-        val coordinatorLayout = findViewById(R.id.categories_coordinator_layout) as CoordinatorLayout
-        val categoryListAdapter = CategoryListAdapter(categoryListItems)
+        coordinatorLayout = findViewById(R.id.categories_coordinator_layout) as CoordinatorLayout
+        categoryListAdapter = CategoryListAdapter(categoryListItems)
 
-        categoryListAdapter.addOnDeleteListener { category ->
-            removedCategoryIds.add(category.id)
+        categoryListAdapter!!.addOnEditListener { category ->
+            editCategory(category)
+        }
 
-            categoryListAdapter.updateData(getFilteredCategoryListItems())
-
-            val snackbar = Snackbar.make(coordinatorLayout,
-                                         getString(R.string.deleted_category_snackbar,
-                                                   category.name),
-                                         Snackbar.LENGTH_LONG)
-                .setAction(getString(R.string.action_undo), { view ->
-                    removedCategoryIds.remove(category.id)
-                    categoryListAdapter.updateData(getFilteredCategoryListItems())
-                })
-                .setCallback(object : Snackbar.Callback()
-                             {
-                                 override fun onDismissed(snackbar: Snackbar?, event: Int)
-                                 {
-                                     if (removedCategoryIds.contains(category.id))
-                                     {
-                                         removedCategoryIds.remove(category.id)
-                                         categoryService.delete(category)
-                                         categoryItems.removeAll { categoryItem -> categoryItem.category.id === category.id }
-                                         categoryListAdapter.updateData(
-                                             getFilteredCategoryListItems())
-                                     }
-                                 }
-                             })
-
-            snackbar.show()
+        categoryListAdapter!!.addOnDeleteListener { category ->
+            deleteCategory(category)
         }
 
         val recycler = findViewById(R.id.categories_recycler) as RecyclerView
         recycler.adapter = categoryListAdapter
         recycler.layoutManager = LinearLayoutManager(this)
+    }
+
+    private fun editCategory(category: Category)
+    {
+        CategoryDetailsActivity.startActivity(this, category)
+    }
+
+    private fun deleteCategory(category: Category)
+    {
+        removedCategoryIds.add(category.id)
+
+        categoryListAdapter!!.updateData(getFilteredCategoryListItems())
+
+        val snackbar = Snackbar.make(coordinatorLayout!!,
+                                     getString(R.string.deleted_category_snackbar,
+                                               category.name),
+                                     Snackbar.LENGTH_LONG)
+            .setAction(getString(R.string.action_undo), { view ->
+                removedCategoryIds.remove(category.id)
+                categoryListAdapter!!.updateData(getFilteredCategoryListItems())
+            })
+            .setCallback(object : Snackbar.Callback()
+                         {
+                             override fun onDismissed(snackbar: Snackbar?, event: Int)
+                             {
+                                 if (removedCategoryIds.contains(category.id))
+                                 {
+                                     removedCategoryIds.remove(category.id)
+                                     categoryService.delete(category)
+                                     categoryItems.removeAll { categoryItem -> categoryItem.category.id === category.id }
+                                     categoryListAdapter!!.updateData(
+                                         getFilteredCategoryListItems())
+                                 }
+                             }
+                         })
+
+        snackbar.show()
     }
 
     private fun setUpFloatingActionButton()
