@@ -1,5 +1,6 @@
 package io.connorwyatt.flashcards.activities
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -74,7 +75,7 @@ class CategoryDetailsActivity : AppCompatActivity()
         {
             R.id.action_delete ->
             {
-                delete()
+                showDeleteCategoryDialog(category)
                 return true
             }
             else               ->
@@ -105,13 +106,37 @@ class CategoryDetailsActivity : AppCompatActivity()
         updateButton()
     }
 
-    private fun delete()
+    private fun deleteCategory(category: Category, deleteFlashcards: Boolean = false)
     {
-        categoryService.delete(category)
+        if (deleteFlashcards)
+            categoryService.deleteWithFlashcards(category)
+        else
+            categoryService.delete(category)
 
         showToast(R.string.flashcard_details_delete_toast)
 
         NavUtils.navigateUpFromSameTask(this)
+    }
+
+    private fun showDeleteCategoryDialog(category: Category)
+    {
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.delete_category_dialog_title))
+            .setMessage(getString(R.string.delete_category_dialog_message))
+            .setPositiveButton(
+                getString(R.string.delete_category_dialog_yes),
+                { dialogInterface, i -> deleteCategory(category, true) }
+            )
+            .setNegativeButton(
+                getString(R.string.delete_category_dialog_no),
+                { dialogInterface, i -> deleteCategory(category) }
+            )
+            .setNeutralButton(
+                getString(R.string.delete_category_dialog_cancel),
+                { dialogInterface, i -> }
+            )
+            .create()
+            .show()
     }
 
     private fun showToast(messageStringId: Int, vararg values: String)
@@ -215,7 +240,8 @@ class CategoryDetailsActivity : AppCompatActivity()
         {
             val intent = Intent(context, CategoryDetailsActivity::class.java)
 
-            if (category !== null) {
+            if (category !== null)
+            {
                 intent.putExtra(CATEGORY_ID, category.id)
             }
 
