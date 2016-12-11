@@ -175,7 +175,7 @@ public class FlashcardCardListActivity extends AppCompatActivity {
             extras.putLong(FlashcardDetailsActivity.INTENT_EXTRAS.FLASHCARD_ID, flashcard.getId());
         }
 
-        if (filterCategory != null) {
+        if (filterCategory != null && filterCategory.getId() != null) {
             extras.putLong(FlashcardDetailsActivity.INTENT_EXTRAS.CATEGORY_ID, filterCategory
                     .getId());
         }
