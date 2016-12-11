@@ -8,8 +8,8 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.connorwyatt.flashcards.data.entities.Category;
 import io.connorwyatt.flashcards.data.contracts.CategoryContract;
+import io.connorwyatt.flashcards.data.entities.Category;
 import io.connorwyatt.flashcards.exceptions.SQLNoRowsAffectedException;
 
 public class CategoryDataSource extends BaseDataSource {
@@ -21,39 +21,6 @@ public class CategoryDataSource extends BaseDataSource {
 
     CategoryDataSource(SQLiteDatabase database) {
         super(database);
-    }
-
-    public Category getById(long id) {
-        Cursor cursor = database.query(CategoryContract.TABLE_NAME,
-                                       allColumns, CategoryContract.Columns._ID + " = " + id, null,
-                                       null, null, null);
-
-        cursor.moveToFirst();
-
-        Category category = cursorToCategory(cursor);
-
-        cursor.close();
-
-        return category;
-    }
-
-    public Category getByName(String name) {
-        Category category = null;
-
-        Cursor cursor = database.query(CategoryContract.TABLE_NAME,
-                                       allColumns,
-                                       CategoryContract.Columns.NAME + " LIKE '" + name + "'", null,
-                                       null, null, null);
-
-        if (cursor.getCount() > 0) {
-            cursor.moveToFirst();
-
-            category = cursorToCategory(cursor);
-
-            cursor.close();
-        }
-
-        return category;
     }
 
     public List<Category> getAll() {
@@ -75,6 +42,39 @@ public class CategoryDataSource extends BaseDataSource {
         return categories;
     }
 
+    public Category getById(long id) {
+        Cursor cursor = database.query(CategoryContract.TABLE_NAME,
+                allColumns, CategoryContract.Columns._ID + " = " + id, null,
+                null, null, null);
+
+        cursor.moveToFirst();
+
+        Category category = cursorToCategory(cursor);
+
+        cursor.close();
+
+        return category;
+    }
+
+    public Category getByName(String name) {
+        Category category = null;
+
+        Cursor cursor = database.query(CategoryContract.TABLE_NAME,
+                allColumns,
+                CategoryContract.Columns.NAME + " LIKE '" + name + "'", null,
+                null, null, null);
+
+        if (cursor.getCount() > 0) {
+            cursor.moveToFirst();
+
+            category = cursorToCategory(cursor);
+
+            cursor.close();
+        }
+
+        return category;
+    }
+
     public Category save(Category category) {
         ContentValues values = new ContentValues();
         values.put(CategoryContract.Columns.NAME, category.getName());
@@ -88,7 +88,7 @@ public class CategoryDataSource extends BaseDataSource {
             savedCategoryId = category.getId();
             addUpdateTimestamp(values);
             int rowsAffected = database.update(CategoryContract.TABLE_NAME, values,
-                                               CategoryContract.Columns._ID + " = " + savedCategoryId, null);
+                    CategoryContract.Columns._ID + " = " + savedCategoryId, null);
 
             if (rowsAffected == 0) {
                 throw new SQLNoRowsAffectedException();
@@ -96,6 +96,26 @@ public class CategoryDataSource extends BaseDataSource {
         }
 
         return getById(savedCategoryId);
+    }
+
+    public void deleteById(long id) {
+        try {
+            database.beginTransaction();
+
+            int rowsAffected = database.delete(CategoryContract.TABLE_NAME,
+                    CategoryContract.Columns._ID + " = " + id, null);
+
+            if (rowsAffected == 0) {
+                throw new SQLNoRowsAffectedException();
+            }
+
+            database.setTransactionSuccessful();
+        } catch (Exception e) {
+            database.endTransaction();
+            throw e;
+        }
+
+        database.endTransaction();
     }
 
     private Category cursorToCategory(Cursor cursor) {

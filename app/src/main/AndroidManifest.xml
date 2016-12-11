@@ -20,6 +20,9 @@
             android:parentActivityName=".activities.FlashcardCardListActivity" />
         <activity android:name=".activities.FlashcardTestActivity" />
         <activity android:name=".activities.CategoriesActivity" />
+        <activity
+            android:name=".activities.CategoryDetailsActivity"
+            android:parentActivityName=".activities.CategoriesActivity" />
     </application>
 
 </manifest>

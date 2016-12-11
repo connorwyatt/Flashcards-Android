@@ -8,6 +8,22 @@ import io.connorwyatt.flashcards.data.entities.Flashcard
 
 class CategoryService(private val context: Context)
 {
+    fun getById(categoryId: Long): Category
+    {
+        val dataSource = CategoryDataSource(context)
+
+        try
+        {
+            dataSource.open()
+
+            return dataSource.getById(categoryId)
+        }
+        finally
+        {
+            dataSource.close()
+        }
+    }
+
     fun getAll(): List<Category>
     {
         val dataSource = CategoryDataSource(context)
@@ -17,7 +33,40 @@ class CategoryService(private val context: Context)
             dataSource.open()
 
             return dataSource.all
-        } finally
+        }
+        finally
+        {
+            dataSource.close()
+        }
+    }
+
+    fun save(category: Category): Category
+    {
+        val dataSource = CategoryDataSource(context)
+
+        try
+        {
+            dataSource.open()
+
+            return dataSource.save(category)
+        }
+        finally
+        {
+            dataSource.close()
+        }
+    }
+
+    fun delete(category: Category): Unit
+    {
+        val dataSource = CategoryDataSource(context)
+
+        try
+        {
+            dataSource.open()
+
+            dataSource.deleteById(category.id)
+        }
+        finally
         {
             dataSource.close()
         }
@@ -32,7 +81,24 @@ class CategoryService(private val context: Context)
             dataSource.open()
 
             return dataSource.getByCategory(categoryId)
-        } finally
+        }
+        finally
+        {
+            dataSource.close()
+        }
+    }
+
+    fun isCategoryNameTaken(name: String): Boolean
+    {
+        val dataSource = CategoryDataSource(context)
+
+        try
+        {
+            dataSource.open()
+
+            return dataSource.getByName(name) !== null
+        }
+        finally
         {
             dataSource.close()
         }
@@ -50,7 +116,8 @@ class CategoryService(private val context: Context)
         if (ratings.size > 0)
         {
             return ratings.sum() / ratings.size.toDouble()
-        } else
+        }
+        else
         {
             return null
         }
