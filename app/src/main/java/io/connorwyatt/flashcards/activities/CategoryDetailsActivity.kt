@@ -16,7 +16,7 @@ import android.widget.Button
 import android.widget.Toast
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.data.entities.Category
-import io.connorwyatt.flashcards.services.CategoryService
+import io.connorwyatt.flashcards.data.services.CategoryService
 
 class CategoryDetailsActivity : AppCompatActivity()
 {
