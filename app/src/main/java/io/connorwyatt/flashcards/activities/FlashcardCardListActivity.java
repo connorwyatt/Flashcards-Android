@@ -1,6 +1,5 @@
 package io.connorwyatt.flashcards.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -92,7 +91,7 @@ public class FlashcardCardListActivity extends AppCompatActivity {
     }
 
     public void addNewFlashcard(View view) {
-        navigateToFlashcardDetails(null);
+        FlashcardDetailsActivity.startActivity(this);
     }
 
     private void setUpListRecyclerView() {
@@ -108,7 +107,8 @@ public class FlashcardCardListActivity extends AppCompatActivity {
         adapter.setOnCardClickListener(new FlashcardCardListAdapter.OnCardClickListener() {
             @Override
             public void onClick(Flashcard flashcard) {
-                navigateToFlashcardDetails(flashcard);
+                FlashcardDetailsActivity.startActivityWithFlashcard(
+                        FlashcardCardListActivity.this, flashcard);
             }
         });
 
@@ -166,26 +166,5 @@ public class FlashcardCardListActivity extends AppCompatActivity {
 
         adapter.setItems(flashcards);
         invalidateOptionsMenu();
-    }
-
-    private void navigateToFlashcardDetails(Flashcard flashcard) {
-        Bundle extras = new Bundle();
-
-        if (flashcard != null) {
-            extras.putLong(FlashcardDetailsActivity.INTENT_EXTRAS.FLASHCARD_ID, flashcard.getId());
-        }
-
-        if (filterCategory != null && filterCategory.getId() != null) {
-            extras.putLong(FlashcardDetailsActivity.INTENT_EXTRAS.CATEGORY_ID, filterCategory
-                    .getId());
-        }
-
-        startFlashcardDetailsActivity(extras);
-    }
-
-    private void startFlashcardDetailsActivity(Bundle extras) {
-        Intent intent = new Intent(this, FlashcardDetailsActivity.class);
-        intent.putExtras(extras);
-        startActivity(intent);
     }
 }
