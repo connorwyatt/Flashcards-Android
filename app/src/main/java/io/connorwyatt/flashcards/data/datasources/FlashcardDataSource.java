@@ -1,12 +1,12 @@
 package io.connorwyatt.flashcards.data.datasources;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.connorwyatt.flashcards.data.contracts.FlashcardContract;
 import io.connorwyatt.flashcards.data.entities.Category;
@@ -14,7 +14,8 @@ import io.connorwyatt.flashcards.data.entities.Flashcard;
 import io.connorwyatt.flashcards.exceptions.SQLNoRowsAffectedException;
 
 public class FlashcardDataSource extends BaseDataSource {
-    private String[] allColumns = {FlashcardContract.Columns._ID, FlashcardContract.Columns.TITLE, FlashcardContract.Columns.TEXT};
+    private String[] allColumns = {FlashcardContract.Columns._ID, FlashcardContract.Columns
+            .TITLE, FlashcardContract.Columns.TEXT};
 
     public FlashcardDataSource(Context context) {
         super(context);
@@ -81,13 +82,14 @@ public class FlashcardDataSource extends BaseDataSource {
 
             if (!flashcard.existsInDatabase()) {
                 addCreateTimestamp(values);
-                savedFlashcardId = database.insertOrThrow(FlashcardContract.TABLE_NAME, null, values);
+                savedFlashcardId = database.insertOrThrow(FlashcardContract.TABLE_NAME, null,
+                        values);
             } else {
                 savedFlashcardId = flashcard.getId();
                 addUpdateTimestamp(values);
                 int rowsAffected = database.update(FlashcardContract.TABLE_NAME, values,
-                                                   FlashcardContract.Columns._ID + " = " + savedFlashcardId,
-                                                   null);
+                        FlashcardContract.Columns._ID + " = " + savedFlashcardId,
+                        null);
 
                 if (rowsAffected == 0) {
                     throw new SQLNoRowsAffectedException();
@@ -117,7 +119,7 @@ public class FlashcardDataSource extends BaseDataSource {
             database.beginTransaction();
 
             int rowsAffected = database.delete(FlashcardContract.TABLE_NAME,
-                                               FlashcardContract.Columns._ID + " = " + id, null);
+                    FlashcardContract.Columns._ID + " = " + id, null);
 
             if (rowsAffected == 0) {
                 throw new SQLNoRowsAffectedException();
@@ -130,6 +132,12 @@ public class FlashcardDataSource extends BaseDataSource {
         }
 
         database.endTransaction();
+    }
+
+    public void deleteByCategory(long categoryId) {
+        for (Flashcard flashcard : getByCategory(categoryId)) {
+            deleteById(flashcard.getId());
+        }
     }
 
     private Flashcard cursorToFlashcard(Cursor cursor) {

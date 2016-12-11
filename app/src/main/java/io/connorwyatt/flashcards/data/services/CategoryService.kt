@@ -72,6 +72,24 @@ class CategoryService(private val context: Context)
         }
     }
 
+    fun deleteWithFlashcards(category: Category): Unit
+    {
+        val flashcardDataSource = FlashcardDataSource(context)
+
+        try
+        {
+            flashcardDataSource.open()
+
+            flashcardDataSource.deleteByCategory(category.id)
+
+            delete(category)
+        }
+        finally
+        {
+            flashcardDataSource.close()
+        }
+    }
+
     fun getFlashcardsForCategory(categoryId: Long): List<Flashcard>
     {
         val dataSource = FlashcardDataSource(context)
