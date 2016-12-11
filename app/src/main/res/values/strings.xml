@@ -32,4 +32,5 @@
     <string name="category_details_name">Name</string>
     <string name="category_details_save">Save</string>
     <string name="category_name_taken">A category with the name \"%1$s\" already exists</string>
+    <string name="action_edit">Edit</string>
 </resources>
