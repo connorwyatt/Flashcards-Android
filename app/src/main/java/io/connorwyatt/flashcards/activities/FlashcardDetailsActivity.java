@@ -24,9 +24,10 @@ import io.connorwyatt.flashcards.R;
 import io.connorwyatt.flashcards.data.datasources.FlashcardDataSource;
 import io.connorwyatt.flashcards.data.entities.Category;
 import io.connorwyatt.flashcards.data.entities.Flashcard;
+import io.connorwyatt.flashcards.services.CategoryService;
 
 public class FlashcardDetailsActivity extends AppCompatActivity {
-    private Flashcard flashcard;
+    private Flashcard flashcard = new Flashcard();
     private TextInputLayout titleLayout;
     private TextInputEditText title;
     private boolean titleTouched = false;
@@ -80,9 +81,14 @@ public class FlashcardDetailsActivity extends AppCompatActivity {
     }
 
     private void setViewFromFlashcard(Flashcard flashcard) {
-        title.setText(flashcard.getTitle());
-        text.setText(flashcard.getText());
-        categories.setText(flashcard.getCategoriesString());
+        if (flashcard.getTitle() != null && flashcard.getTitle().length() > 0)
+            title.setText(flashcard.getTitle());
+
+        if (flashcard.getText() != null && flashcard.getText().length() > 0)
+            text.setText(flashcard.getText());
+
+        if (flashcard.getCategories() != null && flashcard.getCategories().size() > 0)
+            categories.setText(flashcard.getCategoriesString());
     }
 
     @Override
@@ -122,6 +128,15 @@ public class FlashcardDetailsActivity extends AppCompatActivity {
 
                 setViewFromFlashcard(flashcard);
             }
+        } else if (intent.hasExtra(INTENT_EXTRAS.CATEGORY_ID)) {
+            long categoryId = intent.getLongExtra(INTENT_EXTRAS.CATEGORY_ID, -1);
+
+            CategoryService categoryService = new CategoryService(this);
+            Category category = categoryService.getById(categoryId);
+
+            flashcard.getCategories().add(category);
+
+            setViewFromFlashcard(flashcard);
         }
 
         updateButton();
@@ -156,15 +171,13 @@ public class FlashcardDetailsActivity extends AppCompatActivity {
     }
 
     private void save() {
-        Flashcard flashcardToSave = isCreate() ? new Flashcard() : flashcard;
-
-        flashcardToSave.setTitle(title.getText().toString());
-        flashcardToSave.setText(text.getText().toString());
-        flashcardToSave.setCategories(processCategoriesString(categories.getText().toString()));
+        flashcard.setTitle(title.getText().toString());
+        flashcard.setText(text.getText().toString());
+        flashcard.setCategories(processCategoriesString(categories.getText().toString()));
 
         FlashcardDataSource fds = new FlashcardDataSource(this);
         fds.open();
-        flashcard = fds.save(flashcardToSave);
+        flashcard = fds.save(flashcard);
         fds.close();
 
         showToast(R.string.save_toast);
@@ -355,5 +368,6 @@ public class FlashcardDetailsActivity extends AppCompatActivity {
 
     public static class INTENT_EXTRAS {
         public static String FLASHCARD_ID = "FLASHCARD_ID";
+        public static String CATEGORY_ID = "CATEGORY_ID";
     }
 }
