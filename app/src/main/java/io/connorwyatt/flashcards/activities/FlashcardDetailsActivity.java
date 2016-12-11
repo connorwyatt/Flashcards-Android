@@ -160,6 +160,28 @@ public class FlashcardDetailsActivity extends AppCompatActivity {
         }
     }
 
+    public static void startActivity(Context context) {
+        Intent intent = new Intent(context, FlashcardDetailsActivity.class);
+
+        context.startActivity(intent);
+    }
+
+    public static void startActivityWithFlashcard(Context context, Flashcard flashcard) {
+        Intent intent = new Intent(context, FlashcardDetailsActivity.class);
+
+        intent.putExtra(INTENT_EXTRAS.FLASHCARD_ID, flashcard.getId());
+
+        context.startActivity(intent);
+    }
+
+    public static void startActivityWithCategory(Context context, Category category) {
+        Intent intent = new Intent(context, FlashcardDetailsActivity.class);
+
+        intent.putExtra(INTENT_EXTRAS.CATEGORY_ID, category.getId());
+
+        context.startActivity(intent);
+    }
+
     public void onSaveClick(View view) {
         save();
     }
