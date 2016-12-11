@@ -197,9 +197,15 @@ class CategoryDetailsActivity : AppCompatActivity()
 
     companion object Activities
     {
-        fun startActivity(context: Context)
+        internal val CATEGORY_ID = "CATEGORY_ID"
+
+        fun startActivity(context: Context, category: Category? = null)
         {
             val intent = Intent(context, CategoryDetailsActivity::class.java)
+
+            if (category !== null) {
+                intent.putExtra(CATEGORY_ID, category.id)
+            }
 
             context.startActivity(intent)
         }
