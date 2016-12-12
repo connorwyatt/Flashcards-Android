@@ -3,7 +3,7 @@ package io.connorwyatt.flashcards.data.entities
 class FlashcardTest : BaseEntity()
 {
     var rating: Rating? = null
-    var flashcard: Long? = null
+    var flashcardId: Long? = null
 
     fun setRatingFromInt(ratingOrdinal: Int): Unit
     {
