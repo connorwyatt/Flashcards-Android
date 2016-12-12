@@ -78,7 +78,7 @@ class FlashcardService(private val context: Context)
         {
             dataSource.open()
 
-            dataSource.deleteById(flashcard.id)
+            dataSource.deleteById(flashcard.id!!)
         }
         finally
         {

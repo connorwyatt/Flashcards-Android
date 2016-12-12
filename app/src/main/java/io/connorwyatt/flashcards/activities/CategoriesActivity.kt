@@ -48,8 +48,8 @@ class CategoriesActivity : AppCompatActivity()
                 fun(category: Category): CategoryListAdapter.ListItem
                 {
                     val flashcardCountForCategory =
-                        categoryService.getFlashcardsForCategory(category.id).size
-                    val averageRating = categoryService.getAverageRatingForCategory(category.id)
+                        categoryService.getFlashcardsForCategory(category.id!!).size
+                    val averageRating = categoryService.getAverageRatingForCategory(category.id!!)
 
                     return CategoryListAdapter.ListItem(
                         category,
@@ -119,7 +119,7 @@ class CategoriesActivity : AppCompatActivity()
 
     private fun deleteCategory(category: Category, deleteFlashcards: Boolean = false)
     {
-        removedCategoryIds.add(category.id)
+        removedCategoryIds.add(category.id!!)
 
         categoryListAdapter!!.updateData(getFilteredCategoryListItems())
 
@@ -128,16 +128,16 @@ class CategoriesActivity : AppCompatActivity()
                                                category.name),
                                      Snackbar.LENGTH_LONG)
             .setAction(getString(R.string.action_undo), { view ->
-                removedCategoryIds.remove(category.id)
+                removedCategoryIds.remove(category.id!!)
                 categoryListAdapter!!.updateData(getFilteredCategoryListItems())
             })
             .setCallback(object : Snackbar.Callback()
                          {
                              override fun onDismissed(snackbar: Snackbar?, event: Int)
                              {
-                                 if (removedCategoryIds.contains(category.id))
+                                 if (removedCategoryIds.contains(category.id!!))
                                  {
-                                     removedCategoryIds.remove(category.id)
+                                     removedCategoryIds.remove(category.id!!)
 
                                      if (deleteFlashcards)
                                          categoryService.deleteWithFlashcards(category)

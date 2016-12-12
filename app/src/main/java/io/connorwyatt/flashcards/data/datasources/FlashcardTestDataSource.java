@@ -98,7 +98,7 @@ public class FlashcardTestDataSource extends BaseDataSource {
 
         flashcardTest.setId(cursor.getLong(0));
         flashcardTest.setFlashcardId(cursor.getLong(1));
-        flashcardTest.setRatingInt(cursor.getInt(2));
+        flashcardTest.setRatingFromInt(cursor.getInt(2));
 
         return flashcardTest;
     }

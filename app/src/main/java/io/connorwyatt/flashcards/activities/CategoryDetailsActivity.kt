@@ -17,6 +17,7 @@ import android.widget.Button
 import android.widget.Toast
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.data.entities.Category
+import io.connorwyatt.flashcards.data.entities.FlashcardTest
 import io.connorwyatt.flashcards.data.services.CategoryService
 
 class CategoryDetailsActivity : AppCompatActivity()
@@ -89,11 +90,11 @@ class CategoryDetailsActivity : AppCompatActivity()
     {
         category.name = name!!.text.toString()
 
-        val nameTaken = categoryService.isCategoryNameTaken(category.name)
+        val nameTaken = categoryService.isCategoryNameTaken(category.name!!)
 
         if (nameTaken)
         {
-            showToast(R.string.category_name_taken, category.name)
+            showToast(R.string.category_name_taken, category.name!!)
 
             return
         }
