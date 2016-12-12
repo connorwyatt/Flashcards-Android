@@ -105,8 +105,8 @@ public class DBUpgradeHelper {
         db.execSQL("INSERT INTO " + FlashcardCategoryContract.TABLE_NAME +
                 " SELECT "
                 + FlashcardCategoryContract.Columns._ID + ", "
-                + FlashcardCategoryContract.Columns._CREATED_ON + ", "
-                + FlashcardCategoryContract.Columns._LAST_MODIFIED_ON + ", "
+                + FlashcardCategoryContract.Columns.Companion.get_CREATED_ON() + ", "
+                + FlashcardCategoryContract.Columns.Companion.get_LAST_MODIFIED_ON() + ", "
                 + FlashcardCategoryContract.Columns.FLASHCARD_ID + ", "
                 + FlashcardCategoryContract.Columns.CATEGORY_ID
                 + " FROM "
@@ -122,8 +122,8 @@ public class DBUpgradeHelper {
         db.execSQL("INSERT INTO " + FlashcardTestContract.TABLE_NAME +
                 " SELECT "
                 + FlashcardTestContract.Columns._ID + ", "
-                + FlashcardTestContract.Columns._CREATED_ON + ", "
-                + FlashcardTestContract.Columns._LAST_MODIFIED_ON + ", "
+                + FlashcardTestContract.Columns.Companion.get_CREATED_ON() + ", "
+                + FlashcardTestContract.Columns.Companion.get_LAST_MODIFIED_ON() + ", "
                 + FlashcardTestContract.Columns.FLASHCARD_ID + ", "
                 + FlashcardTestContract.Columns.RATING
                 + " FROM "

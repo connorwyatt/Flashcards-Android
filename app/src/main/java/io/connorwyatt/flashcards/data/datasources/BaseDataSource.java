@@ -46,13 +46,13 @@ public class BaseDataSource {
 
     protected void addUpdateTimestamp(ContentValues values) {
         Long currentTimestamp = System.currentTimeMillis() / 1000;
-        values.put(BaseColumnsTimeline._LAST_MODIFIED_ON, currentTimestamp.intValue());
+        values.put(BaseColumnsTimeline.Companion.get_LAST_MODIFIED_ON(), currentTimestamp.intValue());
     }
 
     protected void addCreateTimestamp(ContentValues values) {
         Long currentTimestamp = System.currentTimeMillis() / 1000;
-        values.put(BaseColumnsTimeline._CREATED_ON, currentTimestamp.intValue());
-        values.put(BaseColumnsTimeline._LAST_MODIFIED_ON, currentTimestamp.intValue());
+        values.put(BaseColumnsTimeline.Companion.get_CREATED_ON(), currentTimestamp.intValue());
+        values.put(BaseColumnsTimeline.Companion.get_LAST_MODIFIED_ON(), currentTimestamp.intValue());
     }
 
     protected <T extends BaseEntity> List<Long> getIdsFromList(List<T> entityList) {

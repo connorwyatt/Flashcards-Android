@@ -8,8 +8,8 @@ public final class FlashcardContract {
     public static final String TABLE_CREATE = "create table "
             + TABLE_NAME + "( "
             + Columns._ID + " integer primary key autoincrement, "
-            + Columns._CREATED_ON + " integer not null, "
-            + Columns._LAST_MODIFIED_ON + " integer not null, "
+            + Columns.Companion.get_CREATED_ON() + " integer not null, "
+            + Columns.Companion.get_LAST_MODIFIED_ON() + " integer not null, "
             + Columns.TITLE + " text not null, "
             + Columns.TEXT + " text not null"
             + ");";
