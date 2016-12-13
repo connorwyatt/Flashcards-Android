@@ -26,10 +26,9 @@ class FlashcardTestSummaryFragment : Fragment()
         viewGroup = inflater.inflate(
             R.layout.fragment_flashcard_test_summary_card, container, false) as ViewGroup
 
-        val testFragment = (activity as FlashcardTestActivity)
-            .flashcardTestFragment
+        val testFragment = (activity as FlashcardTestActivity).flashcardTestFragment
 
-        performanceBreakdown = testFragment.performanceBreakdown
+        performanceBreakdown = testFragment!!.performanceBreakdown
 
         setUpView()
 

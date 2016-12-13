@@ -6,7 +6,7 @@ class Flashcard : BaseEntity()
 {
     var title: String? = null
     var text: String? = null
-    var categories: List<Category> = ArrayList()
+    var categories: MutableList<Category> = ArrayList()
 
     val categoriesString: String
         get() = categories.map { it.name }.joinToString()

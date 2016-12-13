@@ -65,10 +65,9 @@ class FlashcardTestCardFragment : Fragment()
         val flashcardTestService = FlashcardTestService(activity)
         flashcardTestService.save(flashcardTest)
 
-        val flashcardTestFragment = (activity as FlashcardTestActivity)
-            .flashcardTestFragment
+        val flashcardTestFragment = (activity as FlashcardTestActivity).flashcardTestFragment
 
-        flashcardTestFragment.updateFlashcardTest(flashcardTest)
+        flashcardTestFragment!!.updateFlashcardTest(flashcardTest)
     }
 
     object ARGUMENT_KEYS
