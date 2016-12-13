@@ -19,7 +19,7 @@ class FlashcardTestCardFragment : Fragment()
     private val flashcardTest = FlashcardTest()
     private var isFlipped = false
 
-    override fun onCreate(savedInstanceState: Bundle)
+    override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
 
@@ -28,7 +28,7 @@ class FlashcardTestCardFragment : Fragment()
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup,
-                              savedInstanceState: Bundle): View
+                              savedInstanceState: Bundle?): View
     {
         super.onCreateView(inflater, container, savedInstanceState)
 
@@ -80,7 +80,7 @@ class FlashcardTestCardFragment : Fragment()
     class CardFrontFragment : Fragment()
     {
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup,
-                                  savedInstanceState: Bundle): View
+                                  savedInstanceState: Bundle?): View
         {
             super.onCreateView(inflater, container, savedInstanceState)
 
@@ -160,7 +160,7 @@ class FlashcardTestCardFragment : Fragment()
         }
 
         override fun onCreateView(inflater: LayoutInflater, container: ViewGroup,
-                                  savedInstanceState: Bundle): View
+                                  savedInstanceState: Bundle?): View
         {
             super.onCreateView(inflater, container, savedInstanceState)
 

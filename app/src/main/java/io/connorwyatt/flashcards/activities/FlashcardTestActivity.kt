@@ -23,7 +23,7 @@ class FlashcardTestActivity : AppCompatActivity()
         setContentView(R.layout.activity_flashcard_test)
 
         val fm = fragmentManager
-        flashcardTestFragment = fm.findFragmentByTag(FRAGMENT_TAG) as FlashcardTestFragment
+        flashcardTestFragment = fm.findFragmentByTag(FRAGMENT_TAG) as FlashcardTestFragment?
 
         if (flashcardTestFragment == null)
         {

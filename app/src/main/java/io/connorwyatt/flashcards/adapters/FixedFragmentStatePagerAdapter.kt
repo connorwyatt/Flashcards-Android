@@ -170,7 +170,7 @@ abstract class FixedFragmentStatePagerAdapter(private val mFragmentManager: Frag
         val fragment = item as Fragment
         if (fragment !== mCurrentPrimaryItem)
         {
-            mCurrentPrimaryItem.let {
+            mCurrentPrimaryItem?.let {
                 FragmentCompat.setMenuVisibility(mCurrentPrimaryItem, false)
                 FragmentCompat.setUserVisibleHint(mCurrentPrimaryItem, false)
             }

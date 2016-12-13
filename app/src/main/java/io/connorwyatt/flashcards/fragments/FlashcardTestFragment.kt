@@ -85,7 +85,7 @@ class FlashcardTestFragment : Fragment()
         )
     }
 
-    override fun onCreate(savedInstanceState: Bundle)
+    override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
 
@@ -108,7 +108,7 @@ class FlashcardTestFragment : Fragment()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup,
-                              savedInstanceState: Bundle): View
+                              savedInstanceState: Bundle?): View
     {
         super.onCreateView(inflater, container, savedInstanceState)
 

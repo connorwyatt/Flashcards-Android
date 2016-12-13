@@ -19,7 +19,7 @@ class FlashcardTestSummaryFragment : Fragment()
     private var changeListener: IPerformanceBreakdown.OnPerformanceBreakdownChangeListener? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup,
-                              savedInstanceState: Bundle): View
+                              savedInstanceState: Bundle?): View
     {
         super.onCreateView(inflater, container, savedInstanceState)
 
