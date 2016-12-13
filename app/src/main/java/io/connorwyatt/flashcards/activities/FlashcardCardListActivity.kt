@@ -140,7 +140,7 @@ class FlashcardCardListActivity : AppCompatActivity()
 
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener
         {
-            override fun onItemSelected(adapterView: AdapterView<*>, view: View, position: Int,
+            override fun onItemSelected(adapterView: AdapterView<*>, view: View?, position: Int,
                                         id: Long)
             {
                 val category = adapterView.getItemAtPosition(position) as Category
