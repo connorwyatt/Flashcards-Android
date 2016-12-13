@@ -106,8 +106,8 @@ abstract class FixedFragmentStatePagerAdapter(private val mFragmentManager: Frag
         if (mFragments.size > position)
         {
             val f = mFragments[position]
-            f.let {
-                return it!!
+            f?.let {
+                return it
             }
         }
 
