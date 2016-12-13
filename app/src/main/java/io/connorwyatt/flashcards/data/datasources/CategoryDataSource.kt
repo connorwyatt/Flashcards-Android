@@ -12,7 +12,7 @@ import java.util.ArrayList
 
 class CategoryDataSource : BaseDataSource
 {
-    private val allColumns = arrayOf(BaseColumnsTimeline._ID, CategoryContract.TABLE_NAME)
+    private val allColumns = arrayOf(BaseColumnsTimeline._ID, CategoryContract.Columns.NAME)
 
     constructor(context: Context) : super(context)
     {
