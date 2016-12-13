@@ -13,7 +13,6 @@ import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.data.entities.Flashcard
 import io.connorwyatt.flashcards.data.services.FlashcardTestService
 import io.connorwyatt.flashcards.views.progressbar.ProgressBar
-import java.util.ArrayList
 
 class FlashcardCardListAdapter :
     RecyclerView.Adapter<FlashcardCardListAdapter.FlashcardCardViewHolder>()
@@ -135,15 +134,13 @@ class FlashcardCardListAdapter :
 
     private fun applyFilters(flashcards: List<Flashcard>): List<Flashcard>
     {
-        var filteredList: List<Flashcard> = ArrayList(flashcards)
-
-        categoryFilter.let {
-            filteredList = filteredList.filter {
+        categoryFilter?.let {
+            return flashcards.filter {
                 it.categories.count { it.id === categoryFilter } > 0
             }
         }
 
-        return filteredList
+        return flashcards
     }
 
     interface OnCardClickListener
