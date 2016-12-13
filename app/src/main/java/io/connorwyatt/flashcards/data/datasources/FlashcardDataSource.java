@@ -9,13 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.connorwyatt.flashcards.data.contracts.FlashcardContract;
+import io.connorwyatt.flashcards.data.entities.BaseColumnsTimeline;
 import io.connorwyatt.flashcards.data.entities.Category;
 import io.connorwyatt.flashcards.data.entities.Flashcard;
 import io.connorwyatt.flashcards.exceptions.SQLNoRowsAffectedException;
 
 public class FlashcardDataSource extends BaseDataSource {
-    private String[] allColumns = {FlashcardContract.Columns._ID, FlashcardContract.Columns
-            .TITLE, FlashcardContract.Columns.TEXT};
+    private String[] allColumns = {BaseColumnsTimeline.INSTANCE.get_ID(), FlashcardContract.Columns
+            .INSTANCE.getTITLE(), FlashcardContract.Columns.INSTANCE.getTEXT()};
 
     public FlashcardDataSource(Context context) {
         super(context);
@@ -28,7 +29,7 @@ public class FlashcardDataSource extends BaseDataSource {
     public List<Flashcard> getAll() {
         List<Flashcard> flashcards = new ArrayList<>();
 
-        Cursor cursor = database.query(FlashcardContract.TABLE_NAME,
+        Cursor cursor = getDatabase().query(FlashcardContract.INSTANCE.getTABLE_NAME(),
                 allColumns, null, null, null, null, null);
 
         cursor.moveToFirst();
@@ -45,8 +46,9 @@ public class FlashcardDataSource extends BaseDataSource {
     }
 
     public Flashcard getById(long id) {
-        Cursor cursor = database.query(FlashcardContract.TABLE_NAME,
-                allColumns, FlashcardContract.Columns._ID + " = " + id, null, null, null, null);
+        Cursor cursor = getDatabase().query(FlashcardContract.INSTANCE.getTABLE_NAME(),
+                allColumns, BaseColumnsTimeline.INSTANCE.get_ID() + " = " + id, null, null, null,
+                null);
 
         cursor.moveToFirst();
 
@@ -58,7 +60,7 @@ public class FlashcardDataSource extends BaseDataSource {
     }
 
     public List<Flashcard> getByCategory(long categoryId) {
-        FlashcardCategoryDataSource fcds = new FlashcardCategoryDataSource(database);
+        FlashcardCategoryDataSource fcds = new FlashcardCategoryDataSource(getDatabase());
         List<Long> flashcardIds = fcds.getFlashcardIdsForCategoryId(categoryId);
 
         List<Flashcard> flashcards = new ArrayList<>();
@@ -74,21 +76,22 @@ public class FlashcardDataSource extends BaseDataSource {
         long savedFlashcardId;
 
         try {
-            database.beginTransaction();
+            getDatabase().beginTransaction();
 
             ContentValues values = new ContentValues();
-            values.put(FlashcardContract.Columns.TITLE, flashcard.getTitle());
-            values.put(FlashcardContract.Columns.TEXT, flashcard.getText());
+            values.put(FlashcardContract.Columns.INSTANCE.getTITLE(), flashcard.getTitle());
+            values.put(FlashcardContract.Columns.INSTANCE.getTEXT(), flashcard.getText());
 
             if (!flashcard.existsInDatabase()) {
                 addCreateTimestamp(values);
-                savedFlashcardId = database.insertOrThrow(FlashcardContract.TABLE_NAME, null,
+                savedFlashcardId = getDatabase().insertOrThrow(FlashcardContract.INSTANCE.getTABLE_NAME(), null,
                         values);
             } else {
                 savedFlashcardId = flashcard.getId();
                 addUpdateTimestamp(values);
-                int rowsAffected = database.update(FlashcardContract.TABLE_NAME, values,
-                        FlashcardContract.Columns._ID + " = " + savedFlashcardId,
+                int rowsAffected = getDatabase().update(FlashcardContract.INSTANCE.getTABLE_NAME
+                                (), values,
+                        BaseColumnsTimeline.INSTANCE.get_ID() + " = " + savedFlashcardId,
                         null);
 
                 if (rowsAffected == 0) {
@@ -100,38 +103,38 @@ public class FlashcardDataSource extends BaseDataSource {
 
             List<Long> categoryIds = getIdsFromList(flashcard.getCategories());
 
-            FlashcardCategoryDataSource fcds = new FlashcardCategoryDataSource(database);
+            FlashcardCategoryDataSource fcds = new FlashcardCategoryDataSource(getDatabase());
             fcds.updateFlashcardCategoryLinks(savedFlashcardId, categoryIds);
 
-            database.setTransactionSuccessful();
+            getDatabase().setTransactionSuccessful();
         } catch (Exception e) {
-            database.endTransaction();
+            getDatabase().endTransaction();
             throw e;
         }
 
-        database.endTransaction();
+        getDatabase().endTransaction();
 
         return getById(savedFlashcardId);
     }
 
     public void deleteById(long id) {
         try {
-            database.beginTransaction();
+            getDatabase().beginTransaction();
 
-            int rowsAffected = database.delete(FlashcardContract.TABLE_NAME,
-                    FlashcardContract.Columns._ID + " = " + id, null);
+            int rowsAffected = getDatabase().delete(FlashcardContract.INSTANCE.getTABLE_NAME(),
+                    BaseColumnsTimeline.INSTANCE.get_ID() + " = " + id, null);
 
             if (rowsAffected == 0) {
                 throw new SQLNoRowsAffectedException();
             }
 
-            database.setTransactionSuccessful();
+            getDatabase().setTransactionSuccessful();
         } catch (Exception e) {
-            database.endTransaction();
+            getDatabase().endTransaction();
             throw e;
         }
 
-        database.endTransaction();
+        getDatabase().endTransaction();
     }
 
     public void deleteByCategory(long categoryId) {
@@ -157,7 +160,7 @@ public class FlashcardDataSource extends BaseDataSource {
         List<Category> categories = flashcard.getCategories();
 
         if (categories != null) {
-            CategoryDataSource cds = new CategoryDataSource(database);
+            CategoryDataSource cds = new CategoryDataSource(getDatabase());
 
             for (Category category : categories) {
                 Category dbCategory = cds.getByName(category.getName());
@@ -174,11 +177,11 @@ public class FlashcardDataSource extends BaseDataSource {
     }
 
     private void populateCategories(Flashcard flashcard) {
-        FlashcardCategoryDataSource fcds = new FlashcardCategoryDataSource(database);
+        FlashcardCategoryDataSource fcds = new FlashcardCategoryDataSource(getDatabase());
         List<Long> categoryIds = fcds.getCategoryIdsForFlashcardId(flashcard.getId());
         List<Category> categories = new ArrayList<>();
 
-        CategoryDataSource cds = new CategoryDataSource(database);
+        CategoryDataSource cds = new CategoryDataSource(getDatabase());
         for (Long categoryId : categoryIds) {
             categories.add(cds.getById(categoryId));
         }
