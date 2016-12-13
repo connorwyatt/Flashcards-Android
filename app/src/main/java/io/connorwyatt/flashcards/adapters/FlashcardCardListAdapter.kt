@@ -22,6 +22,11 @@ class FlashcardCardListAdapter :
     private var categoryFilter: Long? = null
     private var onCardClickListener: OnCardClickListener? = null
 
+    init
+    {
+        setHasStableIds(true)
+    }
+
     fun setItems(flashcards: List<Flashcard>)
     {
         this.flashcards = flashcards
@@ -53,41 +58,34 @@ class FlashcardCardListAdapter :
         val context = holder.layout.context
 
         val fts = FlashcardTestService(context)
-        val averageRating = fts.getAverageRatingForFlashcard(currentFlashcard.id!!)
+        val averageRating = fts.getAverageRatingForFlashcard(currentFlashcard.id!!);
 
-        if (averageRating == null)
-        {
-            holder.rating.setProgress(0.0)
-        }
-        else
-        {
-            var color: Int? = null
+        var colorId: Int = R.color.colorGrey
 
+        averageRating?.let {
             when
             {
                 averageRating > 2.0 / 3.0 ->
                 {
-                    val colorId = R.color.colorPositive
-                    color = ContextCompat.getColor(context, colorId)
+                    colorId = R.color.colorPositive
                 }
                 averageRating < 1.0 / 3.0 ->
                 {
-                    val colorId = R.color.colorNegative
-                    color = ContextCompat.getColor(context, colorId)
+                    colorId = R.color.colorNegative
                 }
                 else                      ->
                 {
-                    val colorId = R.color.colorNeutral
-                    color = ContextCompat.getColor(context, colorId)
+                    colorId = R.color.colorNeutral
                 }
             }
-
-            val backgroundColor = ColorUtils.setAlphaComponent(color, 128)
-
-            holder.rating.setBarColor(color)
-            holder.rating.setUnfilledBarColor(backgroundColor)
-            holder.rating.setProgress(averageRating)
         }
+
+        val color = ContextCompat.getColor(context, colorId)
+        val backgroundColor = ColorUtils.setAlphaComponent(color, 128)
+
+        holder.rating.setBarColor(color)
+        holder.rating.setUnfilledBarColor(backgroundColor)
+        holder.rating.setProgress(averageRating ?: 0.0)
 
         holder.title.text = currentFlashcard.title
         holder.text.text = currentFlashcard.text
@@ -107,6 +105,8 @@ class FlashcardCardListAdapter :
     {
         return viewFlashcards!!.size
     }
+
+    override fun getItemId(position: Int): Long = viewFlashcards!![position].id!!
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView?)
     {
