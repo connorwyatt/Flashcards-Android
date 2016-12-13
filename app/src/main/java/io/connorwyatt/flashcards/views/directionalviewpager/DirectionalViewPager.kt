@@ -8,7 +8,7 @@ import java.util.ArrayList
 
 class DirectionalViewPager : ViewPager
 {
-    val allowLeftSwipe = true
+    var allowLeftSwipe = true
     private val onPageSkipListeners = ArrayList<OnPageSkipListener>()
 
     constructor(context: Context) : super(context)
