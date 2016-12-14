@@ -19,10 +19,9 @@ class CategoryListAdapter(private var categoryListItems: List<ListItem>) : Recyc
     private val onDeleteListeners = ArrayList<(Category) -> Unit>()
     private val onEditListeners = ArrayList<(Category) -> Unit>()
 
-    override fun getItemCount(): Int
-    {
-        return categoryListItems.size
-    }
+    override fun getItemCount(): Int = categoryListItems.size
+
+    override fun getItemId(position: Int): Long = categoryListItems[position].category.id!!
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder
     {
@@ -44,7 +43,7 @@ class CategoryListAdapter(private var categoryListItems: List<ListItem>) : Recyc
                 categoryListItem.flashcardCount)
 
         var statusText: String = context.getString(R.string.category_status_no_data)
-        var statusTextColor: Int? = null
+        var statusTextColor: Int = ContextCompat.getColor(context, R.color.colorTextDisabled)
         var statusBarColor: Int = ContextCompat.getColor(context, R.color.colorGrey)
 
         if (categoryListItem.averageRating != null)
@@ -74,7 +73,7 @@ class CategoryListAdapter(private var categoryListItems: List<ListItem>) : Recyc
 
         holder.status.text = statusText
         holder.statusBar.setBackgroundColor(statusBarColor)
-        if (statusTextColor != null) holder.status.setTextColor(statusTextColor)
+        holder.status.setTextColor(statusTextColor)
 
         holder.menuButton.setOnClickListener { view ->
             val popup = PopupMenu(context, view, Gravity.RIGHT)
@@ -156,20 +155,11 @@ class CategoryListAdapter(private var categoryListItems: List<ListItem>) : Recyc
 
     class ViewHolder internal constructor(itemView: View) : RecyclerView.ViewHolder(itemView)
     {
-        internal val title: TextView
-        internal val count: TextView
-        internal val status: TextView
-        internal val statusBar: LinearLayout
-        internal val menuButton: ImageButton
-
-        init
-        {
-            title = itemView.findViewById(R.id.fragment_category_list_item_category_title) as TextView
-            count = itemView.findViewById(R.id.fragment_category_list_item_category_flashcard_count) as TextView
-            status = itemView.findViewById(R.id.fragment_category_list_item_category_status) as TextView
-            statusBar = itemView.findViewById(R.id.fragment_category_list_item_category_status_bar) as LinearLayout
-            menuButton = itemView.findViewById(R.id.fragment_category_list_item_category_menu) as ImageButton
-        }
+        internal val title: TextView = itemView.findViewById(R.id.fragment_category_list_item_category_title) as TextView
+        internal val count: TextView = itemView.findViewById(R.id.fragment_category_list_item_category_flashcard_count) as TextView
+        internal val status: TextView = itemView.findViewById(R.id.fragment_category_list_item_category_status) as TextView
+        internal val statusBar: LinearLayout = itemView.findViewById(R.id.fragment_category_list_item_category_status_bar) as LinearLayout
+        internal val menuButton: ImageButton = itemView.findViewById(R.id.fragment_category_list_item_category_menu) as ImageButton
     }
 
     data class ListItem(val category: Category, val flashcardCount: Int, val averageRating: Double?)
