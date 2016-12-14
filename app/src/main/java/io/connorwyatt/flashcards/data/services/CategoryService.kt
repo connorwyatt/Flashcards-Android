@@ -64,7 +64,7 @@ class CategoryService(private val context: Context)
         {
             dataSource.open()
 
-            dataSource.deleteById(category.id)
+            dataSource.deleteById(category.id!!)
         }
         finally
         {
@@ -80,7 +80,7 @@ class CategoryService(private val context: Context)
         {
             flashcardDataSource.open()
 
-            flashcardDataSource.deleteByCategory(category.id)
+            flashcardDataSource.deleteByCategory(category.id!!)
 
             delete(category)
         }
@@ -128,10 +128,10 @@ class CategoryService(private val context: Context)
         val flashcards = getFlashcardsForCategory(categoryId)
 
         val ratings = flashcards.mapNotNull { flashcard ->
-            flashcardTestService.getAverageRatingForFlashcard(flashcard.id)
+            flashcardTestService.getAverageRatingForFlashcard(flashcard.id!!)
         }
 
-        if (ratings.size > 0)
+        if (ratings.isNotEmpty())
         {
             return ratings.sum() / ratings.size.toDouble()
         }
