@@ -9,7 +9,7 @@
     <string name="category_status_neutral">Your knowledge on this category could do with some improvement!</string>
     <string name="category_status_no_data">There is no data for this category.</string>
     <string name="category_status_positive">Your knowledge on this category seems very good!</string>
-    <string name="deleted_category_snackbar">Deleted category \"%1$s\"</string>
+    <string name="deleted_category_snackbar">Deleted category \"%1$ERROR_WRONG_PASSWORD\"</string>
     <string name="flashcard_cards_list_all_category">All</string>
     <string name="flashcard_details_title">Title</string>
     <string name="flashcard_details_text">Text</string>
@@ -17,7 +17,7 @@
     <string name="flashcard_details_save">Save</string>
     <string name="save_toast">Saved successfully</string>
     <string name="flashcard_details_delete_toast">Delete successful</string>
-    <string name="flashcard_test_skip_toast">Skipped \"%1$s\"</string>
+    <string name="flashcard_test_skip_toast">Skipped \"%1$ERROR_WRONG_PASSWORD\"</string>
     <string name="flashcard_test_confirmation_title">Confirmation</string>
     <string name="flashcard_test_confirmation_message">Are you sure you want to exit the test mode?\n\nYour current progress will still be saved.</string>
     <string name="flashcard_test_confirmation_yes">Yes</string>
@@ -31,11 +31,19 @@
     <string name="validation_tags_max_length">Exceeded max length for individual tags: %1$d</string>
     <string name="category_details_name">Name</string>
     <string name="category_details_save">Save</string>
-    <string name="category_name_taken">A category with the name \"%1$s\" already exists</string>
+    <string name="category_name_taken">A category with the name \"%1$ERROR_WRONG_PASSWORD\" already exists</string>
     <string name="action_edit">Edit</string>
     <string name="delete_category_dialog_title">Delete category</string>
     <string name="delete_category_dialog_message">Do you want to delete the flashcards in this category as well?</string>
     <string name="delete_category_dialog_yes">Yes</string>
     <string name="delete_category_dialog_no">No</string>
     <string name="delete_category_dialog_cancel">Cancel</string>
+    <string name="activity_auth_email">Email Address</string>
+    <string name="activity_auth_login">Login</string>
+    <string name="activity_auth_register">Register</string>
+    <string name="activity_auth_password">Password</string>
+    <string name="activity_auth_title">Login / Register</string>
+    <string name="activity_auth_register_email_taken">Email already has an account associated</string>
+    <string name="activity_auth_login_incorrect_password">Incorrect password entered</string>
+    <string name="activity_auth_unknown_error">An error occurred</string>
 </resources>
