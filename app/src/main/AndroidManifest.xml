@@ -26,6 +26,7 @@
             android:name=".activities.CategoryDetailsActivity"
             android:parentActivityName=".activities.CategoriesActivity" />
         <activity android:name=".activities.AuthActivity" />
+        <activity android:name=".activities.SplashActivity" />
     </application>
 
 </manifest>
