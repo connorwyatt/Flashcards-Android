@@ -1,23 +1,31 @@
 package io.connorwyatt.flashcards.activities
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Switch
-import android.widget.Toast
-import com.google.firebase.auth.*
 import io.connorwyatt.flashcards.R
+import io.connorwyatt.flashcards.helpers.auth.AuthHelper
 import io.connorwyatt.flashcards.listeners.SimpleTextWatcher
 
 class AuthActivity : AppCompatActivity()
 {
-    private val ERROR_WRONG_PASSWORD = "ERROR_WRONG_PASSWORD"
-    private val ERROR_INVALID_EMAIL = "ERROR_INVALID_EMAIL"
-
-    private val firebaseAuth = FirebaseAuth.getInstance()
+    private val auth = AuthHelper.getInstance()
     private var formState = FormStates.LOGIN
     private var submitButton: Button? = null
+
+    override fun onStart()
+    {
+        super.onStart()
+
+        if (auth.isSignedIn)
+        {
+            onSignIn()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?): Unit
     {
@@ -92,77 +100,22 @@ class AuthActivity : AppCompatActivity()
 
     private fun signIn(email: String, password: String): Unit
     {
-        firebaseAuth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener {
+        auth.loginWithEmailAndPassword(email, password, {
                 if (it.isSuccessful)
                 {
-                    Toast.makeText(this, it.result.user.uid, Toast.LENGTH_LONG).show()
-                }
-                else
-                {
-                    it.exception?.let {
-                        if (it is FirebaseAuthException)
-                        {
-                            handleAuthException(it)
-                        }
-                    }
-                }
+                onSignIn()
             }
+        })
     }
 
     private fun register(email: String, password: String): Unit
     {
-        firebaseAuth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener {
+        auth.registerWithEmailAndPassword(email, password, {
                 if (it.isSuccessful)
                 {
-                    Toast.makeText(this, it.result.user.uid, Toast.LENGTH_LONG).show()
-                }
-                else
-                {
-                    it.exception?.let {
-                        if (it is FirebaseAuthException)
-                        {
-                            handleAuthException(it)
-                        }
-                    }
-                }
-            }
-    }
-
-    private fun handleAuthException(exception: FirebaseAuthException): Unit
-    {
-        var message: String = getString(R.string.activity_auth_unknown_error)
-
-        when (exception)
-        {
-            is FirebaseAuthWeakPasswordException       ->
-            {
-                exception.reason?.let {
-                    message = it
-                }
-            }
-            is FirebaseAuthInvalidCredentialsException ->
-            {
-                when (exception.errorCode)
-                {
-                    ERROR_WRONG_PASSWORD ->
-                    {
-                        message = getString(R.string.activity_auth_login_incorrect_password)
-                    }
-                    ERROR_INVALID_EMAIL  ->
-                    {
-                        message = getString(R.string.activity_auth_login_incorrect_password)
-                    }
-                }
-            }
-            is FirebaseAuthUserCollisionException      ->
-            {
-                message = getString(R.string.activity_auth_register_email_taken)
-            }
+                onSignIn()
         }
-
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+        })
     }
 
     private fun getUserInput(): UserInput
@@ -230,6 +183,11 @@ class AuthActivity : AppCompatActivity()
             }
             else                  -> return null
         }
+    }
+
+    private fun onSignIn()
+    {
+        finish()
     }
 
     private data class UserInput(val email: String, val password: String)
