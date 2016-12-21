@@ -6,8 +6,10 @@ import io.connorwyatt.flashcards.helpers.auth.exceptions.*
 
 class AuthHelper private constructor(private val firebaseAuth: FirebaseAuth)
 {
-    val currentUser: FirebaseUser? = firebaseAuth.currentUser
-    val isSignedIn: Boolean = currentUser !== null
+    val currentUser: FirebaseUser?
+        get() = firebaseAuth.currentUser
+    val isSignedIn: Boolean
+        get() = currentUser !== null
 
     fun loginWithEmailAndPassword(email: String,
                                   password: String,
