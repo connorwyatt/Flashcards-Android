@@ -15,4 +15,11 @@ open class BaseActivity : AppCompatActivity()
             AuthActivity.startActivity(this)
         }
     }
+
+    fun signOut(): Unit
+    {
+        auth.signOut()
+
+        recreate()
+    }
 }
