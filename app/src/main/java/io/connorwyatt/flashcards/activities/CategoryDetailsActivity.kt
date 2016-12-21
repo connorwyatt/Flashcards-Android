@@ -20,7 +20,7 @@ import io.connorwyatt.flashcards.data.entities.Category
 import io.connorwyatt.flashcards.data.entities.FlashcardTest
 import io.connorwyatt.flashcards.data.services.CategoryService
 
-class CategoryDetailsActivity : AppCompatActivity()
+class CategoryDetailsActivity : BaseActivity()
 {
     private var category: Category = Category()
     private var name: TextInputEditText? = null

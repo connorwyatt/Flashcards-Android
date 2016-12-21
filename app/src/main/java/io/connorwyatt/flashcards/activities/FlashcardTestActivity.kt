@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.fragments.FlashcardTestFragment
 
-class FlashcardTestActivity : AppCompatActivity()
+class FlashcardTestActivity : BaseActivity()
 {
     var flashcardTestFragment: FlashcardTestFragment? = null
         private set

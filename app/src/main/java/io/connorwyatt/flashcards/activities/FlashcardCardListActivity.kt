@@ -18,7 +18,7 @@ import io.connorwyatt.flashcards.data.entities.Flashcard
 import io.connorwyatt.flashcards.data.services.CategoryService
 import io.connorwyatt.flashcards.data.services.FlashcardService
 
-class FlashcardCardListActivity : AppCompatActivity()
+class FlashcardCardListActivity : BaseActivity()
 {
     private var adapter: FlashcardCardListAdapter? = null
     private var allCategory: Category? = null

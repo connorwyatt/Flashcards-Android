@@ -16,7 +16,7 @@ import io.connorwyatt.flashcards.adapters.CategoryListAdapter
 import io.connorwyatt.flashcards.data.entities.Category
 import io.connorwyatt.flashcards.data.services.CategoryService
 
-class CategoriesActivity : AppCompatActivity()
+class CategoriesActivity : BaseActivity()
 {
     private val categoryService = CategoryService(this)
     private var categoryItems: MutableList<CategoryListAdapter.ListItem> = mutableListOf()

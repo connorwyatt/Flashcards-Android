@@ -92,7 +92,7 @@ class AuthActivity : AppCompatActivity()
 
             when (formState)
             {
-                FormStates.LOGIN    -> signIn(email, password)
+                FormStates.LOGIN -> signIn(email, password)
                 FormStates.REGISTER -> register(email, password)
             }
         }
@@ -101,8 +101,8 @@ class AuthActivity : AppCompatActivity()
     private fun signIn(email: String, password: String): Unit
     {
         auth.loginWithEmailAndPassword(email, password, {
-                if (it.isSuccessful)
-                {
+            if (it.isSuccessful)
+            {
                 onSignIn()
             }
         })
@@ -111,10 +111,10 @@ class AuthActivity : AppCompatActivity()
     private fun register(email: String, password: String): Unit
     {
         auth.registerWithEmailAndPassword(email, password, {
-                if (it.isSuccessful)
-                {
+            if (it.isSuccessful)
+            {
                 onSignIn()
-        }
+            }
         })
     }
 
@@ -143,7 +143,7 @@ class AuthActivity : AppCompatActivity()
 
         when (formState)
         {
-            FormStates.LOGIN    -> label = getString(R.string.activity_auth_login)
+            FormStates.LOGIN -> label = getString(R.string.activity_auth_login)
             FormStates.REGISTER -> label = getString(R.string.activity_auth_register)
         }
 
@@ -167,7 +167,7 @@ class AuthActivity : AppCompatActivity()
             {
                 return getString(R.string.validation_max_length, email.length, 255)
             }
-            else               -> return null
+            else -> return null
         }
     }
 
@@ -181,7 +181,7 @@ class AuthActivity : AppCompatActivity()
             {
                 return getString(R.string.validation_required)
             }
-            else                  -> return null
+            else -> return null
         }
     }
 

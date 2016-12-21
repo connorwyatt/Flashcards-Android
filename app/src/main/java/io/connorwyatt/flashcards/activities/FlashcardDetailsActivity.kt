@@ -22,7 +22,7 @@ import io.connorwyatt.flashcards.data.services.CategoryService
 import io.connorwyatt.flashcards.data.services.FlashcardService
 import java.util.ArrayList
 
-class FlashcardDetailsActivity : AppCompatActivity()
+class FlashcardDetailsActivity : BaseActivity()
 {
     private var flashcard: Flashcard? = Flashcard()
     private var titleLayout: TextInputLayout? = null
