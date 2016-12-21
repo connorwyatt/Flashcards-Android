@@ -194,4 +194,14 @@ class AuthActivity : AppCompatActivity()
 
     enum class FormStates
     { LOGIN, REGISTER }
+
+    companion object
+    {
+        fun startActivity(context: Context)
+        {
+            val intent = Intent(context, AuthActivity::class.java)
+
+            context.startActivity(intent)
+        }
+    }
 }
