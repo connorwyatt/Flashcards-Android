@@ -51,16 +51,8 @@ class FlashcardDataSource
             flashcard.id = dataSnapshot.key
 
             val categorySingles =
-                dataSnapshot.child("_relationships").child("category").children.mapNotNull {
-                    if (it.getValue(Boolean::class.java))
-                    {
-                        return@mapNotNull categoryDataSource.getById(it.key)
-                    }
-                    else
-                    {
-                        return@mapNotNull null
-                    }
-                }
+                dataSnapshot.child("_relationships").child("category").children
+                    .map { categoryDataSource.getById(it.key) }
 
             Observable
                 .combineLatest(categorySingles, { it.asList() as List<Category> })
