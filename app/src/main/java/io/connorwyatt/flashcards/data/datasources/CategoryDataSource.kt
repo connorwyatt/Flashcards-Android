@@ -12,6 +12,27 @@ class CategoryDataSource
     private val database = FirebaseDatabase.getInstance().reference
     private val authHelper = AuthHelper.getInstance()
 
+    fun getAll(): Observable<List<Category>>
+    {
+        return Observable.create { observer ->
+            authHelper.currentUser?.uid?.let {
+                getCategoriesQuery(userId = it).addListenerForSingleValueEvent(
+                    object : SimpleValueEventListener()
+                    {
+                        override fun onDataChange(dataSnapshot: DataSnapshot?)
+                        {
+                            val categories = dataSnapshot?.children
+                                ?.map { categoryFromDataSnapshot(it) }
+
+                            observer.onNext(categories)
+                            observer.onComplete()
+                        }
+                    }
+                )
+            }
+        }
+    }
+
     fun getById(id: String): Observable<Category>
     {
         return Observable.create { observer ->
@@ -32,8 +53,11 @@ class CategoryDataSource
         }
     }
 
+    private fun getCategoriesQuery(userId: String) =
+        database.child("users").child(userId).child("category")
+
     private fun getCategoryQuery(userId: String, categoryId: String) =
-        database.child("users").child(userId).child("category").child(categoryId)
+        getCategoriesQuery(userId).child(categoryId)
 
     private fun categoryFromDataSnapshot(dataSnapshot: DataSnapshot): Category
     {

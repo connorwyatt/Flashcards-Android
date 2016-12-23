@@ -67,7 +67,7 @@ class FlashcardCardListActivity : BaseActivity()
     {
         when (item.itemId)
         {
-            R.id.action_test                   ->
+            R.id.action_test ->
             {
                 if (allCategory == filterCategory)
                 {
@@ -85,7 +85,7 @@ class FlashcardCardListActivity : BaseActivity()
                 CategoriesActivity.startActivity(this)
                 return true
             }
-            else                               -> return super.onOptionsItemSelected(item)
+            else -> return super.onOptionsItemSelected(item)
         }
     }
 
