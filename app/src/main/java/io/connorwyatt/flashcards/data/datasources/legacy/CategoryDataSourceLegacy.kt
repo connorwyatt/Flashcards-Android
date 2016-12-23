@@ -1,18 +1,18 @@
-package io.connorwyatt.flashcards.data.datasources
+package io.connorwyatt.flashcards.data.datasources.legacy
 
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import io.connorwyatt.flashcards.data.contracts.CategoryContract
-import io.connorwyatt.flashcards.data.entities.BaseColumnsTimeline
-import io.connorwyatt.flashcards.data.entities.Category
+import io.connorwyatt.flashcards.data.entities.legacy.BaseColumnsTimelineLegacy
+import io.connorwyatt.flashcards.data.entities.legacy.CategoryLegacy
 import io.connorwyatt.flashcards.exceptions.SQLNoRowsAffectedException
 import java.util.ArrayList
 
-class CategoryDataSource : BaseDataSource
+class CategoryDataSourceLegacy : BaseDataSourceLegacy
 {
-    private val allColumns = arrayOf(BaseColumnsTimeline._ID, CategoryContract.Columns.NAME)
+    private val allColumns = arrayOf(BaseColumnsTimelineLegacy._ID, CategoryContract.Columns.NAME)
 
     constructor(context: Context) : super(context)
     {
@@ -22,10 +22,10 @@ class CategoryDataSource : BaseDataSource
     {
     }
 
-    val all: List<Category>
+    val all: List<CategoryLegacy>
         get()
         {
-            val categories = ArrayList<Category>()
+            val categories = ArrayList<CategoryLegacy>()
 
             val cursor = database!!
                 .query(CategoryContract.TABLE_NAME, allColumns, null, null, null, null, null)
@@ -44,10 +44,10 @@ class CategoryDataSource : BaseDataSource
             return categories
         }
 
-    fun getById(id: Long): Category
+    fun getById(id: Long): CategoryLegacy
     {
         val cursor = database!!.query(CategoryContract.TABLE_NAME,
-                                      allColumns, BaseColumnsTimeline._ID + " = " + id, null,
+                                      allColumns, BaseColumnsTimelineLegacy._ID + " = " + id, null,
                                       null, null, null)
 
         cursor.moveToFirst()
@@ -59,9 +59,9 @@ class CategoryDataSource : BaseDataSource
         return category
     }
 
-    fun getByName(name: String): Category?
+    fun getByName(name: String): CategoryLegacy?
     {
-        var category: Category? = null
+        var category: CategoryLegacy? = null
 
         val cursor = database!!.query(
             CategoryContract.TABLE_NAME, allColumns,
@@ -79,7 +79,7 @@ class CategoryDataSource : BaseDataSource
         return category
     }
 
-    fun save(category: Category): Category
+    fun save(category: CategoryLegacy): CategoryLegacy
     {
         val values = ContentValues()
         values.put(CategoryContract.Columns.NAME, category.name)
@@ -97,7 +97,7 @@ class CategoryDataSource : BaseDataSource
             addUpdateTimestamp(values)
             val rowsAffected = database!!.update(CategoryContract.TABLE_NAME,
                                                  values,
-                                                 BaseColumnsTimeline._ID + " = " + savedCategoryId,
+                                                 BaseColumnsTimelineLegacy._ID + " = " + savedCategoryId,
                                                  null)
 
             if (rowsAffected == 0)
@@ -116,7 +116,7 @@ class CategoryDataSource : BaseDataSource
             database!!.beginTransaction()
 
             val rowsAffected = database!!.delete(CategoryContract.TABLE_NAME,
-                                                 BaseColumnsTimeline._ID + " = " + id, null)
+                                                 BaseColumnsTimelineLegacy._ID + " = " + id, null)
 
             if (rowsAffected == 0)
             {
@@ -134,9 +134,9 @@ class CategoryDataSource : BaseDataSource
         database!!.endTransaction()
     }
 
-    private fun cursorToCategory(cursor: Cursor): Category
+    private fun cursorToCategory(cursor: Cursor): CategoryLegacy
     {
-        val category = Category()
+        val category = CategoryLegacy()
 
         category.id = cursor.getLong(0)
         category.name = cursor.getString(1)

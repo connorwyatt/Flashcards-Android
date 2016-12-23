@@ -1,7 +1,6 @@
 package io.connorwyatt.flashcards.activities
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
@@ -13,26 +12,26 @@ import android.widget.Spinner
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.adapters.CategoryNameArrayAdapter
 import io.connorwyatt.flashcards.adapters.FlashcardCardListAdapter
-import io.connorwyatt.flashcards.data.entities.Category
-import io.connorwyatt.flashcards.data.entities.Flashcard
-import io.connorwyatt.flashcards.data.services.CategoryService
-import io.connorwyatt.flashcards.data.services.FlashcardService
+import io.connorwyatt.flashcards.data.entities.legacy.CategoryLegacy
+import io.connorwyatt.flashcards.data.entities.legacy.FlashcardLegacy
+import io.connorwyatt.flashcards.data.services.legacy.CategoryServiceLegacy
+import io.connorwyatt.flashcards.data.services.legacy.FlashcardServiceLegacy
 
 class FlashcardCardListActivity : BaseActivity()
 {
     private var adapter: FlashcardCardListAdapter? = null
-    private var allCategory: Category? = null
-    private var filterCategory: Category? = null
+    private var allCategory: CategoryLegacy? = null
+    private var filterCategory: CategoryLegacy? = null
 
-    private val allCategories: List<Category>
+    private val allCategories: List<CategoryLegacy>
         get()
         {
-            val categoryService = CategoryService(this)
+            val categoryService = CategoryServiceLegacy(this)
             val categories = categoryService.getAll().toMutableList()
 
             if (allCategory == null)
             {
-                allCategory = Category()
+                allCategory = CategoryLegacy()
                 allCategory!!.name = getString(R.string.flashcard_cards_list_all_category)
             }
 
@@ -116,7 +115,7 @@ class FlashcardCardListActivity : BaseActivity()
         adapter!!.setOnCardClickListener(
             object : FlashcardCardListAdapter.OnCardClickListener
             {
-                override fun onClick(flashcard: Flashcard)
+                override fun onClick(flashcard: FlashcardLegacy)
                 {
                     FlashcardDetailsActivity.startActivityWithFlashcard(
                         this@FlashcardCardListActivity, flashcard)
@@ -143,7 +142,7 @@ class FlashcardCardListActivity : BaseActivity()
             override fun onItemSelected(adapterView: AdapterView<*>, view: View?, position: Int,
                                         id: Long)
             {
-                val category = adapterView.getItemAtPosition(position) as Category
+                val category = adapterView.getItemAtPosition(position) as CategoryLegacy
 
                 filterCategory = category
 
@@ -180,7 +179,7 @@ class FlashcardCardListActivity : BaseActivity()
 
     private fun updateAdapterData()
     {
-        val flashcardService = FlashcardService(this)
+        val flashcardService = FlashcardServiceLegacy(this)
         val flashcards = flashcardService.getAll()
 
         adapter!!.setItems(flashcards)

@@ -11,13 +11,13 @@ import android.widget.LinearLayout
 import android.widget.PopupMenu
 import android.widget.TextView
 import io.connorwyatt.flashcards.R
-import io.connorwyatt.flashcards.data.entities.Category
+import io.connorwyatt.flashcards.data.entities.legacy.CategoryLegacy
 import java.util.ArrayList
 
 class CategoryListAdapter(private var categoryListItems: List<ListItem>) : RecyclerView.Adapter<CategoryListAdapter.ViewHolder>()
 {
-    private val onDeleteListeners = ArrayList<(Category) -> Unit>()
-    private val onEditListeners = ArrayList<(Category) -> Unit>()
+    private val onDeleteListeners = ArrayList<(CategoryLegacy) -> Unit>()
+    private val onEditListeners = ArrayList<(CategoryLegacy) -> Unit>()
 
     override fun getItemCount(): Int = categoryListItems.size
 
@@ -109,12 +109,12 @@ class CategoryListAdapter(private var categoryListItems: List<ListItem>) : Recyc
         notifyDataSetChanged()
     }
 
-    fun addOnDeleteListener(listener: (Category) -> Unit)
+    fun addOnDeleteListener(listener: (CategoryLegacy) -> Unit)
     {
         onDeleteListeners.add(listener)
     }
 
-    fun removeOnDeleteListener(listener: (Category) -> Unit)
+    fun removeOnDeleteListener(listener: (CategoryLegacy) -> Unit)
     {
         onDeleteListeners.remove(listener)
     }
@@ -124,12 +124,12 @@ class CategoryListAdapter(private var categoryListItems: List<ListItem>) : Recyc
         onDeleteListeners.clear()
     }
 
-    fun addOnEditListener(listener: (Category) -> Unit)
+    fun addOnEditListener(listener: (CategoryLegacy) -> Unit)
     {
         onEditListeners.add(listener)
     }
 
-    fun removeOnEditListener(listener: (Category) -> Unit)
+    fun removeOnEditListener(listener: (CategoryLegacy) -> Unit)
     {
         onEditListeners.remove(listener)
     }
@@ -139,14 +139,14 @@ class CategoryListAdapter(private var categoryListItems: List<ListItem>) : Recyc
         onEditListeners.clear()
     }
 
-    private fun dispatchOnDeleteEvent(category: Category)
+    private fun dispatchOnDeleteEvent(category: CategoryLegacy)
     {
         onDeleteListeners.forEach { listener ->
             listener(category)
         }
     }
 
-    private fun dispatchOnEditEvent(category: Category)
+    private fun dispatchOnEditEvent(category: CategoryLegacy)
     {
         onEditListeners.forEach { listener ->
             listener(category)
@@ -162,5 +162,5 @@ class CategoryListAdapter(private var categoryListItems: List<ListItem>) : Recyc
         internal val menuButton: ImageButton = itemView.findViewById(R.id.fragment_category_list_item_category_menu) as ImageButton
     }
 
-    data class ListItem(val category: Category, val flashcardCount: Int, val averageRating: Double?)
+    data class ListItem(val category: CategoryLegacy, val flashcardCount: Int, val averageRating: Double?)
 }

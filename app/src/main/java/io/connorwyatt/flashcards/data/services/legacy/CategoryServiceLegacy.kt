@@ -1,16 +1,16 @@
-package io.connorwyatt.flashcards.data.services
+package io.connorwyatt.flashcards.data.services.legacy
 
 import android.content.Context
-import io.connorwyatt.flashcards.data.datasources.CategoryDataSource
-import io.connorwyatt.flashcards.data.datasources.FlashcardDataSource
-import io.connorwyatt.flashcards.data.entities.Category
-import io.connorwyatt.flashcards.data.entities.Flashcard
+import io.connorwyatt.flashcards.data.datasources.legacy.CategoryDataSourceLegacy
+import io.connorwyatt.flashcards.data.datasources.legacy.FlashcardDataSourceLegacy
+import io.connorwyatt.flashcards.data.entities.legacy.CategoryLegacy
+import io.connorwyatt.flashcards.data.entities.legacy.FlashcardLegacy
 
-class CategoryService(private val context: Context)
+class CategoryServiceLegacy(private val context: Context)
 {
-    fun getById(categoryId: Long): Category
+    fun getById(categoryId: Long): CategoryLegacy
     {
-        val dataSource = CategoryDataSource(context)
+        val dataSource = CategoryDataSourceLegacy(context)
 
         try
         {
@@ -24,9 +24,9 @@ class CategoryService(private val context: Context)
         }
     }
 
-    fun getAll(): List<Category>
+    fun getAll(): List<CategoryLegacy>
     {
-        val dataSource = CategoryDataSource(context)
+        val dataSource = CategoryDataSourceLegacy(context)
 
         try
         {
@@ -40,9 +40,9 @@ class CategoryService(private val context: Context)
         }
     }
 
-    fun save(category: Category): Category
+    fun save(category: CategoryLegacy): CategoryLegacy
     {
-        val dataSource = CategoryDataSource(context)
+        val dataSource = CategoryDataSourceLegacy(context)
 
         try
         {
@@ -56,9 +56,9 @@ class CategoryService(private val context: Context)
         }
     }
 
-    fun delete(category: Category): Unit
+    fun delete(category: CategoryLegacy): Unit
     {
-        val dataSource = CategoryDataSource(context)
+        val dataSource = CategoryDataSourceLegacy(context)
 
         try
         {
@@ -72,9 +72,9 @@ class CategoryService(private val context: Context)
         }
     }
 
-    fun deleteWithFlashcards(category: Category): Unit
+    fun deleteWithFlashcards(category: CategoryLegacy): Unit
     {
-        val flashcardDataSource = FlashcardDataSource(context)
+        val flashcardDataSource = FlashcardDataSourceLegacy(context)
 
         try
         {
@@ -90,9 +90,9 @@ class CategoryService(private val context: Context)
         }
     }
 
-    fun getFlashcardsForCategory(categoryId: Long): List<Flashcard>
+    fun getFlashcardsForCategory(categoryId: Long): List<FlashcardLegacy>
     {
-        val dataSource = FlashcardDataSource(context)
+        val dataSource = FlashcardDataSourceLegacy(context)
 
         try
         {
@@ -108,7 +108,7 @@ class CategoryService(private val context: Context)
 
     fun isCategoryNameTaken(name: String): Boolean
     {
-        val dataSource = CategoryDataSource(context)
+        val dataSource = CategoryDataSourceLegacy(context)
 
         try
         {
@@ -124,7 +124,7 @@ class CategoryService(private val context: Context)
 
     fun getAverageRatingForCategory(categoryId: Long): Double?
     {
-        val flashcardTestService = FlashcardTestService(context)
+        val flashcardTestService = FlashcardTestServiceLegacy(context)
         val flashcards = getFlashcardsForCategory(categoryId)
 
         val ratings = flashcards.mapNotNull { flashcard ->

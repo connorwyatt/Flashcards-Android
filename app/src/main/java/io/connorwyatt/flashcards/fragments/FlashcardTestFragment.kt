@@ -9,9 +9,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.adapters.FlashcardTestPagerAdapter
-import io.connorwyatt.flashcards.data.entities.Flashcard
-import io.connorwyatt.flashcards.data.entities.FlashcardTest
-import io.connorwyatt.flashcards.data.services.FlashcardService
+import io.connorwyatt.flashcards.data.entities.legacy.FlashcardLegacy
+import io.connorwyatt.flashcards.data.entities.legacy.FlashcardTestLegacy
+import io.connorwyatt.flashcards.data.services.legacy.FlashcardServiceLegacy
 import io.connorwyatt.flashcards.interfaces.IPerformanceBreakdown
 import io.connorwyatt.flashcards.utils.ListUtils
 import io.connorwyatt.flashcards.views.directionalviewpager.DirectionalViewPager
@@ -23,11 +23,11 @@ class FlashcardTestFragment : Fragment()
 {
     val performanceBreakdown = createPerformanceBreakdown()
     private var initialCount: Int = 0
-    private val flashcardTestMap = HashMap<Long, FlashcardTest>()
+    private val flashcardTestMap = HashMap<Long, FlashcardTestLegacy>()
     private val skippedFlashcards = ArrayList<Long>()
     private var flashcardTestPagerAdapter: FlashcardTestPagerAdapter? = null
     private var progressBar: ProgressBar? = null
-    private var flashcards: MutableList<Flashcard>? = null
+    private var flashcards: MutableList<FlashcardLegacy>? = null
     private val changeListeners = ArrayList<IPerformanceBreakdown.OnPerformanceBreakdownChangeListener>()
 
     private val completedCardsCount: Int
@@ -65,7 +65,7 @@ class FlashcardTestFragment : Fragment()
             {
                 override fun onPageSkip(skippedItem: Any)
                 {
-                    val flashcard = skippedItem as Flashcard
+                    val flashcard = skippedItem as FlashcardLegacy
 
                     if (!flashcardTestMap.containsKey(flashcard.id))
                     {
@@ -93,7 +93,7 @@ class FlashcardTestFragment : Fragment()
 
         val intent = activity.intent
 
-        val flashcardService = FlashcardService(activity)
+        val flashcardService = FlashcardServiceLegacy(activity)
         if (intent.hasExtra(EXTRA_KEYS.CATEGORY_ID))
         {
             flashcards = flashcardService
@@ -146,7 +146,7 @@ class FlashcardTestFragment : Fragment()
         }
     }
 
-    fun updateFlashcardTest(flashcardTest: FlashcardTest)
+    fun updateFlashcardTest(flashcardTest: FlashcardTestLegacy)
     {
         flashcardTestMap.put(flashcardTest.flashcardId!!, flashcardTest)
         dispatchOnPerformanceBreakdownChangeEvent()
@@ -172,19 +172,19 @@ class FlashcardTestFragment : Fragment()
         return object : IPerformanceBreakdown
         {
             override val negativeCount: Int
-                get() = getRatingCount(FlashcardTest.Rating.NEGATIVE)
+                get() = getRatingCount(FlashcardTestLegacy.Rating.NEGATIVE)
 
             override val negativePercent: Double
                 get() = getPercentage(negativeCount, ratedTotal)
 
             override val neutralCount: Int
-                get() = getRatingCount(FlashcardTest.Rating.NEUTRAL)
+                get() = getRatingCount(FlashcardTestLegacy.Rating.NEUTRAL)
 
             override val neutralPercent: Double
                 get() = getPercentage(neutralCount, ratedTotal)
 
             override val positiveCount: Int
-                get() = getRatingCount(FlashcardTest.Rating.POSITIVE)
+                get() = getRatingCount(FlashcardTestLegacy.Rating.POSITIVE)
 
             override val positivePercent: Double
                 get() = getPercentage(positiveCount, ratedTotal)
@@ -216,7 +216,7 @@ class FlashcardTestFragment : Fragment()
                 changeListeners.clear()
             }
 
-            private fun getRatingCount(rating: FlashcardTest.Rating): Int
+            private fun getRatingCount(rating: FlashcardTestLegacy.Rating): Int
             {
                 return ListUtils.filter(ArrayList(flashcardTestMap.values)) { flashcardTest -> flashcardTest.rating === rating }.size
             }

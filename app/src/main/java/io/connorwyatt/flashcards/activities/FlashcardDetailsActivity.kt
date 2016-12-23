@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.support.design.widget.TextInputEditText
 import android.support.design.widget.TextInputLayout
 import android.support.v4.app.NavUtils
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.text.Editable
 import android.text.TextWatcher
@@ -16,15 +15,15 @@ import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import io.connorwyatt.flashcards.R
-import io.connorwyatt.flashcards.data.entities.Category
-import io.connorwyatt.flashcards.data.entities.Flashcard
-import io.connorwyatt.flashcards.data.services.CategoryService
-import io.connorwyatt.flashcards.data.services.FlashcardService
+import io.connorwyatt.flashcards.data.entities.legacy.CategoryLegacy
+import io.connorwyatt.flashcards.data.entities.legacy.FlashcardLegacy
+import io.connorwyatt.flashcards.data.services.legacy.CategoryServiceLegacy
+import io.connorwyatt.flashcards.data.services.legacy.FlashcardServiceLegacy
 import java.util.ArrayList
 
 class FlashcardDetailsActivity : BaseActivity()
 {
-    private var flashcard: Flashcard? = Flashcard()
+    private var flashcard: FlashcardLegacy? = FlashcardLegacy()
     private var titleLayout: TextInputLayout? = null
     private var title: TextInputEditText? = null
     private var titleTouched = false
@@ -90,7 +89,7 @@ class FlashcardDetailsActivity : BaseActivity()
     private val isValid: Boolean
         get() = titleError == null && textError == null && categoriesError == null
 
-    private fun setViewFromFlashcard(flashcard: Flashcard)
+    private fun setViewFromFlashcard(flashcard: FlashcardLegacy)
     {
         if (flashcard.title != null && flashcard.title!!.isNotEmpty())
             title!!.setText(flashcard.title)
@@ -128,7 +127,7 @@ class FlashcardDetailsActivity : BaseActivity()
         {
             val id = intent.getLongExtra(INTENT_EXTRAS.FLASHCARD_ID, -1)
 
-            val flashcardService = FlashcardService(this)
+            val flashcardService = FlashcardServiceLegacy(this)
             flashcard = flashcardService.getById(id)
 
             setViewFromFlashcard(flashcard!!)
@@ -137,7 +136,7 @@ class FlashcardDetailsActivity : BaseActivity()
         {
             val categoryId = intent.getLongExtra(INTENT_EXTRAS.CATEGORY_ID, -1)
 
-            val categoryService = CategoryService(this)
+            val categoryService = CategoryServiceLegacy(this)
             val category = categoryService.getById(categoryId)
 
             flashcard!!.categories.add(category)
@@ -186,7 +185,7 @@ class FlashcardDetailsActivity : BaseActivity()
         flashcard!!.categories =
             processCategoriesString(categories!!.text.toString()).toMutableList()
 
-        val flashcardService = FlashcardService(this)
+        val flashcardService = FlashcardServiceLegacy(this)
         flashcard = flashcardService.save(flashcard!!)
 
         showToast(R.string.save_toast)
@@ -197,7 +196,7 @@ class FlashcardDetailsActivity : BaseActivity()
 
     private fun delete()
     {
-        val flashcardService = FlashcardService(this)
+        val flashcardService = FlashcardServiceLegacy(this)
         flashcardService.delete(flashcard!!)
 
         showToast(R.string.flashcard_details_delete_toast)
@@ -408,15 +407,15 @@ class FlashcardDetailsActivity : BaseActivity()
         return categories
     }
 
-    private fun processCategoriesString(categoriesString: String): List<Category>
+    private fun processCategoriesString(categoriesString: String): List<CategoryLegacy>
     {
-        val categories = ArrayList<Category>()
+        val categories = ArrayList<CategoryLegacy>()
 
         val categoryNames = splitCategoriesString(categoriesString)
 
         for (categoryName in categoryNames)
         {
-            val category = Category()
+            val category = CategoryLegacy()
             category.name = categoryName
             categories.add(category)
         }
@@ -440,7 +439,7 @@ class FlashcardDetailsActivity : BaseActivity()
             context.startActivity(intent)
         }
 
-        fun startActivityWithFlashcard(context: Context, flashcard: Flashcard)
+        fun startActivityWithFlashcard(context: Context, flashcard: FlashcardLegacy)
         {
             val intent = Intent(context, FlashcardDetailsActivity::class.java)
 
@@ -449,7 +448,7 @@ class FlashcardDetailsActivity : BaseActivity()
             context.startActivity(intent)
         }
 
-        fun startActivityWithCategory(context: Context, category: Category)
+        fun startActivityWithCategory(context: Context, category: CategoryLegacy)
         {
             val intent = Intent(context, FlashcardDetailsActivity::class.java)
 

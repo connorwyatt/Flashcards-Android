@@ -1,14 +1,14 @@
-package io.connorwyatt.flashcards.data.services
+package io.connorwyatt.flashcards.data.services.legacy
 
 import android.content.Context
-import io.connorwyatt.flashcards.data.datasources.FlashcardDataSource
-import io.connorwyatt.flashcards.data.entities.Flashcard
+import io.connorwyatt.flashcards.data.datasources.legacy.FlashcardDataSourceLegacy
+import io.connorwyatt.flashcards.data.entities.legacy.FlashcardLegacy
 
-class FlashcardService(private val context: Context)
+class FlashcardServiceLegacy(private val context: Context)
 {
-    fun getAll(): List<Flashcard>
+    fun getAll(): List<FlashcardLegacy>
     {
-        val dataSource = FlashcardDataSource(context)
+        val dataSource = FlashcardDataSourceLegacy(context)
 
         try
         {
@@ -22,9 +22,9 @@ class FlashcardService(private val context: Context)
         }
     }
 
-    fun getByCategory(categoryId: Long): List<Flashcard>
+    fun getByCategory(categoryId: Long): List<FlashcardLegacy>
     {
-        val dataSource = FlashcardDataSource(context)
+        val dataSource = FlashcardDataSourceLegacy(context)
 
         try
         {
@@ -38,9 +38,9 @@ class FlashcardService(private val context: Context)
         }
     }
 
-    fun getById(flashcardId: Long): Flashcard
+    fun getById(flashcardId: Long): FlashcardLegacy
     {
-        val dataSource = FlashcardDataSource(context)
+        val dataSource = FlashcardDataSourceLegacy(context)
 
         try
         {
@@ -54,9 +54,9 @@ class FlashcardService(private val context: Context)
         }
     }
 
-    fun save(flashcard: Flashcard): Flashcard
+    fun save(flashcard: FlashcardLegacy): FlashcardLegacy
     {
-        val dataSource = FlashcardDataSource(context)
+        val dataSource = FlashcardDataSourceLegacy(context)
 
         try
         {
@@ -70,9 +70,9 @@ class FlashcardService(private val context: Context)
         }
     }
 
-    fun delete(flashcard: Flashcard): Unit
+    fun delete(flashcard: FlashcardLegacy): Unit
     {
-        val dataSource = FlashcardDataSource(context)
+        val dataSource = FlashcardDataSourceLegacy(context)
 
         try
         {

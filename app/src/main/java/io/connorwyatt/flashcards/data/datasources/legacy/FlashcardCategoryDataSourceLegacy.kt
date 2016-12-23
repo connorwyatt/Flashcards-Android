@@ -1,4 +1,4 @@
-package io.connorwyatt.flashcards.data.datasources
+package io.connorwyatt.flashcards.data.datasources.legacy
 
 import android.content.ContentValues
 import android.content.Context
@@ -8,7 +8,7 @@ import io.connorwyatt.flashcards.exceptions.SQLNoRowsAffectedException
 import io.connorwyatt.flashcards.utils.ListUtils
 import java.util.ArrayList
 
-class FlashcardCategoryDataSource : BaseDataSource
+class FlashcardCategoryDataSourceLegacy : BaseDataSourceLegacy
 {
     constructor(context: Context) : super(context)
     {

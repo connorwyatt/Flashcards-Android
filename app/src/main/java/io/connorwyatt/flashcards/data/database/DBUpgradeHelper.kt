@@ -4,7 +4,7 @@ import android.database.sqlite.SQLiteDatabase
 import io.connorwyatt.flashcards.data.contracts.CategoryContract
 import io.connorwyatt.flashcards.data.contracts.FlashcardCategoryContract
 import io.connorwyatt.flashcards.data.contracts.FlashcardTestContract
-import io.connorwyatt.flashcards.data.entities.BaseColumnsTimeline
+import io.connorwyatt.flashcards.data.entities.legacy.BaseColumnsTimelineLegacy
 import io.connorwyatt.flashcards.exceptions.DBUpgradeException
 
 object DBUpgradeHelper
@@ -40,7 +40,7 @@ object DBUpgradeHelper
      * Changes in between these versions were:
      *
      *
-     * - Category table was created.
+     * - CategoryLegacy table was created.
      * - FlashcardCategory table was created.
      */
     private fun upgrade5to6(db: SQLiteDatabase)
@@ -70,7 +70,7 @@ object DBUpgradeHelper
      * Changes in between these versions were:
      *
      *
-     * - FlashcardTest table was created.
+     * - FlashcardTestLegacy table was created.
      */
     private fun upgrade7to8(db: SQLiteDatabase)
     {
@@ -84,7 +84,7 @@ object DBUpgradeHelper
      * Changes in between these versions were:
      *
      *
-     * - The rating column in FlashcardTest has been changed to an integer.
+     * - The rating column in FlashcardTestLegacy has been changed to an integer.
      */
     private fun upgrade8to9(db: SQLiteDatabase)
     {
@@ -116,9 +116,9 @@ object DBUpgradeHelper
         db.execSQL(FlashcardCategoryContract.TABLE_CREATE)
         db.execSQL("INSERT INTO ${FlashcardCategoryContract.TABLE_NAME} " +
                    "SELECT " +
-                   "${BaseColumnsTimeline._ID}, " +
-                   "${BaseColumnsTimeline._CREATED_ON}, " +
-                   "${BaseColumnsTimeline._LAST_MODIFIED_ON}, " +
+                   "${BaseColumnsTimelineLegacy._ID}, " +
+                   "${BaseColumnsTimelineLegacy._CREATED_ON}, " +
+                   "${BaseColumnsTimelineLegacy._LAST_MODIFIED_ON}, " +
                    "${FlashcardCategoryContract.Columns.FLASHCARD_ID}, " +
                    "${FlashcardCategoryContract.Columns.CATEGORY_ID} " +
                    "FROM $tempTableName;"
@@ -132,9 +132,9 @@ object DBUpgradeHelper
         db.execSQL("ALTER TABLE ${FlashcardTestContract.TABLE_NAME} RENAME TO $tempTableName;")
         db.execSQL(FlashcardTestContract.TABLE_CREATE)
         db.execSQL("INSERT INTO ${FlashcardTestContract.TABLE_NAME} " +
-                   "SELECT ${BaseColumnsTimeline._ID}, " +
-                   "${BaseColumnsTimeline._CREATED_ON}, " +
-                   "${BaseColumnsTimeline._LAST_MODIFIED_ON}, " +
+                   "SELECT ${BaseColumnsTimelineLegacy._ID}, " +
+                   "${BaseColumnsTimelineLegacy._CREATED_ON}, " +
+                   "${BaseColumnsTimelineLegacy._LAST_MODIFIED_ON}, " +
                    "${FlashcardTestContract.Columns.FLASHCARD_ID}, " +
                    "${FlashcardTestContract.Columns.RATING} " +
                    "FROM $tempTableName;"

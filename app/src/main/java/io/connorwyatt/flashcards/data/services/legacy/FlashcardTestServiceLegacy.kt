@@ -1,15 +1,15 @@
-package io.connorwyatt.flashcards.data.services
+package io.connorwyatt.flashcards.data.services.legacy
 
 import android.content.Context
-import io.connorwyatt.flashcards.data.datasources.FlashcardTestDataSource
-import io.connorwyatt.flashcards.data.entities.FlashcardTest
+import io.connorwyatt.flashcards.data.datasources.legacy.FlashcardTestDataSourceLegacy
+import io.connorwyatt.flashcards.data.entities.legacy.FlashcardTestLegacy
 
-class FlashcardTestService(private val context: Context)
+class FlashcardTestServiceLegacy(private val context: Context)
 {
     fun getAverageRatingForFlashcard(id: Long): Double?
     {
-        val dataSource = FlashcardTestDataSource(context)
-        val flashcardTests: List<FlashcardTest>
+        val dataSource = FlashcardTestDataSourceLegacy(context)
+        val flashcardTests: List<FlashcardTestLegacy>
 
         try
         {
@@ -32,9 +32,9 @@ class FlashcardTestService(private val context: Context)
             {
                 when (flashcardTest.rating)
                 {
-                    FlashcardTest.Rating.POSITIVE -> total += 1.0
-                    FlashcardTest.Rating.NEUTRAL  -> total += 0.5
-                    FlashcardTest.Rating.NEGATIVE -> total += 0.0
+                    FlashcardTestLegacy.Rating.POSITIVE -> total += 1.0
+                    FlashcardTestLegacy.Rating.NEUTRAL -> total += 0.5
+                    FlashcardTestLegacy.Rating.NEGATIVE -> total += 0.0
                 }
             }
 
@@ -44,9 +44,9 @@ class FlashcardTestService(private val context: Context)
         return averageRating
     }
 
-    fun save(flashcardTest: FlashcardTest): FlashcardTest
+    fun save(flashcardTest: FlashcardTestLegacy): FlashcardTestLegacy
     {
-        val dataSource = FlashcardTestDataSource(context)
+        val dataSource = FlashcardTestDataSourceLegacy(context)
 
         try
         {

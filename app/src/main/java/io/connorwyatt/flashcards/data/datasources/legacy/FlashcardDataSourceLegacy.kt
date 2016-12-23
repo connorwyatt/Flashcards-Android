@@ -1,19 +1,19 @@
-package io.connorwyatt.flashcards.data.datasources
+package io.connorwyatt.flashcards.data.datasources.legacy
 
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import io.connorwyatt.flashcards.data.contracts.FlashcardContract
-import io.connorwyatt.flashcards.data.entities.BaseColumnsTimeline
-import io.connorwyatt.flashcards.data.entities.Category
-import io.connorwyatt.flashcards.data.entities.Flashcard
+import io.connorwyatt.flashcards.data.entities.legacy.BaseColumnsTimelineLegacy
+import io.connorwyatt.flashcards.data.entities.legacy.CategoryLegacy
+import io.connorwyatt.flashcards.data.entities.legacy.FlashcardLegacy
 import io.connorwyatt.flashcards.exceptions.SQLNoRowsAffectedException
 import java.util.ArrayList
 
-class FlashcardDataSource : BaseDataSource
+class FlashcardDataSourceLegacy : BaseDataSourceLegacy
 {
-    private val allColumns = arrayOf(BaseColumnsTimeline._ID,
+    private val allColumns = arrayOf(BaseColumnsTimelineLegacy._ID,
                                      FlashcardContract.Columns.TITLE,
                                      FlashcardContract.Columns.TEXT)
 
@@ -25,10 +25,10 @@ class FlashcardDataSource : BaseDataSource
     {
     }
 
-    val all: List<Flashcard>
+    val all: List<FlashcardLegacy>
         get()
         {
-            val flashcards = ArrayList<Flashcard>()
+            val flashcards = ArrayList<FlashcardLegacy>()
 
             val cursor = database!!.query(FlashcardContract.TABLE_NAME,
                                           allColumns, null, null, null, null, null)
@@ -47,11 +47,11 @@ class FlashcardDataSource : BaseDataSource
             return flashcards
         }
 
-    fun getById(id: Long): Flashcard
+    fun getById(id: Long): FlashcardLegacy
     {
         val cursor = database!!.query(FlashcardContract.TABLE_NAME,
                                       allColumns,
-                                      "${BaseColumnsTimeline._ID} = $id",
+                                      "${BaseColumnsTimelineLegacy._ID} = $id",
                                       null,
                                       null,
                                       null,
@@ -66,19 +66,19 @@ class FlashcardDataSource : BaseDataSource
         return flashcard
     }
 
-    fun getByCategory(categoryId: Long): List<Flashcard>
+    fun getByCategory(categoryId: Long): List<FlashcardLegacy>
     {
-        val fcds = FlashcardCategoryDataSource(database!!)
+        val fcds = FlashcardCategoryDataSourceLegacy(database!!)
         val flashcardIds = fcds.getFlashcardIdsForCategoryId(categoryId)
 
-        val flashcards = ArrayList<Flashcard>()
+        val flashcards = ArrayList<FlashcardLegacy>()
 
         flashcardIds.forEach { flashcards.add(getById(it)) }
 
         return flashcards
     }
 
-    fun save(flashcard: Flashcard): Flashcard
+    fun save(flashcard: FlashcardLegacy): FlashcardLegacy
     {
         val savedFlashcardId: Long
 
@@ -101,7 +101,7 @@ class FlashcardDataSource : BaseDataSource
                 savedFlashcardId = flashcard.id!!
                 addUpdateTimestamp(values)
                 val rowsAffected = database!!.update(FlashcardContract.TABLE_NAME, values,
-                                                     "${BaseColumnsTimeline._ID} = $savedFlashcardId",
+                                                     "${BaseColumnsTimelineLegacy._ID} = $savedFlashcardId",
                                                      null)
 
                 if (rowsAffected == 0)
@@ -114,7 +114,7 @@ class FlashcardDataSource : BaseDataSource
 
             val categoryIds = getIdsFromList(flashcard.categories)
 
-            val fcds = FlashcardCategoryDataSource(database!!)
+            val fcds = FlashcardCategoryDataSourceLegacy(database!!)
             fcds.updateFlashcardCategoryLinks(savedFlashcardId, categoryIds)
 
             database!!.setTransactionSuccessful()
@@ -137,7 +137,7 @@ class FlashcardDataSource : BaseDataSource
             database!!.beginTransaction()
 
             val rowsAffected = database!!.delete(FlashcardContract.TABLE_NAME,
-                                                 "${BaseColumnsTimeline._ID} = $id", null)
+                                                 "${BaseColumnsTimelineLegacy._ID} = $id", null)
 
             if (rowsAffected == 0)
             {
@@ -160,9 +160,9 @@ class FlashcardDataSource : BaseDataSource
         getByCategory(categoryId).forEach { deleteById(it.id!!) }
     }
 
-    private fun cursorToFlashcard(cursor: Cursor): Flashcard
+    private fun cursorToFlashcard(cursor: Cursor): FlashcardLegacy
     {
-        val flashcard = Flashcard()
+        val flashcard = FlashcardLegacy()
 
         flashcard.id = cursor.getLong(0)
         flashcard.title = cursor.getString(1)
@@ -173,12 +173,12 @@ class FlashcardDataSource : BaseDataSource
         return flashcard
     }
 
-    private fun createNonexistentCategories(flashcard: Flashcard)
+    private fun createNonexistentCategories(flashcard: FlashcardLegacy)
     {
-        val savedCategories = ArrayList<Category>()
+        val savedCategories = ArrayList<CategoryLegacy>()
         val categories = flashcard.categories
 
-        val cds = CategoryDataSource(database!!)
+        val cds = CategoryDataSourceLegacy(database!!)
 
         for (category in categories)
         {
@@ -195,12 +195,12 @@ class FlashcardDataSource : BaseDataSource
         flashcard.categories = savedCategories
     }
 
-    private fun populateCategories(flashcard: Flashcard)
+    private fun populateCategories(flashcard: FlashcardLegacy)
     {
-        val fcds = FlashcardCategoryDataSource(database!!)
+        val fcds = FlashcardCategoryDataSourceLegacy(database!!)
         val categoryIds = fcds.getCategoryIdsForFlashcardId(flashcard.id!!)
 
-        val cds = CategoryDataSource(database!!)
+        val cds = CategoryDataSourceLegacy(database!!)
 
         flashcard.categories = categoryIds.map { cds.getById(it) }.toMutableList()
     }

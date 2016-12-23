@@ -1,19 +1,20 @@
-package io.connorwyatt.flashcards.data.datasources
+package io.connorwyatt.flashcards.data.datasources.legacy
 
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import io.connorwyatt.flashcards.data.contracts.FlashcardTestContract
-import io.connorwyatt.flashcards.data.entities.BaseColumnsTimeline
-import io.connorwyatt.flashcards.data.entities.FlashcardTest
+import io.connorwyatt.flashcards.data.entities.legacy.BaseColumnsTimelineLegacy
+import io.connorwyatt.flashcards.data.entities.legacy.FlashcardTestLegacy
 import io.connorwyatt.flashcards.exceptions.SQLNoRowsAffectedException
 import java.util.ArrayList
 
-class FlashcardTestDataSource : BaseDataSource
+class FlashcardTestDataSourceLegacy : BaseDataSourceLegacy
 {
-    private val allColumns = arrayOf(BaseColumnsTimeline._ID, FlashcardTestContract
-        .Columns.FLASHCARD_ID, FlashcardTestContract.Columns.RATING)
+    private val allColumns = arrayOf(BaseColumnsTimelineLegacy._ID,
+                                     FlashcardTestContract.Columns.FLASHCARD_ID,
+                                     FlashcardTestContract.Columns.RATING)
 
     constructor(context: Context) : super(context)
     {
@@ -23,11 +24,11 @@ class FlashcardTestDataSource : BaseDataSource
     {
     }
 
-    fun getById(id: Long): FlashcardTest
+    fun getById(id: Long): FlashcardTestLegacy
     {
         val cursor = database!!.query(FlashcardTestContract.TABLE_NAME,
                                       allColumns,
-                                      BaseColumnsTimeline._ID + " = " + id,
+                                      BaseColumnsTimelineLegacy._ID + " = " + id,
                                       null,
                                       null,
                                       null,
@@ -42,7 +43,7 @@ class FlashcardTestDataSource : BaseDataSource
         return flashcardTest
     }
 
-    fun getByFlashcardId(flashcardId: Long): List<FlashcardTest>
+    fun getByFlashcardId(flashcardId: Long): List<FlashcardTestLegacy>
     {
         val cursor = database!!.query(FlashcardTestContract.TABLE_NAME,
                                       allColumns,
@@ -51,7 +52,7 @@ class FlashcardTestDataSource : BaseDataSource
                                       null,
                                       null,
                                       null)
-        val flashcardTests = ArrayList<FlashcardTest>()
+        val flashcardTests = ArrayList<FlashcardTestLegacy>()
 
         cursor.moveToFirst()
 
@@ -67,7 +68,7 @@ class FlashcardTestDataSource : BaseDataSource
         return flashcardTests
     }
 
-    fun save(flashcardTest: FlashcardTest): FlashcardTest
+    fun save(flashcardTest: FlashcardTestLegacy): FlashcardTestLegacy
     {
         val savedFlashcardTestId: Long
 
@@ -90,7 +91,7 @@ class FlashcardTestDataSource : BaseDataSource
                 savedFlashcardTestId = flashcardTest.id!!
                 addUpdateTimestamp(values)
                 val rowsAffected = database!!.update(FlashcardTestContract.TABLE_NAME, values,
-                                                     BaseColumnsTimeline._ID + " = " + savedFlashcardTestId,
+                                                     BaseColumnsTimelineLegacy._ID + " = " + savedFlashcardTestId,
                                                      null)
 
                 if (rowsAffected == 0)
@@ -112,9 +113,9 @@ class FlashcardTestDataSource : BaseDataSource
         return getById(savedFlashcardTestId)
     }
 
-    private fun cursorToFlashcardTest(cursor: Cursor): FlashcardTest
+    private fun cursorToFlashcardTest(cursor: Cursor): FlashcardTestLegacy
     {
-        val flashcardTest = FlashcardTest()
+        val flashcardTest = FlashcardTestLegacy()
 
         flashcardTest.id = cursor.getLong(0)
         flashcardTest.flashcardId = cursor.getLong(1)

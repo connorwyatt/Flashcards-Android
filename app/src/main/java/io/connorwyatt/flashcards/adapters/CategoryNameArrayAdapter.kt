@@ -7,10 +7,10 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
 
-import io.connorwyatt.flashcards.data.entities.Category
+import io.connorwyatt.flashcards.data.entities.legacy.CategoryLegacy
 
-class CategoryNameArrayAdapter(context: Context, categories: List<Category>) :
-    ArrayAdapter<Category>(context, 0, categories)
+class CategoryNameArrayAdapter(context: Context, categories: List<CategoryLegacy>) :
+    ArrayAdapter<CategoryLegacy>(context, 0, categories)
 {
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View
     {

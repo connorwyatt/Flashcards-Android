@@ -7,18 +7,17 @@ import android.os.Bundle
 import android.support.design.widget.CoordinatorLayout
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.adapters.CategoryListAdapter
-import io.connorwyatt.flashcards.data.entities.Category
-import io.connorwyatt.flashcards.data.services.CategoryService
+import io.connorwyatt.flashcards.data.entities.legacy.CategoryLegacy
+import io.connorwyatt.flashcards.data.services.legacy.CategoryServiceLegacy
 
 class CategoriesActivity : BaseActivity()
 {
-    private val categoryService = CategoryService(this)
+    private val categoryService = CategoryServiceLegacy(this)
     private var categoryItems: MutableList<CategoryListAdapter.ListItem> = mutableListOf()
     private val removedCategoryIds: MutableList<Long> = mutableListOf()
 
@@ -45,7 +44,7 @@ class CategoriesActivity : BaseActivity()
 
         val categoryListItems: List<CategoryListAdapter.ListItem> =
             categories.map(
-                fun(category: Category): CategoryListAdapter.ListItem
+                fun(category: CategoryLegacy): CategoryListAdapter.ListItem
                 {
                     val flashcardCountForCategory =
                         categoryService.getFlashcardsForCategory(category.id!!).size
@@ -91,12 +90,12 @@ class CategoriesActivity : BaseActivity()
         recycler.layoutManager = LinearLayoutManager(this)
     }
 
-    private fun editCategory(category: Category)
+    private fun editCategory(category: CategoryLegacy)
     {
         CategoryDetailsActivity.startActivity(this, category)
     }
 
-    private fun showDeleteCategoryDialog(category: Category)
+    private fun showDeleteCategoryDialog(category: CategoryLegacy)
     {
         AlertDialog.Builder(this)
             .setTitle(getString(R.string.delete_category_dialog_title))
@@ -117,7 +116,7 @@ class CategoriesActivity : BaseActivity()
             .show()
     }
 
-    private fun deleteCategory(category: Category, deleteFlashcards: Boolean = false)
+    private fun deleteCategory(category: CategoryLegacy, deleteFlashcards: Boolean = false)
     {
         removedCategoryIds.add(category.id!!)
 

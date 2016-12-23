@@ -1,6 +1,6 @@
-package io.connorwyatt.flashcards.data.entities
+package io.connorwyatt.flashcards.data.entities.legacy
 
-class FlashcardTest : BaseEntity()
+class FlashcardTestLegacy : BaseEntityLegacy()
 {
     var rating: Rating? = null
     var flashcardId: Long? = null

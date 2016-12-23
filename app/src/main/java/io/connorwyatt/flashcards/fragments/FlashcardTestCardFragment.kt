@@ -10,13 +10,13 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.activities.FlashcardTestActivity
-import io.connorwyatt.flashcards.data.entities.FlashcardTest
-import io.connorwyatt.flashcards.data.services.FlashcardTestService
+import io.connorwyatt.flashcards.data.entities.legacy.FlashcardTestLegacy
+import io.connorwyatt.flashcards.data.services.legacy.FlashcardTestServiceLegacy
 import java.util.ArrayList
 
 class FlashcardTestCardFragment : Fragment()
 {
-    private val flashcardTest = FlashcardTest()
+    private val flashcardTest = FlashcardTestLegacy()
     private var isFlipped = false
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -62,7 +62,7 @@ class FlashcardTestCardFragment : Fragment()
 
     private fun saveFlashcardTest()
     {
-        val flashcardTestService = FlashcardTestService(activity)
+        val flashcardTestService = FlashcardTestServiceLegacy(activity)
         flashcardTestService.save(flashcardTest)
 
         val flashcardTestFragment = (activity as FlashcardTestActivity).flashcardTestFragment
@@ -141,11 +141,11 @@ class FlashcardTestCardFragment : Fragment()
 
             when (testCardFragment!!.flashcardTest.rating)
             {
-                FlashcardTest.Rating.POSITIVE -> button = layout!!.findViewById(R.id
+                FlashcardTestLegacy.Rating.POSITIVE -> button = layout!!.findViewById(R.id
                                                                                     .flashcard_test_card_positive_button) as ImageButton
-                FlashcardTest.Rating.NEUTRAL  -> button = layout!!.findViewById(R.id
+                FlashcardTestLegacy.Rating.NEUTRAL -> button = layout!!.findViewById(R.id
                                                                                     .flashcard_test_card_neutral_button) as ImageButton
-                FlashcardTest.Rating.NEGATIVE -> button = layout!!.findViewById(R.id
+                FlashcardTestLegacy.Rating.NEGATIVE -> button = layout!!.findViewById(R.id
                                                                                     .flashcard_test_card_negative_button) as ImageButton
             }
 

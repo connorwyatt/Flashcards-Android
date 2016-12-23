@@ -1,6 +1,6 @@
-package io.connorwyatt.flashcards.data.entities
+package io.connorwyatt.flashcards.data.entities.legacy
 
-object BaseColumnsTimeline
+object BaseColumnsTimelineLegacy
 {
     val _ID = "_id"
     val _CREATED_ON = "_created_on"

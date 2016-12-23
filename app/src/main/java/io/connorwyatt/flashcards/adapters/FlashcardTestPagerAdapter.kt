@@ -5,11 +5,11 @@ import android.app.FragmentManager
 import android.os.Bundle
 import android.support.v4.view.PagerAdapter
 
-import io.connorwyatt.flashcards.data.entities.Flashcard
+import io.connorwyatt.flashcards.data.entities.legacy.FlashcardLegacy
 import io.connorwyatt.flashcards.fragments.FlashcardTestCardFragment
 import io.connorwyatt.flashcards.fragments.FlashcardTestSummaryFragment
 
-class FlashcardTestPagerAdapter(fragmentManager: FragmentManager, private val flashcards: MutableList<Flashcard>) :
+class FlashcardTestPagerAdapter(fragmentManager: FragmentManager, private val flashcards: MutableList<FlashcardLegacy>) :
     FixedFragmentStatePagerAdapter(fragmentManager)
 {
     private val summaryFragment = FlashcardTestSummaryFragment()
@@ -54,7 +54,7 @@ class FlashcardTestPagerAdapter(fragmentManager: FragmentManager, private val fl
         return tag
     }
 
-    fun removeItem(position: Int): Flashcard
+    fun removeItem(position: Int): FlashcardLegacy
     {
         val removedFlashcard = flashcards.removeAt(position)
         notifyDataSetChanged()

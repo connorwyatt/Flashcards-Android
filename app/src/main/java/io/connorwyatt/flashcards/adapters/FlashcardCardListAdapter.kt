@@ -10,15 +10,15 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import io.connorwyatt.flashcards.R
-import io.connorwyatt.flashcards.data.entities.Flashcard
-import io.connorwyatt.flashcards.data.services.FlashcardTestService
+import io.connorwyatt.flashcards.data.entities.legacy.FlashcardLegacy
+import io.connorwyatt.flashcards.data.services.legacy.FlashcardTestServiceLegacy
 import io.connorwyatt.flashcards.views.progressbar.ProgressBar
 
 class FlashcardCardListAdapter :
     RecyclerView.Adapter<FlashcardCardListAdapter.FlashcardCardViewHolder>()
 {
-    private var flashcards: List<Flashcard>? = null
-    private var viewFlashcards: List<Flashcard>? = null
+    private var flashcards: List<FlashcardLegacy>? = null
+    private var viewFlashcards: List<FlashcardLegacy>? = null
     private var categoryFilter: Long? = null
     private var onCardClickListener: OnCardClickListener? = null
 
@@ -27,7 +27,7 @@ class FlashcardCardListAdapter :
         setHasStableIds(true)
     }
 
-    fun setItems(flashcards: List<Flashcard>)
+    fun setItems(flashcards: List<FlashcardLegacy>)
     {
         this.flashcards = flashcards
         updateViewFlashcards()
@@ -57,7 +57,7 @@ class FlashcardCardListAdapter :
 
         val context = holder.layout.context
 
-        val fts = FlashcardTestService(context)
+        val fts = FlashcardTestServiceLegacy(context)
         val averageRating = fts.getAverageRatingForFlashcard(currentFlashcard.id!!);
 
         var colorId: Int = R.color.colorGrey
@@ -132,7 +132,7 @@ class FlashcardCardListAdapter :
         notifyDataSetChanged()
     }
 
-    private fun applyFilters(flashcards: List<Flashcard>): List<Flashcard>
+    private fun applyFilters(flashcards: List<FlashcardLegacy>): List<FlashcardLegacy>
     {
         categoryFilter?.let {
             return flashcards.filter {
@@ -145,7 +145,7 @@ class FlashcardCardListAdapter :
 
     interface OnCardClickListener
     {
-        fun onClick(flashcard: Flashcard)
+        fun onClick(flashcard: FlashcardLegacy)
     }
 
     class FlashcardCardViewHolder internal constructor(itemView: View) :

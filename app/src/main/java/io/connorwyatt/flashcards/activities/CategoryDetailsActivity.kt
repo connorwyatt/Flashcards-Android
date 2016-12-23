@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.support.design.widget.TextInputEditText
 import android.support.design.widget.TextInputLayout
 import android.support.v4.app.NavUtils
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.text.Editable
 import android.text.TextWatcher
@@ -16,17 +15,16 @@ import android.view.MenuItem
 import android.widget.Button
 import android.widget.Toast
 import io.connorwyatt.flashcards.R
-import io.connorwyatt.flashcards.data.entities.Category
-import io.connorwyatt.flashcards.data.entities.FlashcardTest
-import io.connorwyatt.flashcards.data.services.CategoryService
+import io.connorwyatt.flashcards.data.entities.legacy.CategoryLegacy
+import io.connorwyatt.flashcards.data.services.legacy.CategoryServiceLegacy
 
 class CategoryDetailsActivity : BaseActivity()
 {
-    private var category: Category = Category()
+    private var category: CategoryLegacy = CategoryLegacy()
     private var name: TextInputEditText? = null
     private var nameLayout: TextInputLayout? = null
     private var saveButton: Button? = null
-    private val categoryService = CategoryService(this)
+    private val categoryService = CategoryServiceLegacy(this)
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -107,7 +105,7 @@ class CategoryDetailsActivity : BaseActivity()
         updateButton()
     }
 
-    private fun deleteCategory(category: Category, deleteFlashcards: Boolean = false)
+    private fun deleteCategory(category: CategoryLegacy, deleteFlashcards: Boolean = false)
     {
         if (deleteFlashcards)
             categoryService.deleteWithFlashcards(category)
@@ -119,7 +117,7 @@ class CategoryDetailsActivity : BaseActivity()
         NavUtils.navigateUpFromSameTask(this)
     }
 
-    private fun showDeleteCategoryDialog(category: Category)
+    private fun showDeleteCategoryDialog(category: CategoryLegacy)
     {
         AlertDialog.Builder(this)
             .setTitle(getString(R.string.delete_category_dialog_title))
@@ -149,7 +147,7 @@ class CategoryDetailsActivity : BaseActivity()
         toast.show()
     }
 
-    private fun updateViewFromCategory(category: Category)
+    private fun updateViewFromCategory(category: CategoryLegacy)
     {
         name!!.setText(category.name)
     }
@@ -237,7 +235,7 @@ class CategoryDetailsActivity : BaseActivity()
     {
         internal val CATEGORY_ID = "CATEGORY_ID"
 
-        fun startActivity(context: Context, category: Category? = null)
+        fun startActivity(context: Context, category: CategoryLegacy? = null)
         {
             val intent = Intent(context, CategoryDetailsActivity::class.java)
 
