@@ -1,15 +1,13 @@
 package io.connorwyatt.flashcards.data.datasources
 
 import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.FirebaseDatabase
 import io.connorwyatt.flashcards.data.entities.Category
 import io.connorwyatt.flashcards.helpers.auth.AuthHelper
 import io.connorwyatt.flashcards.listeners.SimpleValueEventListener
 import io.reactivex.Observable
 
-class CategoryDataSource
+class CategoryDataSource : BaseDataSource()
 {
-    private val database = FirebaseDatabase.getInstance().reference
     private val authHelper = AuthHelper.getInstance()
 
     fun getAll(): Observable<List<Category>>
@@ -54,7 +52,7 @@ class CategoryDataSource
     }
 
     private fun getCategoriesQuery(userId: String) =
-        database.child("users").child(userId).child("category")
+        getUserDataQuery(userId).child("category")
 
     private fun getCategoryQuery(userId: String, categoryId: String) =
         getCategoriesQuery(userId).child(categoryId)

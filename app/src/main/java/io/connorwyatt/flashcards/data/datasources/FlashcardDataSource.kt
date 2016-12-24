@@ -1,16 +1,14 @@
 package io.connorwyatt.flashcards.data.datasources
 
 import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.FirebaseDatabase
 import io.connorwyatt.flashcards.data.entities.Category
 import io.connorwyatt.flashcards.data.entities.Flashcard
 import io.connorwyatt.flashcards.helpers.auth.AuthHelper
 import io.connorwyatt.flashcards.listeners.SimpleValueEventListener
 import io.reactivex.Observable
 
-class FlashcardDataSource
+class FlashcardDataSource : BaseDataSource()
 {
-    private val database = FirebaseDatabase.getInstance().reference
     private val authHelper = AuthHelper.getInstance()
 
     fun getAll(): Observable<List<Flashcard>>
@@ -39,8 +37,32 @@ class FlashcardDataSource
         }
     }
 
+    fun getById(id: String): Observable<Flashcard>
+    {
+        return Observable.create<Flashcard> { observer ->
+            authHelper.currentUser?.uid?.let {
+                getFlashcardQuery(userId = it, flashcardId = id).addListenerForSingleValueEvent(
+                    object : SimpleValueEventListener()
+                    {
+                        override fun onDataChange(dataSnapshot: DataSnapshot?)
+                        {
+                            val flashcardSingle = dataSnapshot?.let { flashcardFromDataSnapshot(it) }
+                            flashcardSingle?.subscribe {
+                                observer.onNext(it)
+                                observer.onComplete()
+                            }
+                        }
+                    }
+                )
+            }
+        }
+    }
+
     private fun getFlashcardsQuery(userId: String) =
-        database.child("users").child(userId).child("flashcard")
+        getUserDataQuery(userId).child("flashcard")
+
+    private fun getFlashcardQuery(userId: String, flashcardId: String) =
+        getFlashcardsQuery(userId).child(flashcardId)
 
     private fun flashcardFromDataSnapshot(dataSnapshot: DataSnapshot): Observable<Flashcard>
     {
