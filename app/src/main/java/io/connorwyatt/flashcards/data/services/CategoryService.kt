@@ -12,4 +12,11 @@ class CategoryService
 
         return dataSource.getAll()
     }
+
+    fun getById(id: String): Observable<Category>
+    {
+        val dataSource = CategoryDataSource()
+
+        return dataSource.getById(id)
+    }
 }
