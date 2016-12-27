@@ -10,8 +10,16 @@ class FlashcardTest(data: DataSnapshot?) : BaseEntity(data)
     {
         val values = data?.value as? Map<*, *>
 
-        val ratingValue = values?.get(PropertyKeys.rating) as Double
-        rating = Rating.fromValue(ratingValue)
+        val ratingValue = values?.get(PropertyKeys.rating)?.let {
+            when (it)
+            {
+                is Long -> it.toDouble()
+                is Double -> it
+                else -> null
+            }
+        }
+
+        rating = ratingValue?.let { Rating.fromValue(it) }
     }
 
     companion object

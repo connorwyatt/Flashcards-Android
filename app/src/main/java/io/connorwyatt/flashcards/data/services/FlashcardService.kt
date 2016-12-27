@@ -5,7 +5,7 @@ import io.connorwyatt.flashcards.data.datasources.FlashcardDataSource
 import io.connorwyatt.flashcards.data.entities.Flashcard
 import io.reactivex.Observable
 
-class FlashcardService
+object FlashcardService
 {
     fun getAll(): Observable<List<Flashcard>>
         = FlashcardDataSource().getAll()

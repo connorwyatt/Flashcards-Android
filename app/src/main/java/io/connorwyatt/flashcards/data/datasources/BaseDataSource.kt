@@ -41,6 +41,30 @@ abstract class BaseDataSource
         })
     }
 
+    protected fun <T> executeQueryRelationship(query: (FirebaseUser) -> Query,
+                                               resourceName: String,
+                                               resourceId: String,
+                                               parser: (DataSnapshot) -> Observable<T>,
+                                               clazz: Class<T>): Observable<List<T>>
+    {
+        return baseExecuteQuery<List<T>>(
+            { user ->
+                query(user)
+                    .orderByChild("_relationships/$resourceName/$resourceId")
+                    .startAt(true)
+                    .endAt(true)
+            },
+            { dataSnapshot ->
+                dataSnapshot.children?.map { parser(it) }?.let {
+                    return@baseExecuteQuery Observable
+                        .combineLatest(it, { it.filterIsInstance(clazz) })
+                }
+
+                return@baseExecuteQuery Observable.just(arrayListOf())
+            }
+        )
+    }
+
     private fun <T> baseExecuteQuery(query: (FirebaseUser) -> Query,
                                      processData: (DataSnapshot) -> Observable<T>): Observable<T>
     {

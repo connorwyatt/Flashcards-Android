@@ -4,7 +4,7 @@ import io.connorwyatt.flashcards.data.datasources.CategoryDataSource
 import io.connorwyatt.flashcards.data.entities.Category
 import io.reactivex.Observable
 
-class CategoryService
+object CategoryService
 {
     fun getAll(): Observable<List<Category>>
         = CategoryDataSource().getAll()
