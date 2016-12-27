@@ -7,17 +7,9 @@ import io.reactivex.Observable
 class FlashcardService
 {
     fun getAll(): Observable<List<Flashcard>>
-    {
-        val dataSource = FlashcardDataSource()
-
-        return dataSource.getAll()
-    }
+        = FlashcardDataSource().getAll()
 
     fun getById(id: String): Observable<Flashcard>
-    {
-        val dataSource = FlashcardDataSource()
-
-        return dataSource.getById(id)
-    }
+        = FlashcardDataSource().getById(id)
 }
 
