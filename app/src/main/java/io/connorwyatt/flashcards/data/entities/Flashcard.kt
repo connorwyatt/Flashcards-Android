@@ -25,9 +25,12 @@ class Flashcard(data: DataSnapshot?) : BaseEntity(data)
         return serialisedEntity
     }
 
-    companion object PropertyKeys
+    companion object
     {
-        val title = "title"
-        val text = "text"
+        object PropertyKeys
+        {
+            val title = "title"
+            val text = "text"
+        }
     }
 }

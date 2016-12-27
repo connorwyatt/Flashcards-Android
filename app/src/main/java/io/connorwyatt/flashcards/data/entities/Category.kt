@@ -22,8 +22,11 @@ class Category(data: DataSnapshot?) : BaseEntity(data)
         return serialisedEntity
     }
 
-    companion object PropertyKeys
+    companion object
     {
-        val name = "name"
+        object PropertyKeys
+        {
+            val name = "name"
+        }
     }
 }

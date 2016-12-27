@@ -33,10 +33,13 @@ abstract class BaseEntity(data: DataSnapshot?)
         return serialisedEntity
     }
 
-    companion object PropertyKeys
+    companion object
     {
-        val created = "_created_on"
-        val lastModified = "_last_modified_on"
-        val relationships = "_relationships"
+        object PropertyKeys
+        {
+            val created = "_created_on"
+            val lastModified = "_last_modified_on"
+            val relationships = "_relationships"
+        }
     }
 }
