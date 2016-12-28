@@ -10,7 +10,7 @@ class Category(data: DataSnapshot?) : BaseEntity(data)
     {
         val values = data?.value as? Map<*, *>
 
-        name = values?.get(PropertyKeys.name) as String
+        name = values?.get(PropertyKeys.name) as String?
     }
 
     override fun serialise(): MutableMap<String, Any?>

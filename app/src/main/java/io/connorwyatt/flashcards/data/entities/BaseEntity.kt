@@ -14,8 +14,8 @@ abstract class BaseEntity(data: DataSnapshot?)
 
         val values = data?.value as? Map<*, *>
 
-        val created = values?.get(PropertyKeys.created) as Long
-        val lastModified = values?.get(PropertyKeys.lastModified) as Long
+        val created = values?.get(PropertyKeys.created) as Long?
+        val lastModified = values?.get(PropertyKeys.lastModified) as Long?
         this.timestamps = Timestamps(created, lastModified)
 
         val relationshipMap = values?.get("_relationships") as? Map<*, *>
@@ -32,6 +32,8 @@ abstract class BaseEntity(data: DataSnapshot?)
 
         return serialisedEntity
     }
+
+    fun existsInDatabase(): Boolean = id != null
 
     companion object
     {

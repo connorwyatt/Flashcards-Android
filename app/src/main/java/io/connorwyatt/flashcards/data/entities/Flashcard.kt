@@ -11,8 +11,8 @@ class Flashcard(data: DataSnapshot?) : BaseEntity(data)
     {
         val values = data?.value as? Map<*, *>
 
-        title = values?.get(PropertyKeys.title) as String
-        text = values?.get(PropertyKeys.text) as String
+        title = values?.get(PropertyKeys.title) as String?
+        text = values?.get(PropertyKeys.text) as String?
     }
 
     override fun serialise(): MutableMap<String, Any?>
