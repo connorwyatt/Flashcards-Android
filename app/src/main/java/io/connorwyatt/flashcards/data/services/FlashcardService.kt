@@ -18,5 +18,13 @@ object FlashcardService
 
         return flashcardDataSource.getByCategoryId(categoryId)
     }
+
+    fun save(flashcard: Flashcard): Observable<Flashcard>
+    {
+        val flashcardDataSource = FlashcardDataSource()
+
+        return flashcardDataSource.save(flashcard)
+            .flatMap { getById(it) }
+    }
 }
 

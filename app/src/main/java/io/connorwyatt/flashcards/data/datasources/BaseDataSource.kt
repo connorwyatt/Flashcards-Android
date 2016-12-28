@@ -2,6 +2,7 @@ package io.connorwyatt.flashcards.data.datasources
 
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
+import io.connorwyatt.flashcards.data.entities.BaseEntity
 import io.connorwyatt.flashcards.helpers.auth.AuthHelper
 import io.connorwyatt.flashcards.helpers.auth.exceptions.NotSignedInException
 import io.connorwyatt.flashcards.listeners.SimpleValueEventListener
@@ -21,17 +22,17 @@ abstract class BaseDataSource
         return query
     }
 
-    protected fun <T> executeQuerySingle(query: (FirebaseUser) -> Query,
+    protected fun <T> executeQuerySingle(reference: (FirebaseUser) -> DatabaseReference,
                                          parser: (DataSnapshot) -> Observable<T>): Observable<T>
     {
-        return baseExecuteQuery<T>(query, parser)
+        return baseExecuteQuery<T>(reference, parser)
     }
 
-    protected fun <T> executeQueryList(query: (FirebaseUser) -> Query,
+    protected fun <T> executeQueryList(reference: (FirebaseUser) -> DatabaseReference,
                                        parser: (DataSnapshot) -> Observable<T>,
                                        clazz: Class<T>): Observable<List<T>>
     {
-        return baseExecuteQuery<List<T>>(query, { dataSnapshot ->
+        return baseExecuteQuery<List<T>>(reference, { dataSnapshot ->
             dataSnapshot.children?.map { parser(it) }?.let {
                 return@baseExecuteQuery Observable
                     .combineLatest(it, { it.filterIsInstance(clazz) })
@@ -41,7 +42,7 @@ abstract class BaseDataSource
         })
     }
 
-    protected fun <T> executeQueryRelationship(query: (FirebaseUser) -> Query,
+    protected fun <T> executeQueryRelationship(reference: (FirebaseUser) -> DatabaseReference,
                                                resourceName: String,
                                                resourceId: String,
                                                parser: (DataSnapshot) -> Observable<T>,
@@ -49,7 +50,7 @@ abstract class BaseDataSource
     {
         return baseExecuteQuery<List<T>>(
             { user ->
-                query(user)
+                reference(user)
                     .orderByChild("_relationships/$resourceName/$resourceId")
                     .startAt(true)
                     .endAt(true)
@@ -65,12 +66,21 @@ abstract class BaseDataSource
         )
     }
 
-    private fun <T> baseExecuteQuery(query: (FirebaseUser) -> Query,
+    protected fun executeSave(resource: BaseEntity,
+                              createReference: (FirebaseUser) -> DatabaseReference,
+                              updateReference: (FirebaseUser) -> DatabaseReference): Observable<String>
+    {
+        return baseSave(resource = resource,
+                        createReference = createReference,
+                        updateReference = updateReference)
+    }
+
+    private fun <T> baseExecuteQuery(reference: (FirebaseUser) -> Query,
                                      processData: (DataSnapshot) -> Observable<T>): Observable<T>
     {
         authHelper.currentUser?.let { user ->
             return Observable.create { observer ->
-                query(user).addListenerForSingleValueEvent(
+                reference(user).addListenerForSingleValueEvent(
                     object : SimpleValueEventListener()
                     {
                         override fun onDataChange(dataSnapshot: DataSnapshot?)
@@ -102,5 +112,76 @@ abstract class BaseDataSource
         }
 
         return Observable.error(NotSignedInException())
+    }
+
+    private fun baseSave(resource: BaseEntity,
+                         createReference: (FirebaseUser) -> DatabaseReference,
+                         updateReference: (FirebaseUser) -> DatabaseReference): Observable<String>
+    {
+        authHelper.currentUser?.let { user ->
+            return Observable.create { observer ->
+                val ref: DatabaseReference
+
+                if (resource.existsInDatabase())
+                {
+                    resource.timestamps.modifiedNow()
+                    ref = updateReference(user)
+                }
+                else
+                {
+                    resource.timestamps.createdNow()
+                    ref = createReference(user)
+
+                }
+
+                val updates = getUpdates(ref, user, resource)
+
+                getUserDataQuery(userId = user.uid).updateChildren(updates)
+                    .addOnFailureListener { observer.onError(it) }
+                    .addOnSuccessListener {
+                        observer.onNext(ref.key)
+                        observer.onComplete()
+                    }
+            }
+        }
+
+        return Observable.error(NotSignedInException())
+    }
+
+    private fun getUpdates(ref: DatabaseReference,
+                           user: FirebaseUser,
+                           resource: BaseEntity): MutableMap<String, Any>
+    {
+        val updates: MutableMap<String, Any> = mutableMapOf()
+
+        val resourcePath =
+            getPathRelativeToUserQuery(user, ref).joinToString(separator = "/")
+
+        updates.put(resourcePath, resource.serialise())
+
+        return updates
+    }
+
+    private fun getPathRelativeToUserQuery(user: FirebaseUser,
+                                           reference: DatabaseReference): List<String>
+    {
+        val userPath = getSplitPath(getUserDataQuery(user.uid))
+
+        return getSplitPath(reference).filterNot { userPath.contains(it) }
+    }
+
+    private fun getSplitPath(reference: DatabaseReference): MutableList<String>
+    {
+        var currentRef = reference
+        val path = mutableListOf(currentRef.key)
+
+        while (currentRef.parent != null)
+        {
+            currentRef = currentRef.parent
+
+            currentRef.key?.let { path.add(0, it) }
+        }
+
+        return path
     }
 }

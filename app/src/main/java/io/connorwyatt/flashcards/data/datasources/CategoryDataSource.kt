@@ -1,5 +1,6 @@
 package io.connorwyatt.flashcards.data.datasources
 
+import com.google.firebase.database.DatabaseReference
 import io.connorwyatt.flashcards.data.entities.Category
 import io.reactivex.Observable
 
@@ -22,9 +23,9 @@ class CategoryDataSource : BaseDataSource()
         )
     }
 
-    private fun getCategoriesQuery(userId: String) =
+    private fun getCategoriesQuery(userId: String): DatabaseReference =
         getUserDataQuery(userId).child("category")
 
-    private fun getCategoryQuery(userId: String, categoryId: String) =
+    private fun getCategoryQuery(userId: String, categoryId: String): DatabaseReference =
         getCategoriesQuery(userId).child(categoryId)
 }
