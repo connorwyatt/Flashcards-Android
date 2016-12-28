@@ -1,6 +1,5 @@
 package io.connorwyatt.flashcards.data.services
 
-import io.connorwyatt.flashcards.data.datasources.CategoryDataSource
 import io.connorwyatt.flashcards.data.datasources.FlashcardDataSource
 import io.connorwyatt.flashcards.data.entities.Flashcard
 import io.reactivex.Observable
@@ -15,15 +14,9 @@ object FlashcardService
 
     fun getByCategory(categoryId: String): Observable<List<Flashcard>>
     {
-        val categoryDataSource = CategoryDataSource()
+        val flashcardDataSource = FlashcardDataSource()
 
-        return categoryDataSource.getById(categoryId).flatMap { category ->
-            val observables = category.relationships.getRelationships("flashcard")?.map { flashcardId ->
-                getById(flashcardId)
-            }
-
-            Observable.combineLatest(observables, { it.filterIsInstance(Flashcard::class.java) })
-        }
+        return flashcardDataSource.getByCategoryId(categoryId)
     }
 }
 
