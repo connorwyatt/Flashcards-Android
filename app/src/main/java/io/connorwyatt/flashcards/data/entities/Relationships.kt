@@ -14,6 +14,11 @@ class Relationships(relationships: Map<*, *>?)
     fun getRelationships(name: String): List<String>?
         = relationships[name]
 
+    fun getUpdatedRelationships(): UpdatedRelationships
+    {
+        return UpdatedRelationships(null, null)
+    }
+
     fun serialise(): MutableMap<String, MutableMap<String, Any>>
     {
         val serialisedRelationships: MutableMap<String, MutableMap<String, Any>> = mutableMapOf()
@@ -47,5 +52,13 @@ class Relationships(relationships: Map<*, *>?)
         }
 
         return relationships
+    }
+
+    companion object
+    {
+        data class UpdatedRelationships(
+            val added: List<Pair<String, String>>?,
+            val removed: List<Pair<String, String>>?
+        )
     }
 }
