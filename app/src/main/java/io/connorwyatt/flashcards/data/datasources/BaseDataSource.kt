@@ -22,17 +22,17 @@ abstract class BaseDataSource
         return query
     }
 
-    protected fun <T> executeQuerySingle(reference: (FirebaseUser) -> DatabaseReference,
+    protected fun <T> executeQuerySingle(query: (FirebaseUser) -> Query,
                                          parser: (DataSnapshot) -> Observable<T>): Observable<T>
     {
-        return baseExecuteQuery<T>(reference, parser)
+        return baseExecuteQuery<T>(query, parser)
     }
 
-    protected fun <T> executeQueryList(reference: (FirebaseUser) -> DatabaseReference,
+    protected fun <T> executeQueryList(query: (FirebaseUser) -> Query,
                                        parser: (DataSnapshot) -> Observable<T>,
                                        clazz: Class<T>): Observable<List<T>>
     {
-        return baseExecuteQuery<List<T>>(reference, { dataSnapshot ->
+        return baseExecuteQuery<List<T>>(query, { dataSnapshot ->
             if (dataSnapshot.hasChildren())
             {
                 dataSnapshot.children?.map { parser(it) }?.let {
@@ -45,7 +45,7 @@ abstract class BaseDataSource
         })
     }
 
-    protected fun <T> executeQueryRelationship(reference: (FirebaseUser) -> DatabaseReference,
+    protected fun <T> executeQueryRelationship(query: (FirebaseUser) -> Query,
                                                resourceName: String,
                                                resourceId: String,
                                                parser: (DataSnapshot) -> Observable<T>,
@@ -53,7 +53,7 @@ abstract class BaseDataSource
     {
         return baseExecuteQuery<List<T>>(
             { user ->
-                reference(user)
+                query(user)
                     .orderByChild("_relationships/$resourceName/$resourceId")
                     .startAt(true)
                     .endAt(true)
@@ -78,12 +78,12 @@ abstract class BaseDataSource
                         updateReference = updateReference)
     }
 
-    private fun <T> baseExecuteQuery(reference: (FirebaseUser) -> Query,
+    private fun <T> baseExecuteQuery(query: (FirebaseUser) -> Query,
                                      processData: (DataSnapshot) -> Observable<T>): Observable<T>
     {
         authHelper.currentUser?.let { user ->
             return Observable.create { observer ->
-                reference(user).addListenerForSingleValueEvent(
+                query(user).addListenerForSingleValueEvent(
                     object : SimpleValueEventListener()
                     {
                         override fun onDataChange(dataSnapshot: DataSnapshot?)

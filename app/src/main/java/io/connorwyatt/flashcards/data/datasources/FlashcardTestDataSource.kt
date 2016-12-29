@@ -9,7 +9,7 @@ class FlashcardTestDataSource : BaseDataSource()
     fun getByFlashcardId(id: String): Observable<List<FlashcardTest>>
     {
         return executeQueryRelationship(
-            reference = { getFlashcardTestsQuery(userId = it.uid) },
+            query = { getFlashcardTestsQuery(userId = it.uid) },
             resourceName = "flashcard",
             resourceId = id,
             parser = { Observable.just(FlashcardTest(it)) },
