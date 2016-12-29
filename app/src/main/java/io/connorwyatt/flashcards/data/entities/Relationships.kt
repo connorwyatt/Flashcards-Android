@@ -4,11 +4,14 @@ package io.connorwyatt.flashcards.data.entities
 class Relationships(relationships: Map<*, *>?)
 {
     val relationships: MutableMap<String, MutableList<String>>
+    private val originalRelationships: MutableMap<String, MutableList<String>>
 
     init
     {
         this.relationships =
             relationships?.let { parseRawRelationships(it) } ?: mutableMapOf()
+
+        originalRelationships = cloneRelationships(this.relationships)
     }
 
     fun getRelationships(name: String): List<String>?
@@ -16,7 +19,40 @@ class Relationships(relationships: Map<*, *>?)
 
     fun getUpdatedRelationships(): UpdatedRelationships
     {
-        return UpdatedRelationships(null, null)
+        val addedMap: MutableMap<String, MutableList<String>> = mutableMapOf()
+        val removedMap: MutableMap<String, MutableList<String>> = mutableMapOf()
+
+        relationships.forEach { entry ->
+            val newIds = entry.value
+            val oldIds = originalRelationships[entry.key]
+
+            if (oldIds == null)
+            {
+                addedMap.put(entry.key, newIds)
+            }
+            else
+            {
+                val addedIds = newIds.filterNot { it in oldIds }.toMutableList()
+                val removedIds = oldIds.filterNot { it in newIds }.toMutableList()
+
+                if (addedIds.isNotEmpty())
+                {
+                    addedMap.put(entry.key, addedIds)
+                }
+
+                if (removedIds.isNotEmpty())
+                {
+                    removedMap.put(entry.key, removedIds)
+                }
+            }
+        }
+
+        return UpdatedRelationships(added = addedMap, removed = removedMap)
+    }
+
+    fun setRelationships(name: String, ids: List<String>): Unit
+    {
+        relationships[name] = ids.toMutableList()
     }
 
     fun serialise(): MutableMap<String, MutableMap<String, Any>>
@@ -34,6 +70,19 @@ class Relationships(relationships: Map<*, *>?)
         }
 
         return serialisedRelationships
+    }
+
+    private fun cloneRelationships(relationships: MutableMap<String, MutableList<String>>): MutableMap<String, MutableList<String>>
+    {
+        val cloned: MutableMap<String, MutableList<String>> = mutableMapOf()
+
+        relationships.forEach { entry ->
+            val clonedList = entry.value.map { it }.toMutableList()
+
+            cloned.put(entry.key, clonedList)
+        }
+
+        return cloned
     }
 
     private fun parseRawRelationships(rawRelationships: Map<*, *>): MutableMap<String, MutableList<String>>
@@ -57,8 +106,8 @@ class Relationships(relationships: Map<*, *>?)
     companion object
     {
         data class UpdatedRelationships(
-            val added: List<Pair<String, String>>?,
-            val removed: List<Pair<String, String>>?
+            val added: MutableMap<String, MutableList<String>>,
+            val removed: MutableMap<String, MutableList<String>>
         )
     }
 }
