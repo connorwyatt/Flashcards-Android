@@ -36,12 +36,11 @@ class FlashcardDataSource : BaseDataSource()
 
     fun save(flashcard: Flashcard): Observable<String>
     {
-        return executeSave(resource = flashcard,
-                           createReference = { getFlashcardsQuery(userId = it.uid).push() },
-                           updateReference = {
-                               getFlashcardQuery(userId = it.uid,
-                                                 flashcardId = flashcard.id!!)
-                           })
+        return executeSave(
+            resource = flashcard,
+            createReference = { getFlashcardsQuery(userId = it.uid).push() },
+            updateReference = { getFlashcardQuery(userId = it.uid, flashcardId = flashcard.id!!) }
+        )
     }
 
     private fun getFlashcardsQuery(userId: String): DatabaseReference =

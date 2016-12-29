@@ -33,6 +33,15 @@ class CategoryDataSource : BaseDataSource()
         )
     }
 
+    fun save(category: Category): Observable<String>
+    {
+        return executeSave(
+            resource = category,
+            createReference = { getCategoriesQuery(userId = it.uid).push() },
+            updateReference = { getCategoryQuery(userId = it.uid, categoryId = category.id!!) }
+        )
+    }
+
     private fun getCategoriesQuery(userId: String): DatabaseReference =
         getUserDataQuery(userId).child("category")
 

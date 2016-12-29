@@ -19,5 +19,27 @@ object CategoryService
         return CategoryDataSource().getByName(normalisedName)
     }
 
+    fun createCategoriesByName(categoryNames: List<String>): Observable<List<Category>>
+    {
+        val observables = categoryNames.distinctBy { normaliseCategoryName(it) }
+            .map { name ->
+                getByName(name)
+                    .flatMap { category ->
+                        category.singleOrNull()?.let { return@flatMap Observable.just(it) }
+
+                        val newCategory = Category(null)
+                        newCategory.name = name
+
+                        return@flatMap save(newCategory)
+                    }
+            }
+
+        return Observable.combineLatest(observables, { it.filterIsInstance(Category::class.java) })
+    }
+
+
+    fun save(category: Category): Observable<Category>
+        = CategoryDataSource().save(category).flatMap { getById(it) }
+
     private fun normaliseCategoryName(name: String): String = name.trim()
 }
