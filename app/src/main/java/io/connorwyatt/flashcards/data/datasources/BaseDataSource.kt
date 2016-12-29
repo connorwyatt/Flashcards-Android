@@ -123,26 +123,25 @@ abstract class BaseDataSource
     {
         authHelper.currentUser?.let { user ->
             return Observable.create { observer ->
-                val ref: DatabaseReference
+                val reference: DatabaseReference
 
                 if (resource.existsInDatabase())
                 {
                     resource.timestamps.modifiedNow()
-                    ref = updateReference(user)
+                    reference = updateReference(user)
                 }
                 else
                 {
                     resource.timestamps.createdNow()
-                    ref = createReference(user)
-
+                    reference = createReference(user)
                 }
 
-                val updates = getUpdates(ref, user, resource)
+                val updates = getUpdates(reference, user, reference.key, resource)
 
                 getUserDataQuery(userId = user.uid).updateChildren(updates)
                     .addOnFailureListener { observer.onError(it) }
                     .addOnSuccessListener {
-                        observer.onNext(ref.key)
+                        observer.onNext(reference.key)
                         observer.onComplete()
                     }
             }
@@ -151,16 +150,38 @@ abstract class BaseDataSource
         return Observable.error(NotSignedInException())
     }
 
-    private fun getUpdates(ref: DatabaseReference,
+    private fun getUpdates(reference: DatabaseReference,
                            user: FirebaseUser,
-                           resource: BaseEntity): MutableMap<String, Any>
+                           resourceId: String,
+                           resource: BaseEntity): MutableMap<String, Any?>
     {
-        val updates: MutableMap<String, Any> = mutableMapOf()
+        val updates: MutableMap<String, Any?> = mutableMapOf()
 
-        val resourcePath =
-            getPathRelativeToUserQuery(user, ref).joinToString(separator = "/")
+        val resourcePath = getPathRelativeToUserQuery(user, reference)
+        val resourcePathString = resourcePath.joinToString(separator = "/")
 
-        updates.put(resourcePath, resource.serialise())
+        updates.put(resourcePathString, resource.serialise())
+
+        val (addedRelationships, removedRelationships)
+            = resource.relationships.getUpdatedRelationships()
+
+        addedRelationships.forEach { resourceEntry ->
+            resourceEntry.value.forEach { id ->
+                val relationshipPath =
+                    getRelationshipPath(resourceEntry.key, id, resource.getType(), resourceId)
+
+                updates.put(relationshipPath, true)
+            }
+        }
+
+        removedRelationships.forEach { resourceEntry ->
+            resourceEntry.value.forEach { id ->
+                val relationshipPath =
+                    getRelationshipPath(resourceEntry.key, id, resource.getType(), resourceId)
+
+                updates.put(relationshipPath, null)
+            }
+        }
 
         return updates
     }
@@ -186,5 +207,21 @@ abstract class BaseDataSource
         }
 
         return path
+    }
+
+    private fun getRelationshipPath(resourceType: String,
+                                    resourceId: String,
+                                    relatedResourceType: String,
+                                    relatedResourceId: String): String
+    {
+        val relationshipPath: MutableList<String> = mutableListOf(
+            resourceType,
+            resourceId,
+            "_relationships",
+            relatedResourceType,
+            relatedResourceId
+        )
+
+        return relationshipPath.joinToString(separator = "/")
     }
 }
