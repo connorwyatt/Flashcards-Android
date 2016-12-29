@@ -34,7 +34,13 @@ object CategoryService
                     }
             }
 
-        return Observable.combineLatest(observables, { it.filterIsInstance(Category::class.java) })
+        if (observables.isNotEmpty())
+        {
+            return Observable.combineLatest(observables,
+                                            { it.filterIsInstance(Category::class.java) })
+        }
+
+        return Observable.just(listOf())
     }
 
 
