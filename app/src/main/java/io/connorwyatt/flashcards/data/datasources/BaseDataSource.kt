@@ -33,12 +33,15 @@ abstract class BaseDataSource
                                        clazz: Class<T>): Observable<List<T>>
     {
         return baseExecuteQuery<List<T>>(reference, { dataSnapshot ->
-            dataSnapshot.children?.map { parser(it) }?.let {
-                return@baseExecuteQuery Observable
-                    .combineLatest(it, { it.filterIsInstance(clazz) })
+            if (dataSnapshot.hasChildren())
+            {
+                dataSnapshot.children?.map { parser(it) }?.let {
+                    return@baseExecuteQuery Observable
+                        .combineLatest(it, { it.filterIsInstance(clazz) })
+                }
             }
 
-            return@baseExecuteQuery Observable.just(arrayListOf())
+            return@baseExecuteQuery Observable.just(listOf())
         })
     }
 
