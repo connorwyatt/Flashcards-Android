@@ -22,6 +22,8 @@ class Category(data: DataSnapshot?) : BaseEntity(data)
         return serialisedEntity
     }
 
+    override fun getType() = "category"
+
     companion object
     {
         object PropertyKeys

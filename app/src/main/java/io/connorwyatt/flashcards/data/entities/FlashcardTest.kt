@@ -22,6 +22,8 @@ class FlashcardTest(data: DataSnapshot?) : BaseEntity(data)
         rating = ratingValue?.let { Rating.fromValue(it) }
     }
 
+    override fun getType() = "flashcardTest"
+
     companion object
     {
         object PropertyKeys

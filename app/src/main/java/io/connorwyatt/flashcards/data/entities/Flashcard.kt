@@ -25,6 +25,8 @@ class Flashcard(data: DataSnapshot?) : BaseEntity(data)
         return serialisedEntity
     }
 
+    override fun getType() = "flashcard"
+
     companion object
     {
         object PropertyKeys

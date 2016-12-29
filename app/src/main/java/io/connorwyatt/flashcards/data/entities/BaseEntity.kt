@@ -35,6 +35,8 @@ abstract class BaseEntity(data: DataSnapshot?)
 
     fun existsInDatabase(): Boolean = id != null
 
+    abstract fun getType(): String
+
     companion object
     {
         object PropertyKeys
