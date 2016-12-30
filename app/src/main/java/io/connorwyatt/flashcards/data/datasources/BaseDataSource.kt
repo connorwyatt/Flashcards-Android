@@ -78,6 +78,13 @@ abstract class BaseDataSource
                         updateReference = updateReference)
     }
 
+    protected fun executeDelete(resource: BaseEntity,
+                                reference: (FirebaseUser) -> DatabaseReference): Observable<Any?>
+    {
+        return baseDelete(resource = resource,
+                          reference = reference)
+    }
+
     private fun <T> baseExecuteQuery(query: (FirebaseUser) -> Query,
                                      processData: (DataSnapshot) -> Observable<T>): Observable<T>
     {
@@ -150,6 +157,37 @@ abstract class BaseDataSource
         return Observable.error(NotSignedInException())
     }
 
+    private fun baseDelete(resource: BaseEntity,
+                           reference: (FirebaseUser) -> DatabaseReference): Observable<Any?>
+    {
+        authHelper.currentUser?.let { user ->
+            return Observable.create { observer ->
+                val ref = reference(user)
+
+                val updates: MutableMap<String, Any?> = mutableMapOf()
+
+                val pathToDelete
+                    = getPathRelativeToUserQuery(user, ref).joinToString(separator = "/")
+
+                updates.put(pathToDelete, null)
+
+                val relationships = resource.relationships.getAllRelationships()
+
+                updates.putAll(getRelationshipUpdates(relationships, resource, ref.key, null))
+
+                getUserDataQuery(userId = user.uid).updateChildren(updates)
+                    .addOnFailureListener { observer.onError(it) }
+                    .addOnSuccessListener {
+                        observer.onNext(true)
+                        observer.onComplete()
+                    }
+
+            }
+        }
+
+        return Observable.error(NotSignedInException())
+    }
+
     private fun getUpdates(reference: DatabaseReference,
                            user: FirebaseUser,
                            resourceId: String,
@@ -165,25 +203,30 @@ abstract class BaseDataSource
         val (addedRelationships, removedRelationships)
             = resource.relationships.getUpdatedRelationships()
 
-        addedRelationships.forEach { resourceEntry ->
-            resourceEntry.value.forEach { id ->
-                val relationshipPath =
-                    getRelationshipPath(resourceEntry.key, id, resource.getType(), resourceId)
+        updates.putAll(getRelationshipUpdates(addedRelationships, resource, resourceId, true))
 
-                updates.put(relationshipPath, true)
-            }
-        }
-
-        removedRelationships.forEach { resourceEntry ->
-            resourceEntry.value.forEach { id ->
-                val relationshipPath =
-                    getRelationshipPath(resourceEntry.key, id, resource.getType(), resourceId)
-
-                updates.put(relationshipPath, null)
-            }
-        }
+        updates.putAll(getRelationshipUpdates(removedRelationships, resource, resourceId, null))
 
         return updates
+    }
+
+    private fun getRelationshipUpdates(relationships: Map<String, List<String>>,
+                                       resource: BaseEntity,
+                                       resourceId: String,
+                                       value: Any?): Map<String, Any?>
+    {
+        val values: MutableMap<String, Any?> = mutableMapOf()
+
+        relationships.forEach { resourceEntry ->
+            resourceEntry.value.forEach { id ->
+                val relationshipPath =
+                    getRelationshipPath(resourceEntry.key, id, resource.getType(), resourceId)
+
+                values.put(relationshipPath, value)
+            }
+        }
+
+        return values
     }
 
     private fun getPathRelativeToUserQuery(user: FirebaseUser,
