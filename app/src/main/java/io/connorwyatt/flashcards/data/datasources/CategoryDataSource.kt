@@ -42,6 +42,14 @@ class CategoryDataSource : BaseDataSource()
         )
     }
 
+    fun delete(category: Category): Observable<Any?>
+    {
+        return executeDelete(
+            resource = category,
+            reference = { getCategoryQuery(userId = it.uid, categoryId = category.id!!) }
+        )
+    }
+
     private fun getCategoriesQuery(userId: String): DatabaseReference =
         getUserDataQuery(userId).child("category")
 

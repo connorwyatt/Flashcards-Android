@@ -45,13 +45,27 @@ object CategoryService
 
 
     fun save(category: Category): Observable<Category>
-        = CategoryDataSource().save(category).flatMap { getById(it) }
+    {
+        return getByName(category.name!!).flatMap { categories ->
+            if (categories.isEmpty())
+            {
+                return@flatMap CategoryDataSource().save(category).flatMap { getById(it) }
+            }
+            else
+            {
+                return@flatMap Observable.error<Category>(CategoryNameTakenException())
+            }
+        }
+    }
 
     fun delete(category: Category): Observable<Any?>
-        = TODO("Stub Method") // TODO Replace with real method body
+        = CategoryDataSource().delete(category)
 
     fun deleteWithFlashcards(category: Category): Observable<Any?>
         = TODO("Stub Method") // TODO Replace with real method body
+
+    class CategoryNameTakenException : Exception()
+    {}
 
     private fun normaliseCategoryName(name: String): String = name.trim()
 }
