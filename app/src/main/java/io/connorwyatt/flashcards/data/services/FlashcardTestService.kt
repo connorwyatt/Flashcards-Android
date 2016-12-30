@@ -6,6 +6,10 @@ import io.reactivex.Observable
 
 object FlashcardTestService
 {
+    fun getById(id: String): Observable<FlashcardTest>
+        = FlashcardTestDataSource().getById(id)
+
+
     fun getByFlashcardId(id: String): Observable<List<FlashcardTest>>
         = FlashcardTestDataSource().getByFlashcardId(id)
 
@@ -35,7 +39,11 @@ object FlashcardTestService
     }
 
     fun save(flashcardTest: FlashcardTest): Observable<FlashcardTest>
-        = TODO("Stub Method") // TODO Replace with real method body
+    {
+        return FlashcardTestDataSource().save(flashcardTest).flatMap {
+            getById(it)
+        }
+    }
 
     fun delete(flashcardTest: FlashcardTest): Observable<Any?>
         = FlashcardTestDataSource().delete(flashcardTest)

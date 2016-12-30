@@ -6,6 +6,14 @@ import io.reactivex.Observable
 
 class FlashcardTestDataSource : BaseDataSource()
 {
+    fun getById(id: String): Observable<FlashcardTest>
+    {
+        return executeQuerySingle(
+            query = { getFlashcardTestQuery(userId = it.uid, flashcardTestId = id) },
+            parser = { Observable.just(FlashcardTest(it)) }
+        )
+    }
+
     fun getByFlashcardId(id: String): Observable<List<FlashcardTest>>
     {
         return executeQueryRelationship(
@@ -14,6 +22,19 @@ class FlashcardTestDataSource : BaseDataSource()
             resourceId = id,
             parser = { Observable.just(FlashcardTest(it)) },
             clazz = FlashcardTest::class.java
+        )
+    }
+
+    fun save(flashcardTest: FlashcardTest): Observable<String>
+    {
+        return executeSave(
+            resource = flashcardTest,
+            createReference = {
+                getFlashcardTestsQuery(userId = it.uid).push()
+            },
+            updateReference = {
+                getFlashcardTestQuery(userId = it.uid, flashcardTestId = flashcardTest.id!!)
+            }
         )
     }
 
