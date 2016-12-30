@@ -1,4 +1,4 @@
-package io.connorwyatt.flashcards.fragments
+package io.connorwyatt.flashcards.fragments.legacy
 
 import android.app.Fragment
 import android.os.Bundle
@@ -9,12 +9,13 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import io.connorwyatt.flashcards.R
-import io.connorwyatt.flashcards.activities.FlashcardTestActivity
+import io.connorwyatt.flashcards.activities.legacy.FlashcardTestActivityLegacy
 import io.connorwyatt.flashcards.data.entities.legacy.FlashcardTestLegacy
 import io.connorwyatt.flashcards.data.services.legacy.FlashcardTestServiceLegacy
 import java.util.ArrayList
 
-class FlashcardTestCardFragment : Fragment()
+@Deprecated("This is considered legacy.")
+class FlashcardTestCardFragmentLegacy : Fragment()
 {
     private val flashcardTest = FlashcardTestLegacy()
     private var isFlipped = false
@@ -65,7 +66,7 @@ class FlashcardTestCardFragment : Fragment()
         val flashcardTestService = FlashcardTestServiceLegacy(activity)
         flashcardTestService.save(flashcardTest)
 
-        val flashcardTestFragment = (activity as FlashcardTestActivity).flashcardTestFragment
+        val flashcardTestFragment = (activity as FlashcardTestActivityLegacy).flashcardTestFragment
 
         flashcardTestFragment!!.updateFlashcardTest(flashcardTest)
     }
@@ -87,10 +88,10 @@ class FlashcardTestCardFragment : Fragment()
             val layout = inflater.inflate(
                 R.layout.fragment_flashcard_test_card_front, container, false) as LinearLayout
 
-            val parentFragment = parentFragment as FlashcardTestCardFragment
+            val parentFragment = parentFragment as FlashcardTestCardFragmentLegacy
 
             val arguments = parentFragment.arguments
-            val titleText = arguments.getString(FlashcardTestCardFragment.ARGUMENT_KEYS.TITLE)
+            val titleText = arguments.getString(FlashcardTestCardFragmentLegacy.ARGUMENT_KEYS.TITLE)
 
             val title = layout.findViewById(R.id.flashcard_test_card_title) as TextView
             title.text = titleText
@@ -105,7 +106,7 @@ class FlashcardTestCardFragment : Fragment()
 
     class CardBackFragment : Fragment()
     {
-        private var testCardFragment: FlashcardTestCardFragment? = null
+        private var testCardFragment: FlashcardTestCardFragmentLegacy? = null
         private val buttons = ArrayList<ImageButton>()
         private var currentlySelectedButton: ImageButton? = null
         private var layout: LinearLayout? = null
@@ -164,17 +165,17 @@ class FlashcardTestCardFragment : Fragment()
         {
             super.onCreateView(inflater, container, savedInstanceState)
 
-            testCardFragment = parentFragment as FlashcardTestCardFragment
+            testCardFragment = parentFragment as FlashcardTestCardFragmentLegacy
 
             layout = inflater.inflate(R.layout.fragment_flashcard_test_card_back,
                                       container, false) as LinearLayout
 
             val arguments = testCardFragment!!.arguments
-            val titleText = arguments.getString(FlashcardTestCardFragment.ARGUMENT_KEYS.TITLE)
-            val textText = arguments.getString(FlashcardTestCardFragment.ARGUMENT_KEYS.TEXT)
+            val titleText = arguments.getString(FlashcardTestCardFragmentLegacy.ARGUMENT_KEYS.TITLE)
+            val textText = arguments.getString(FlashcardTestCardFragmentLegacy.ARGUMENT_KEYS.TEXT)
 
             testCardFragment!!.flashcardTest.flashcardId = arguments.getLong(
-                FlashcardTestCardFragment.ARGUMENT_KEYS.ID)
+                FlashcardTestCardFragmentLegacy.ARGUMENT_KEYS.ID)
 
             val title = layout!!.findViewById(R.id.flashcard_test_card_title) as TextView
             title.text = titleText

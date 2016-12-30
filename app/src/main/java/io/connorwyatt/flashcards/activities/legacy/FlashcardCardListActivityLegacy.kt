@@ -1,4 +1,4 @@
-package io.connorwyatt.flashcards.activities
+package io.connorwyatt.flashcards.activities.legacy
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -10,16 +10,18 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.Spinner
 import io.connorwyatt.flashcards.R
-import io.connorwyatt.flashcards.adapters.CategoryNameArrayAdapter
-import io.connorwyatt.flashcards.adapters.FlashcardCardListAdapter
+import io.connorwyatt.flashcards.activities.BaseActivity
+import io.connorwyatt.flashcards.adapters.legacy.CategoryNameArrayAdapterLegacy
+import io.connorwyatt.flashcards.adapters.legacy.FlashcardCardListAdapterLegacy
 import io.connorwyatt.flashcards.data.entities.legacy.CategoryLegacy
 import io.connorwyatt.flashcards.data.entities.legacy.FlashcardLegacy
 import io.connorwyatt.flashcards.data.services.legacy.CategoryServiceLegacy
 import io.connorwyatt.flashcards.data.services.legacy.FlashcardServiceLegacy
 
-class FlashcardCardListActivity : BaseActivity()
+@Deprecated("This is considered legacy.")
+class FlashcardCardListActivityLegacy : BaseActivity()
 {
-    private var adapter: FlashcardCardListAdapter? = null
+    private var adapter: FlashcardCardListAdapterLegacy? = null
     private var allCategory: CategoryLegacy? = null
     private var filterCategory: CategoryLegacy? = null
 
@@ -71,18 +73,18 @@ class FlashcardCardListActivity : BaseActivity()
             {
                 if (allCategory == filterCategory)
                 {
-                    FlashcardTestActivity.startActivity(this)
+                    FlashcardTestActivityLegacy.startActivity(this)
                 }
                 else
                 {
-                    FlashcardTestActivity
+                    FlashcardTestActivityLegacy
                         .startActivityWithCategoryFilter(this, filterCategory!!.id!!)
                 }
                 return true
             }
             R.id.action_navigate_to_categories ->
             {
-                CategoriesActivity.startActivity(this)
+                CategoriesActivityLegacy.startActivity(this)
                 return true
             }
             else -> return super.onOptionsItemSelected(item)
@@ -98,7 +100,7 @@ class FlashcardCardListActivity : BaseActivity()
 
     fun addNewFlashcard(view: View)
     {
-        FlashcardDetailsActivity.startActivity(this)
+        FlashcardDetailsActivityLegacy.startActivity(this)
     }
 
     private fun setUpListRecyclerView()
@@ -111,14 +113,14 @@ class FlashcardCardListActivity : BaseActivity()
         val layoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = layoutManager
 
-        adapter = FlashcardCardListAdapter()
+        adapter = FlashcardCardListAdapterLegacy()
         adapter!!.setOnCardClickListener(
-            object : FlashcardCardListAdapter.OnCardClickListener
+            object : FlashcardCardListAdapterLegacy.OnCardClickListener
             {
                 override fun onClick(flashcard: FlashcardLegacy)
                 {
-                    FlashcardDetailsActivity.startActivityWithFlashcard(
-                        this@FlashcardCardListActivity, flashcard)
+                    FlashcardDetailsActivityLegacy.startActivityWithFlashcard(
+                        this@FlashcardCardListActivityLegacy, flashcard)
                 }
             }
         )
@@ -133,7 +135,7 @@ class FlashcardCardListActivity : BaseActivity()
         val categories = allCategories
 
         val spinner = findViewById(R.id.flashcard_card_list_spinner) as Spinner
-        val spinnerAdapter = CategoryNameArrayAdapter(
+        val spinnerAdapter = CategoryNameArrayAdapterLegacy(
             supportActionBar!!.themedContext, categories)
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 

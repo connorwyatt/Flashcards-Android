@@ -1,4 +1,4 @@
-package io.connorwyatt.flashcards.activities
+package io.connorwyatt.flashcards.activities.legacy
 
 import android.app.AlertDialog
 import android.content.Context
@@ -11,17 +11,19 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import io.connorwyatt.flashcards.R
-import io.connorwyatt.flashcards.adapters.CategoryListAdapter
+import io.connorwyatt.flashcards.activities.BaseActivity
+import io.connorwyatt.flashcards.adapters.legacy.CategoryListAdapterLegacy
 import io.connorwyatt.flashcards.data.entities.legacy.CategoryLegacy
 import io.connorwyatt.flashcards.data.services.legacy.CategoryServiceLegacy
 
-class CategoriesActivity : BaseActivity()
+@Deprecated("This is considered legacy.")
+class CategoriesActivityLegacy : BaseActivity()
 {
     private val categoryService = CategoryServiceLegacy(this)
-    private var categoryItems: MutableList<CategoryListAdapter.ListItem> = mutableListOf()
+    private var categoryItems: MutableList<CategoryListAdapterLegacy.ListItem> = mutableListOf()
     private val removedCategoryIds: MutableList<Long> = mutableListOf()
 
-    private var categoryListAdapter: CategoryListAdapter? = null
+    private var categoryListAdapter: CategoryListAdapterLegacy? = null
     private var coordinatorLayout: CoordinatorLayout? = null
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -38,19 +40,19 @@ class CategoriesActivity : BaseActivity()
         setUpFloatingActionButton()
     }
 
-    private fun getCategoryListItems(): List<CategoryListAdapter.ListItem>
+    private fun getCategoryListItems(): List<CategoryListAdapterLegacy.ListItem>
     {
         val categories = categoryService.getAll()
 
-        val categoryListItems: List<CategoryListAdapter.ListItem> =
+        val categoryListItems: List<CategoryListAdapterLegacy.ListItem> =
             categories.map(
-                fun(category: CategoryLegacy): CategoryListAdapter.ListItem
+                fun(category: CategoryLegacy): CategoryListAdapterLegacy.ListItem
                 {
                     val flashcardCountForCategory =
                         categoryService.getFlashcardsForCategory(category.id!!).size
                     val averageRating = categoryService.getAverageRatingForCategory(category.id!!)
 
-                    return CategoryListAdapter.ListItem(
+                    return CategoryListAdapterLegacy.ListItem(
                         category,
                         flashcardCountForCategory,
                         averageRating)
@@ -60,7 +62,7 @@ class CategoriesActivity : BaseActivity()
         return categoryListItems
     }
 
-    private fun getFilteredCategoryListItems(): List<CategoryListAdapter.ListItem>
+    private fun getFilteredCategoryListItems(): List<CategoryListAdapterLegacy.ListItem>
     {
         return categoryItems.filterNot { categoryItem -> removedCategoryIds.contains(categoryItem.category.id) }
     }
@@ -72,10 +74,10 @@ class CategoriesActivity : BaseActivity()
         setSupportActionBar(toolbar)
     }
 
-    private fun setUpRecycler(categoryListItems: List<CategoryListAdapter.ListItem>)
+    private fun setUpRecycler(categoryListItems: List<CategoryListAdapterLegacy.ListItem>)
     {
         coordinatorLayout = findViewById(R.id.categories_coordinator_layout) as CoordinatorLayout
-        categoryListAdapter = CategoryListAdapter(categoryListItems)
+        categoryListAdapter = CategoryListAdapterLegacy(categoryListItems)
 
         categoryListAdapter!!.addOnEditListener { category ->
             editCategory(category)
@@ -92,7 +94,7 @@ class CategoriesActivity : BaseActivity()
 
     private fun editCategory(category: CategoryLegacy)
     {
-        CategoryDetailsActivity.startActivity(this, category)
+        CategoryDetailsActivityLegacy.startActivity(this, category)
     }
 
     private fun showDeleteCategoryDialog(category: CategoryLegacy)
@@ -158,7 +160,7 @@ class CategoriesActivity : BaseActivity()
         val fab = findViewById(R.id.categories_add_button) as FloatingActionButton
 
         fab.setOnClickListener { view ->
-            CategoryDetailsActivity.startActivity(this)
+            CategoryDetailsActivityLegacy.startActivity(this)
         }
     }
 
@@ -166,7 +168,7 @@ class CategoriesActivity : BaseActivity()
     {
         fun startActivity(context: Context)
         {
-            val intent = Intent(context, CategoriesActivity::class.java)
+            val intent = Intent(context, CategoriesActivityLegacy::class.java)
 
             context.startActivity(intent)
         }

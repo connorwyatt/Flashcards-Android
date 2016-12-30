@@ -6,6 +6,7 @@ import io.connorwyatt.flashcards.data.datasources.legacy.FlashcardDataSourceLega
 import io.connorwyatt.flashcards.data.entities.legacy.CategoryLegacy
 import io.connorwyatt.flashcards.data.entities.legacy.FlashcardLegacy
 
+@Deprecated("This is considered legacy.")
 class CategoryServiceLegacy(private val context: Context)
 {
     fun getById(categoryId: Long): CategoryLegacy

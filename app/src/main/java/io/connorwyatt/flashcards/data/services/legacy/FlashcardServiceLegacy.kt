@@ -4,6 +4,7 @@ import android.content.Context
 import io.connorwyatt.flashcards.data.datasources.legacy.FlashcardDataSourceLegacy
 import io.connorwyatt.flashcards.data.entities.legacy.FlashcardLegacy
 
+@Deprecated("This is considered legacy.")
 class FlashcardServiceLegacy(private val context: Context)
 {
     fun getAll(): List<FlashcardLegacy>

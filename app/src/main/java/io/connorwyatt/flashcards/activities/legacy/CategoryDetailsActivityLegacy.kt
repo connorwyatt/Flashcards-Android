@@ -1,4 +1,4 @@
-package io.connorwyatt.flashcards.activities
+package io.connorwyatt.flashcards.activities.legacy
 
 import android.app.AlertDialog
 import android.content.Context
@@ -15,10 +15,12 @@ import android.view.MenuItem
 import android.widget.Button
 import android.widget.Toast
 import io.connorwyatt.flashcards.R
+import io.connorwyatt.flashcards.activities.BaseActivity
 import io.connorwyatt.flashcards.data.entities.legacy.CategoryLegacy
 import io.connorwyatt.flashcards.data.services.legacy.CategoryServiceLegacy
 
-class CategoryDetailsActivity : BaseActivity()
+@Deprecated("This is considered legacy.")
+class CategoryDetailsActivityLegacy : BaseActivity()
 {
     private var category: CategoryLegacy = CategoryLegacy()
     private var name: TextInputEditText? = null
@@ -237,7 +239,7 @@ class CategoryDetailsActivity : BaseActivity()
 
         fun startActivity(context: Context, category: CategoryLegacy? = null)
         {
-            val intent = Intent(context, CategoryDetailsActivity::class.java)
+            val intent = Intent(context, CategoryDetailsActivityLegacy::class.java)
 
             if (category !== null)
             {

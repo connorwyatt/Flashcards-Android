@@ -4,6 +4,7 @@ import android.content.Context
 import io.connorwyatt.flashcards.data.datasources.legacy.FlashcardTestDataSourceLegacy
 import io.connorwyatt.flashcards.data.entities.legacy.FlashcardTestLegacy
 
+@Deprecated("This is considered legacy.")
 class FlashcardTestServiceLegacy(private val context: Context)
 {
     fun getAverageRatingForFlashcard(id: Long): Double?

@@ -1,4 +1,4 @@
-package io.connorwyatt.flashcards.adapters
+package io.connorwyatt.flashcards.adapters.legacy
 
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
@@ -14,7 +14,8 @@ import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.data.entities.legacy.CategoryLegacy
 import java.util.ArrayList
 
-class CategoryListAdapter(private var categoryListItems: List<ListItem>) : RecyclerView.Adapter<CategoryListAdapter.ViewHolder>()
+@Deprecated("This is considered legacy.")
+class CategoryListAdapterLegacy(private var categoryListItems: List<ListItem>) : RecyclerView.Adapter<CategoryListAdapterLegacy.ViewHolder>()
 {
     private val onDeleteListeners = ArrayList<(CategoryLegacy) -> Unit>()
     private val onEditListeners = ArrayList<(CategoryLegacy) -> Unit>()
@@ -39,8 +40,8 @@ class CategoryListAdapter(private var categoryListItems: List<ListItem>) : Recyc
 
         holder.title.text = categoryListItem.category.name
         holder.count.text = resources.getQuantityString(R.plurals.flashcard_count,
-                categoryListItem.flashcardCount,
-                categoryListItem.flashcardCount)
+                                                        categoryListItem.flashcardCount,
+                                                        categoryListItem.flashcardCount)
 
         var statusText: String = context.getString(R.string.category_status_no_data)
         var statusTextColor: Int = ContextCompat.getColor(context, R.color.colorTextDisabled)

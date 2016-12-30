@@ -1,4 +1,4 @@
-package io.connorwyatt.flashcards.activities
+package io.connorwyatt.flashcards.activities.legacy
 
 import android.content.Context
 import android.content.Intent
@@ -15,13 +15,15 @@ import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import io.connorwyatt.flashcards.R
+import io.connorwyatt.flashcards.activities.BaseActivity
 import io.connorwyatt.flashcards.data.entities.legacy.CategoryLegacy
 import io.connorwyatt.flashcards.data.entities.legacy.FlashcardLegacy
 import io.connorwyatt.flashcards.data.services.legacy.CategoryServiceLegacy
 import io.connorwyatt.flashcards.data.services.legacy.FlashcardServiceLegacy
 import java.util.ArrayList
 
-class FlashcardDetailsActivity : BaseActivity()
+@Deprecated("This is considered legacy.")
+class FlashcardDetailsActivityLegacy : BaseActivity()
 {
     private var flashcard: FlashcardLegacy? = FlashcardLegacy()
     private var titleLayout: TextInputLayout? = null
@@ -434,14 +436,14 @@ class FlashcardDetailsActivity : BaseActivity()
 
         fun startActivity(context: Context)
         {
-            val intent = Intent(context, FlashcardDetailsActivity::class.java)
+            val intent = Intent(context, FlashcardDetailsActivityLegacy::class.java)
 
             context.startActivity(intent)
         }
 
         fun startActivityWithFlashcard(context: Context, flashcard: FlashcardLegacy)
         {
-            val intent = Intent(context, FlashcardDetailsActivity::class.java)
+            val intent = Intent(context, FlashcardDetailsActivityLegacy::class.java)
 
             intent.putExtra(INTENT_EXTRAS.FLASHCARD_ID, flashcard.id)
 
@@ -450,7 +452,7 @@ class FlashcardDetailsActivity : BaseActivity()
 
         fun startActivityWithCategory(context: Context, category: CategoryLegacy)
         {
-            val intent = Intent(context, FlashcardDetailsActivity::class.java)
+            val intent = Intent(context, FlashcardDetailsActivityLegacy::class.java)
 
             intent.putExtra(INTENT_EXTRAS.CATEGORY_ID, category.id)
 

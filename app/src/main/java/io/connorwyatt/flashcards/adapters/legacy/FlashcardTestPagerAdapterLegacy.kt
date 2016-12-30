@@ -1,15 +1,15 @@
-package io.connorwyatt.flashcards.adapters
+package io.connorwyatt.flashcards.adapters.legacy
 
 import android.app.Fragment
 import android.app.FragmentManager
 import android.os.Bundle
 import android.support.v4.view.PagerAdapter
-
+import io.connorwyatt.flashcards.adapters.FixedFragmentStatePagerAdapter
 import io.connorwyatt.flashcards.data.entities.legacy.FlashcardLegacy
-import io.connorwyatt.flashcards.fragments.FlashcardTestCardFragment
-import io.connorwyatt.flashcards.fragments.FlashcardTestSummaryFragment
 
-class FlashcardTestPagerAdapter(fragmentManager: FragmentManager, private val flashcards: MutableList<FlashcardLegacy>) :
+@Deprecated("This is considered legacy.")
+class FlashcardTestPagerAdapterLegacy(fragmentManager: FragmentManager,
+                                      private val flashcards: MutableList<FlashcardLegacy>) :
     FixedFragmentStatePagerAdapter(fragmentManager)
 {
     private val summaryFragment = FlashcardTestSummaryFragment()

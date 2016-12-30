@@ -2,6 +2,7 @@ package io.connorwyatt.flashcards.data.contracts
 
 import io.connorwyatt.flashcards.data.entities.legacy.BaseColumnsTimelineLegacy
 
+@Deprecated("This is considered legacy.")
 object CategoryContract
 {
     val TABLE_NAME = "category"

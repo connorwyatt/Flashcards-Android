@@ -7,6 +7,7 @@ import io.connorwyatt.flashcards.data.contracts.FlashcardTestContract
 import io.connorwyatt.flashcards.data.entities.legacy.BaseColumnsTimelineLegacy
 import io.connorwyatt.flashcards.exceptions.DBUpgradeException
 
+@Deprecated("This is considered legacy.")
 object DBUpgradeHelper
 {
     @Throws(DBUpgradeException::class)

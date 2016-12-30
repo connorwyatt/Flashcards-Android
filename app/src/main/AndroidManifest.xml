@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activities.FlashcardCardListActivity"
+            android:name=".activities.legacy.FlashcardCardListActivityLegacy"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,13 +19,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.FlashcardDetailsActivity"
-            android:parentActivityName=".activities.FlashcardCardListActivity" />
-        <activity android:name=".activities.FlashcardTestActivity" />
-        <activity android:name=".activities.CategoriesActivity" />
+            android:name=".activities.legacy.FlashcardDetailsActivityLegacy"
+            android:parentActivityName=".activities.legacy.FlashcardCardListActivityLegacy" />
+        <activity android:name=".activities.legacy.FlashcardTestActivityLegacy" />
+        <activity android:name=".activities.legacy.CategoriesActivityLegacy" />
         <activity
-            android:name=".activities.CategoryDetailsActivity"
-            android:parentActivityName=".activities.CategoriesActivity" />
+            android:name=".activities.legacy.CategoryDetailsActivityLegacy"
+            android:parentActivityName=".activities.legacy.CategoriesActivityLegacy" />
         <activity android:name=".activities.AuthActivity" />
     </application>
 

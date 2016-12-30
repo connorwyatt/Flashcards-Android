@@ -9,7 +9,7 @@ import android.widget.Button
 import android.widget.TextView
 
 import io.connorwyatt.flashcards.R
-import io.connorwyatt.flashcards.activities.FlashcardTestActivity
+import io.connorwyatt.flashcards.activities.legacy.FlashcardTestActivityLegacy
 import io.connorwyatt.flashcards.interfaces.IPerformanceBreakdown
 
 class FlashcardTestSummaryFragment : Fragment()
@@ -26,7 +26,7 @@ class FlashcardTestSummaryFragment : Fragment()
         viewGroup = inflater.inflate(
             R.layout.fragment_flashcard_test_summary_card, container, false) as ViewGroup
 
-        val testFragment = (activity as FlashcardTestActivity).flashcardTestFragment
+        val testFragment = (activity as FlashcardTestActivityLegacy).flashcardTestFragment
 
         performanceBreakdown = testFragment!!.performanceBreakdown
 

@@ -11,6 +11,7 @@ import io.connorwyatt.flashcards.data.entities.legacy.FlashcardLegacy
 import io.connorwyatt.flashcards.exceptions.SQLNoRowsAffectedException
 import java.util.ArrayList
 
+@Deprecated("This is considered legacy.")
 class FlashcardDataSourceLegacy : BaseDataSourceLegacy
 {
     private val allColumns = arrayOf(BaseColumnsTimelineLegacy._ID,

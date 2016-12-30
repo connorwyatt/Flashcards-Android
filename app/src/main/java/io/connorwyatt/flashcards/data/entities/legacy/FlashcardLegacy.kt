@@ -2,6 +2,7 @@ package io.connorwyatt.flashcards.data.entities.legacy
 
 import java.util.ArrayList
 
+@Deprecated("This is considered legacy.")
 class FlashcardLegacy : BaseEntityLegacy()
 {
     var title: String? = null

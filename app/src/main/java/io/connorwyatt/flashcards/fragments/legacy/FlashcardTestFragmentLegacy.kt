@@ -1,4 +1,4 @@
-package io.connorwyatt.flashcards.fragments
+package io.connorwyatt.flashcards.fragments.legacy
 
 import android.app.AlertDialog
 import android.app.Fragment
@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import io.connorwyatt.flashcards.R
-import io.connorwyatt.flashcards.adapters.FlashcardTestPagerAdapter
+import io.connorwyatt.flashcards.adapters.legacy.FlashcardTestPagerAdapterLegacy
 import io.connorwyatt.flashcards.data.entities.legacy.FlashcardLegacy
 import io.connorwyatt.flashcards.data.entities.legacy.FlashcardTestLegacy
 import io.connorwyatt.flashcards.data.services.legacy.FlashcardServiceLegacy
@@ -19,13 +19,14 @@ import io.connorwyatt.flashcards.views.progressbar.ProgressBar
 import java.util.ArrayList
 import java.util.HashMap
 
-class FlashcardTestFragment : Fragment()
+@Deprecated("This is considered legacy.")
+class FlashcardTestFragmentLegacy : Fragment()
 {
     val performanceBreakdown = createPerformanceBreakdown()
     private var initialCount: Int = 0
     private val flashcardTestMap = HashMap<Long, FlashcardTestLegacy>()
     private val skippedFlashcards = ArrayList<Long>()
-    private var flashcardTestPagerAdapter: FlashcardTestPagerAdapter? = null
+    private var flashcardTestPagerAdapter: FlashcardTestPagerAdapterLegacy? = null
     private var progressBar: ProgressBar? = null
     private var flashcards: MutableList<FlashcardLegacy>? = null
     private val changeListeners = ArrayList<IPerformanceBreakdown.OnPerformanceBreakdownChangeListener>()
@@ -115,7 +116,7 @@ class FlashcardTestFragment : Fragment()
         val viewGroup = inflater.inflate(R.layout.fragment_flashcard_test,
                                          container, false) as ViewGroup
 
-        flashcardTestPagerAdapter = FlashcardTestPagerAdapter(fragmentManager, flashcards!!)
+        flashcardTestPagerAdapter = FlashcardTestPagerAdapterLegacy(fragmentManager, flashcards!!)
 
         setUpViewPager(viewGroup)
 

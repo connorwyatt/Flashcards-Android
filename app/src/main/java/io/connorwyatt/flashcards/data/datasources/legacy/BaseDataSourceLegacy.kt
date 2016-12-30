@@ -9,6 +9,7 @@ import io.connorwyatt.flashcards.data.entities.legacy.BaseColumnsTimelineLegacy
 import io.connorwyatt.flashcards.data.entities.legacy.BaseEntityLegacy
 import java.util.ArrayList
 
+@Deprecated("This is considered legacy.")
 open class BaseDataSourceLegacy
 {
     protected var database: SQLiteDatabase? = null

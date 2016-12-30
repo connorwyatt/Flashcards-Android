@@ -1,20 +1,21 @@
-package io.connorwyatt.flashcards.activities
+package io.connorwyatt.flashcards.activities.legacy
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import io.connorwyatt.flashcards.R
-import io.connorwyatt.flashcards.fragments.FlashcardTestFragment
+import io.connorwyatt.flashcards.activities.BaseActivity
+import io.connorwyatt.flashcards.fragments.legacy.FlashcardTestFragmentLegacy
 
-class FlashcardTestActivity : BaseActivity()
+@Deprecated("This is considered legacy.")
+class FlashcardTestActivityLegacy : BaseActivity()
 {
-    var flashcardTestFragment: FlashcardTestFragment? = null
+    var flashcardTestFragment: FlashcardTestFragmentLegacy? = null
         private set
 
     override fun onBackPressed()
     {
-        flashcardTestFragment!!.onBackPressed(Runnable { super@FlashcardTestActivity.onBackPressed() })
+        flashcardTestFragment!!.onBackPressed(Runnable { super@FlashcardTestActivityLegacy.onBackPressed() })
     }
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -23,11 +24,11 @@ class FlashcardTestActivity : BaseActivity()
         setContentView(R.layout.activity_flashcard_test)
 
         val fm = fragmentManager
-        flashcardTestFragment = fm.findFragmentByTag(FRAGMENT_TAG) as FlashcardTestFragment?
+        flashcardTestFragment = fm.findFragmentByTag(FRAGMENT_TAG) as FlashcardTestFragmentLegacy?
 
         if (flashcardTestFragment == null)
         {
-            flashcardTestFragment = FlashcardTestFragment()
+            flashcardTestFragment = FlashcardTestFragmentLegacy()
 
             fragmentManager
                 .beginTransaction()
@@ -47,7 +48,7 @@ class FlashcardTestActivity : BaseActivity()
 
         fun startActivity(context: Context)
         {
-            val intent = Intent(context, FlashcardTestActivity::class.java)
+            val intent = Intent(context, FlashcardTestActivityLegacy::class.java)
 
             context.startActivity(intent)
         }
@@ -57,7 +58,7 @@ class FlashcardTestActivity : BaseActivity()
             val extras = Bundle()
             extras.putLong(EXTRA_KEYS.CATEGORY_ID, categoryId)
 
-            val intent = Intent(context, FlashcardTestActivity::class.java)
+            val intent = Intent(context, FlashcardTestActivityLegacy::class.java)
             intent.putExtras(extras)
 
             context.startActivity(intent)

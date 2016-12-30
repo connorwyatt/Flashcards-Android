@@ -1,5 +1,6 @@
 package io.connorwyatt.flashcards.data.entities.legacy
 
+@Deprecated("This is considered legacy.")
 object BaseColumnsTimelineLegacy
 {
     val _ID = "_id"

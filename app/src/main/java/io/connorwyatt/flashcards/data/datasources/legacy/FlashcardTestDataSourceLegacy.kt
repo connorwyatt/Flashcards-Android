@@ -10,6 +10,7 @@ import io.connorwyatt.flashcards.data.entities.legacy.FlashcardTestLegacy
 import io.connorwyatt.flashcards.exceptions.SQLNoRowsAffectedException
 import java.util.ArrayList
 
+@Deprecated("This is considered legacy.")
 class FlashcardTestDataSourceLegacy : BaseDataSourceLegacy
 {
     private val allColumns = arrayOf(BaseColumnsTimelineLegacy._ID,

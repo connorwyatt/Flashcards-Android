@@ -8,6 +8,7 @@ import io.connorwyatt.flashcards.exceptions.SQLNoRowsAffectedException
 import io.connorwyatt.flashcards.utils.ListUtils
 import java.util.ArrayList
 
+@Deprecated("This is considered legacy.")
 class FlashcardCategoryDataSourceLegacy : BaseDataSourceLegacy
 {
     constructor(context: Context) : super(context)

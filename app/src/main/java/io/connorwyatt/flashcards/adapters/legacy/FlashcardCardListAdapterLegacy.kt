@@ -1,4 +1,4 @@
-package io.connorwyatt.flashcards.adapters
+package io.connorwyatt.flashcards.adapters.legacy
 
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.ColorUtils
@@ -14,8 +14,9 @@ import io.connorwyatt.flashcards.data.entities.legacy.FlashcardLegacy
 import io.connorwyatt.flashcards.data.services.legacy.FlashcardTestServiceLegacy
 import io.connorwyatt.flashcards.views.progressbar.ProgressBar
 
-class FlashcardCardListAdapter :
-    RecyclerView.Adapter<FlashcardCardListAdapter.FlashcardCardViewHolder>()
+@Deprecated("This is considered legacy.")
+class FlashcardCardListAdapterLegacy :
+    RecyclerView.Adapter<FlashcardCardListAdapterLegacy.FlashcardCardViewHolder>()
 {
     private var flashcards: List<FlashcardLegacy>? = null
     private var viewFlashcards: List<FlashcardLegacy>? = null

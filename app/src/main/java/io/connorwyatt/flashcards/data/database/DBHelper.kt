@@ -9,6 +9,7 @@ import io.connorwyatt.flashcards.data.contracts.FlashcardCategoryContract
 import io.connorwyatt.flashcards.data.contracts.FlashcardContract
 import io.connorwyatt.flashcards.data.contracts.FlashcardTestContract
 
+@Deprecated("This is considered legacy.")
 class DBHelper(context: Context) :
     SQLiteOpenHelper(context, DBHelper.DATABASE_NAME, null, DBHelper.DATABASE_VERSION)
 {

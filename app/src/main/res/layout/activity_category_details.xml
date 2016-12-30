@@ -4,7 +4,7 @@
     android:id="@+id/activity_category_details"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.CategoryDetailsActivity">
+    tools:context=".activities.legacy.CategoryDetailsActivityLegacy">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/category_details_toolbar"
