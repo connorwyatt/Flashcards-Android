@@ -1,6 +1,7 @@
 package io.connorwyatt.flashcards.data.services
 
 import io.connorwyatt.flashcards.data.datasources.FlashcardTestDataSource
+import io.connorwyatt.flashcards.data.entities.FlashcardTest
 import io.reactivex.Observable
 
 object FlashcardTestService
@@ -15,5 +16,11 @@ object FlashcardTestService
             ratings.sum() / ratings.size
         }
     }
+
+    fun getAverageRatingForCategory(): Observable<Double?>
+        = TODO("Stub Method") // TODO Replace with real method body
+
+    fun save(flashcardTest: FlashcardTest): Observable<FlashcardTest>
+        = TODO("Stub Method") // TODO Replace with real method body
 }
 

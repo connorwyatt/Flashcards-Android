@@ -47,5 +47,11 @@ object CategoryService
     fun save(category: Category): Observable<Category>
         = CategoryDataSource().save(category).flatMap { getById(it) }
 
+    fun delete(category: Category): Observable<Any?>
+        = TODO("Stub Method") // TODO Replace with real method body
+
+    fun deleteWithFlashcards(category: Category): Observable<Any?>
+        = TODO("Stub Method") // TODO Replace with real method body
+
     private fun normaliseCategoryName(name: String): String = name.trim()
 }
