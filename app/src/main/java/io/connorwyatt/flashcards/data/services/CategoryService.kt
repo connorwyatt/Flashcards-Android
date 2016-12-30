@@ -62,7 +62,11 @@ object CategoryService
         = CategoryDataSource().delete(category)
 
     fun deleteWithFlashcards(category: Category): Observable<Any?>
-        = TODO("Stub Method") // TODO Replace with real method body
+    {
+        return FlashcardService.deleteByCategoryId(category.id!!).flatMap {
+            CategoryDataSource().delete(category)
+        }
+    }
 
     class CategoryNameTakenException : Exception()
     {}

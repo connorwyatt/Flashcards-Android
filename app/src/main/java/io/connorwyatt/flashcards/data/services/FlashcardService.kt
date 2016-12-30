@@ -28,6 +28,18 @@ object FlashcardService
     }
 
     fun delete(flashcard: Flashcard): Observable<Any?>
-        = FlashcardDataSource().delete(flashcard)
-}
+    {
+        return FlashcardTestService.deleteByFlashcardId(flashcard.id!!).flatMap {
+            FlashcardDataSource().delete(flashcard)
+        }
+    }
 
+    fun deleteByCategoryId(categoryId: String): Observable<Any?>
+    {
+        return getByCategory(categoryId).flatMap { flashcards ->
+            val observables = flashcards.map { delete(it) }
+
+            return@flatMap Observable.combineLatest(observables, { it })
+        }
+    }
+}
