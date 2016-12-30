@@ -17,6 +17,22 @@ class FlashcardTestDataSource : BaseDataSource()
         )
     }
 
+    fun delete(flashcardTest: FlashcardTest): Observable<Any?>
+    {
+        return executeDelete(
+            resource = flashcardTest,
+            reference = {
+                getFlashcardTestQuery(
+                    userId = it.uid,
+                    flashcardTestId = flashcardTest.id!!
+                )
+            }
+        )
+    }
+
     private fun getFlashcardTestsQuery(userId: String): DatabaseReference
         = getUserDataQuery(userId).child("flashcardTest")
+
+    private fun getFlashcardTestQuery(userId: String, flashcardTestId: String): DatabaseReference
+        = getUserDataQuery(userId).child("flashcardTest").child(flashcardTestId)
 }

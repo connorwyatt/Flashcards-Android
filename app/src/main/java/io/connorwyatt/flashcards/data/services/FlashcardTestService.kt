@@ -22,5 +22,8 @@ object FlashcardTestService
 
     fun save(flashcardTest: FlashcardTest): Observable<FlashcardTest>
         = TODO("Stub Method") // TODO Replace with real method body
+
+    fun delete(flashcardTest: FlashcardTest): Observable<Any?>
+        = FlashcardTestDataSource().delete(flashcardTest)
 }
 
