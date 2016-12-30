@@ -12,14 +12,27 @@ object FlashcardTestService
     fun getAverageRatingForFlashcard(id: String): Observable<Double?>
     {
         return getByFlashcardId(id).map { tests ->
-            val ratings = tests.mapNotNull { it.rating?.value }
-
-            ratings.sum() / ratings.size
+            averageFlashcardTests(tests)
         }
     }
 
-    fun getAverageRatingForCategory(): Observable<Double?>
-        = TODO("Stub Method") // TODO Replace with real method body
+    fun getByCategoryId(id: String): Observable<List<FlashcardTest>>
+    {
+        return FlashcardService.getByCategory(id).flatMap { flashcards ->
+            val observables = flashcards.map { getByFlashcardId(it.id!!) }
+
+            Observable.combineLatest(observables, {
+                it.filterIsInstance(FlashcardTest::class.java)
+            })
+        }
+    }
+
+    fun getAverageRatingForCategory(id: String): Observable<Double?>
+    {
+        return getByCategoryId(id).map { tests ->
+            averageFlashcardTests(tests)
+        }
+    }
 
     fun save(flashcardTest: FlashcardTest): Observable<FlashcardTest>
         = TODO("Stub Method") // TODO Replace with real method body
@@ -35,5 +48,11 @@ object FlashcardTestService
             return@flatMap Observable.combineLatest(observables, { it })
         }
     }
-}
 
+    private fun averageFlashcardTests(tests: List<FlashcardTest>): Double
+    {
+        val ratings = tests.mapNotNull { it.rating?.value }
+
+        return ratings.sum() / ratings.size
+    }
+}
