@@ -3,7 +3,7 @@ package io.connorwyatt.flashcards.data.entities
 
 class Relationships(relationships: Map<*, *>?)
 {
-    val relationships: MutableMap<String, MutableList<String>>
+    private val relationships: MutableMap<String, MutableList<String>>
     private val originalRelationships: MutableMap<String, MutableList<String>>
 
     init
@@ -12,6 +12,11 @@ class Relationships(relationships: Map<*, *>?)
             relationships?.let { parseRawRelationships(it) } ?: mutableMapOf()
 
         originalRelationships = cloneRelationships(this.relationships)
+    }
+
+    fun getAllRelationships(): Map<String, List<String>>
+    {
+        return relationships
     }
 
     fun getRelationships(name: String): List<String>?
