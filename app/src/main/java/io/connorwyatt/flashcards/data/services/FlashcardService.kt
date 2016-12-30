@@ -26,5 +26,8 @@ object FlashcardService
         return flashcardDataSource.save(flashcard)
             .flatMap { getById(it) }
     }
+
+    fun delete(flashcard: Flashcard): Observable<Any?>
+        = FlashcardDataSource().delete(flashcard)
 }
 
