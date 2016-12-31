@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.Spinner
@@ -28,7 +29,7 @@ class FlashcardListActivity : BaseActivity()
     private var adapter = FlashcardListAdapter()
     private var filterCategory: Category? = null
 
-    // region Activity Lifecycle
+    // region Activity
 
     override fun onCreate(savedInstanceState: Bundle?): Unit
     {
@@ -49,6 +50,33 @@ class FlashcardListActivity : BaseActivity()
         }
 
         return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean
+    {
+        when (item.itemId)
+        {
+            R.id.action_test ->
+            {
+                val category = filterCategory
+
+                if (category != null)
+                {
+                    navigateToFlashcardTest(category)
+                }
+                else
+                {
+                    navigateToFlashcardTest()
+                }
+                return true
+            }
+            R.id.action_navigate_to_categories ->
+            {
+                navigateToCategoryList()
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
     }
 
     // endregion
@@ -223,12 +251,27 @@ class FlashcardListActivity : BaseActivity()
 
     private fun navigateToFlashcardDetails(): Unit
     {
-        // TODO Add navigation to details
+        // TODO Add navigation to FlashcardDetails
     }
 
     private fun navigateToFlashcardDetails(flashcard: Flashcard): Unit
     {
-        // TODO Add navigation to details
+        // TODO Add navigation to FlashcardDetails
+    }
+
+    private fun navigateToFlashcardTest(): Unit
+    {
+        // TODO Add navigation to FlashcardTest
+    }
+
+    private fun navigateToFlashcardTest(category: Category): Unit
+    {
+        // TODO Add navigation to FlashcardTest
+    }
+
+    private fun navigateToCategoryList(): Unit
+    {
+        // TODO Add navigation to CategoryList
     }
 
     // endregion
