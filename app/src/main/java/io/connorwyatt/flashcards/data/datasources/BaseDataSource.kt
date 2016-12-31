@@ -59,9 +59,12 @@ abstract class BaseDataSource
                     .endAt(true)
             },
             { dataSnapshot ->
-                dataSnapshot.children?.map { parser(it) }?.let {
-                    return@baseExecuteQuery Observable
-                        .combineLatest(it, { it.filterIsInstance(clazz) })
+                if (dataSnapshot.hasChildren())
+                {
+                    dataSnapshot.children?.map { parser(it) }?.let {
+                        return@baseExecuteQuery Observable
+                            .combineLatest(it, { it.filterIsInstance(clazz) })
+                    }
                 }
 
                 return@baseExecuteQuery Observable.just(arrayListOf())
