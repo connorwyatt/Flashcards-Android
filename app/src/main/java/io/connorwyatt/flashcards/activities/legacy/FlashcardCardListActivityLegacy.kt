@@ -45,7 +45,7 @@ class FlashcardCardListActivityLegacy : BaseActivity()
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_flashcard_card_list)
+        setContentView(R.layout.activity_flashcard_list)
 
         setUpToolbar()
 
@@ -106,7 +106,7 @@ class FlashcardCardListActivityLegacy : BaseActivity()
     private fun setUpListRecyclerView()
     {
         val recyclerView = findViewById(
-            R.id.flashcard_card_list_recycler_view) as RecyclerView
+            R.id.flashcard_list_recycler_view) as RecyclerView
 
         recyclerView.setHasFixedSize(true)
 
@@ -134,7 +134,7 @@ class FlashcardCardListActivityLegacy : BaseActivity()
     {
         val categories = allCategories
 
-        val spinner = findViewById(R.id.flashcard_card_list_spinner) as Spinner
+        val spinner = findViewById(R.id.flashcard_list_spinner) as Spinner
         val spinnerAdapter = CategoryNameArrayAdapterLegacy(
             supportActionBar!!.themedContext, categories)
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -170,7 +170,7 @@ class FlashcardCardListActivityLegacy : BaseActivity()
 
     private fun setUpToolbar()
     {
-        val toolbar = findViewById(R.id.flashcard_card_list_toolbar) as Toolbar
+        val toolbar = findViewById(R.id.flashcard_list_toolbar) as Toolbar
         setSupportActionBar(toolbar)
 
         val actionBar = supportActionBar
