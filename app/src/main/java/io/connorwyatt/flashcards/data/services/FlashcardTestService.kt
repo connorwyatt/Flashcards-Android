@@ -13,10 +13,10 @@ object FlashcardTestService
     fun getByFlashcardId(id: String): Observable<List<FlashcardTest>>
         = FlashcardTestDataSource().getByFlashcardId(id)
 
-    fun getAverageRatingForFlashcard(id: String): Observable<Double?>
+    fun getAverageRatingForFlashcard(id: String): Observable<Double>
     {
         return getByFlashcardId(id).map { tests ->
-            averageFlashcardTests(tests)
+            averageFlashcardTests(tests) ?: -1.0
         }
     }
 
@@ -31,10 +31,10 @@ object FlashcardTestService
         }
     }
 
-    fun getAverageRatingForCategory(id: String): Observable<Double?>
+    fun getAverageRatingForCategory(id: String): Observable<Double>
     {
         return getByCategoryId(id).map { tests ->
-            averageFlashcardTests(tests)
+            averageFlashcardTests(tests) ?: -1.0
         }
     }
 
@@ -57,10 +57,17 @@ object FlashcardTestService
         }
     }
 
-    private fun averageFlashcardTests(tests: List<FlashcardTest>): Double
+    private fun averageFlashcardTests(tests: List<FlashcardTest>): Double?
     {
         val ratings = tests.mapNotNull { it.rating?.value }
 
+        if (ratings.isNotEmpty())
+        {
         return ratings.sum() / ratings.size
+    }
+        else
+        {
+            return null
+        }
     }
 }
