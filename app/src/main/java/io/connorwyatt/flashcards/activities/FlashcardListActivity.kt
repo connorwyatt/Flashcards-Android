@@ -251,12 +251,12 @@ class FlashcardListActivity : BaseActivity()
 
     private fun navigateToFlashcardDetails(): Unit
     {
-        // TODO Add navigation to FlashcardDetails
+        FlashcardDetailsActivity.startActivity(this)
     }
 
     private fun navigateToFlashcardDetails(flashcard: Flashcard): Unit
     {
-        // TODO Add navigation to FlashcardDetails
+        FlashcardDetailsActivity.startActivityWithFlashcard(this, flashcard)
     }
 
     private fun navigateToFlashcardTest(): Unit
