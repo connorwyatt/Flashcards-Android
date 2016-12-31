@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.support.v4.view.PagerAdapter
 import io.connorwyatt.flashcards.adapters.FixedFragmentStatePagerAdapter
 import io.connorwyatt.flashcards.data.entities.legacy.FlashcardLegacy
+import io.connorwyatt.flashcards.fragments.FlashcardTestSummaryFragment
+import io.connorwyatt.flashcards.fragments.legacy.FlashcardTestCardFragmentLegacy
 
 @Deprecated("This is considered legacy.")
 class FlashcardTestPagerAdapterLegacy(fragmentManager: FragmentManager,
@@ -65,13 +67,13 @@ class FlashcardTestPagerAdapterLegacy(fragmentManager: FragmentManager,
     {
         val currentFlashcard = flashcards[position]
 
-        val fragment = FlashcardTestCardFragment()
+        val fragment = FlashcardTestCardFragmentLegacy()
 
         val arguments = Bundle()
-        arguments.putLong(FlashcardTestCardFragment.ARGUMENT_KEYS.ID, currentFlashcard.id!!)
-        arguments.putString(FlashcardTestCardFragment.ARGUMENT_KEYS.TITLE, currentFlashcard
+        arguments.putLong(FlashcardTestCardFragmentLegacy.ARGUMENT_KEYS.ID, currentFlashcard.id!!)
+        arguments.putString(FlashcardTestCardFragmentLegacy.ARGUMENT_KEYS.TITLE, currentFlashcard
             .title)
-        arguments.putString(FlashcardTestCardFragment.ARGUMENT_KEYS.TEXT, currentFlashcard
+        arguments.putString(FlashcardTestCardFragmentLegacy.ARGUMENT_KEYS.TEXT, currentFlashcard
             .text)
         fragment.arguments = arguments
 
