@@ -1,6 +1,7 @@
 package io.connorwyatt.flashcards.data.entities
 
 import com.google.firebase.database.DataSnapshot
+import io.connorwyatt.flashcards.enums.Rating
 
 class FlashcardTest(data: DataSnapshot?) : BaseEntity(data)
 {
@@ -29,18 +30,6 @@ class FlashcardTest(data: DataSnapshot?) : BaseEntity(data)
         object PropertyKeys
         {
             val rating = "rating"
-        }
-
-        enum class Rating(val value: Double)
-        {
-            POSITIVE(1.0),
-            NEUTRAL(0.5),
-            NEGATIVE(0.0);
-
-            companion object
-            {
-                fun fromValue(value: Double): Rating? = Rating.values().find { it.value == value }
-            }
         }
     }
 }
