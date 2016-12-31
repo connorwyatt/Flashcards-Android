@@ -6,8 +6,13 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.view.Menu
+import android.view.View
+import android.widget.AdapterView
+import android.widget.Spinner
 import io.connorwyatt.flashcards.R
+import io.connorwyatt.flashcards.adapters.DropdownItem
 import io.connorwyatt.flashcards.adapters.FlashcardListAdapter
+import io.connorwyatt.flashcards.adapters.GenericArrayAdapter
 import io.connorwyatt.flashcards.data.entities.Category
 import io.connorwyatt.flashcards.data.entities.Flashcard
 import io.connorwyatt.flashcards.data.services.CategoryService
@@ -15,11 +20,13 @@ import io.connorwyatt.flashcards.data.services.FlashcardService
 import io.connorwyatt.flashcards.data.services.FlashcardTestService
 import io.connorwyatt.flashcards.data.viewmodels.FlashcardViewModel
 import io.connorwyatt.flashcards.enums.Rating
+import io.connorwyatt.flashcards.listeners.SimpleOnItemSelectedListener
 import io.reactivex.Observable
 
 class FlashcardListActivity : BaseActivity()
 {
     private var adapter = FlashcardListAdapter()
+    private var filterCategory: Category? = null
 
     // region Activity Lifecycle
 
@@ -50,7 +57,31 @@ class FlashcardListActivity : BaseActivity()
 
     fun getData(): Observable<List<FlashcardViewModel>>
     {
-        return FlashcardService.getAll().flatMap { flashcards ->
+        return mapFlashcardsToViewModels(FlashcardService.getAll())
+    }
+
+    fun getDataWithCategoryFilter(category: Category): Observable<List<FlashcardViewModel>>
+    {
+        return mapFlashcardsToViewModels(FlashcardService.getByCategory(category.id!!))
+    }
+
+    fun getDropdownCategories(): Observable<List<DropdownItem<Category?>>>
+    {
+        return CategoryService.getAll().map { categories ->
+            val dropdownItems = categories.map { category ->
+                DropdownItem<Category?>(value = category.name!!, data = category)
+            }
+
+            val allCategoryName = getString(R.string.flashcard_cards_list_all_category)
+
+            listOf(DropdownItem<Category?>(value = allCategoryName, data = null))
+                .plus(dropdownItems)
+        }
+    }
+
+    private fun mapFlashcardsToViewModels(flashcardsObservable: Observable<List<Flashcard>>): Observable<List<FlashcardViewModel>>
+    {
+        return flashcardsObservable.flatMap { flashcards ->
             val observables = flashcards.map { flashcard ->
                 val flashcardId = flashcard.id!!
                 val categoriesObservable
@@ -98,6 +129,36 @@ class FlashcardListActivity : BaseActivity()
 
         val actionBar = supportActionBar
         actionBar!!.setDisplayShowTitleEnabled(false)
+
+        setUpSpinner()
+    }
+
+    private fun setUpSpinner()
+    {
+        getDropdownCategories().subscribe { dropdownCategories ->
+            val spinner = findViewById(R.id.flashcard_list_spinner) as Spinner
+
+            val spinnerAdapter = GenericArrayAdapter<Category?>(
+                supportActionBar!!.themedContext,
+                dropdownCategories
+            )
+
+            spinner.onItemSelectedListener = object : SimpleOnItemSelectedListener()
+            {
+                override fun onItemSelected(adapterView: AdapterView<*>,
+                                            view: View?,
+                                            position: Int,
+                                            id: Long)
+                {
+                    val category
+                        = (adapterView.getItemAtPosition(position) as DropdownItem<*>).data as Category?
+
+                    filterByCategory(category)
+                }
+            }
+
+            spinner.adapter = spinnerAdapter
+        }
     }
 
     private fun setUpListRecyclerView(): Unit
@@ -131,6 +192,29 @@ class FlashcardListActivity : BaseActivity()
     private fun updateAdapterData(viewModels: List<FlashcardViewModel>): Unit
     {
         adapter.setItems(viewModels)
+
+        invalidateOptionsMenu()
+    }
+
+    private fun filterByCategory(category: Category?): Unit
+    {
+        if (filterCategory?.id != category?.id)
+        {
+            filterCategory = category
+
+            if (category !== null)
+            {
+                getDataWithCategoryFilter(category).subscribe {
+                    updateAdapterData(it)
+                }
+            }
+            else
+            {
+                getData().subscribe {
+                    updateAdapterData(it)
+                }
+            }
+        }
     }
 
     // endregion
