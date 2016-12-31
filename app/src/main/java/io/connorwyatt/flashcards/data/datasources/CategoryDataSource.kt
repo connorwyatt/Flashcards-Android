@@ -24,6 +24,17 @@ class CategoryDataSource : BaseDataSource()
         )
     }
 
+    fun getByFlashcardId(id: String): Observable<List<Category>>
+    {
+        return executeQueryRelationship(
+            query = { getCategoriesQuery(userId = it.uid) },
+            resourceId = id,
+            resourceName = "flashcard",
+            parser = { Observable.just(Category(it)) },
+            clazz = Category::class.java
+        )
+    }
+
     fun getByName(name: String): Observable<List<Category>>
     {
         return executeQueryList(

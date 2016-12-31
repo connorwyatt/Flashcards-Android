@@ -12,6 +12,9 @@ object CategoryService
     fun getById(id: String): Observable<Category>
         = CategoryDataSource().getById(id)
 
+    fun getByFlashcardId(id: String): Observable<List<Category>>
+        = CategoryDataSource().getByFlashcardId(id)
+
     fun getByName(name: String): Observable<List<Category>>
     {
         val normalisedName = normaliseCategoryName(name)
