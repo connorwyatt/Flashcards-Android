@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
+import android.widget.Toast
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.data.entities.Category
 import io.connorwyatt.flashcards.data.entities.Flashcard
@@ -96,6 +97,7 @@ class FlashcardDetailsActivity : BaseActivity()
         flashcardViewModel.save().subscribe {
             viewModel = it
             updateUI()
+            showToast(R.string.save_toast)
         }
     }
 
@@ -103,6 +105,7 @@ class FlashcardDetailsActivity : BaseActivity()
     {
         flashcardViewModel.delete()
             .subscribe {
+                showToast(R.string.flashcard_details_delete_toast)
                 NavUtils.navigateUpFromSameTask(this)
             }
     }
@@ -175,6 +178,15 @@ class FlashcardDetailsActivity : BaseActivity()
             categoriesInput!!.setText(
                 categories.map { it.name }.joinToString(separator = ", ")
             )
+    }
+
+    private fun showToast(stringResource: Int): Unit
+    {
+        val toastMessage = getString(stringResource)
+        val duration = Toast.LENGTH_SHORT
+
+        val toast = Toast.makeText(this, toastMessage, duration)
+        toast.show()
     }
 
     //endregion
