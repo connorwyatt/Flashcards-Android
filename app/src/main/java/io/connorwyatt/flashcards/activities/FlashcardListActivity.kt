@@ -18,9 +18,7 @@ import io.connorwyatt.flashcards.data.entities.Category
 import io.connorwyatt.flashcards.data.entities.Flashcard
 import io.connorwyatt.flashcards.data.services.CategoryService
 import io.connorwyatt.flashcards.data.services.FlashcardService
-import io.connorwyatt.flashcards.data.services.FlashcardTestService
 import io.connorwyatt.flashcards.data.viewmodels.FlashcardViewModel
-import io.connorwyatt.flashcards.enums.Rating
 import io.connorwyatt.flashcards.listeners.SimpleOnItemSelectedListener
 import io.reactivex.Observable
 
@@ -110,30 +108,12 @@ class FlashcardListActivity : BaseActivity()
     private fun mapFlashcardsToViewModels(flashcardsObservable: Observable<List<Flashcard>>): Observable<List<FlashcardViewModel>>
     {
         return flashcardsObservable.flatMap { flashcards ->
-            val observables = flashcards.map { flashcard ->
-                val flashcardId = flashcard.id!!
-                val categoriesObservable
-                    = CategoryService.getByFlashcardId(flashcardId)
-                val flashcardTestsObservable
-                    = FlashcardTestService.getAverageRatingForFlashcard(flashcardId)
+            val observables = flashcards.map { FlashcardViewModel.getFromFlashcard(it) }
 
-                return@map Observable.combineLatest(
-                    listOf(categoriesObservable, flashcardTestsObservable),
-                    { it }
-                ).map {
-                    var categories = it[0] as List<*>
-                    val ratingValue = it[1] as Double
-
-                    categories = categories.filterIsInstance(Category::class.java)
-
-                    val rating = Rating.fromValue(ratingValue) ?: Rating.NOT_RATED
-
-                    FlashcardViewModel(flashcard, categories, rating)
-                }
-            }
-
-            return@flatMap Observable.combineLatest(observables,
-                                                    { it.filterIsInstance(FlashcardViewModel::class.java) })
+            Observable.combineLatest(
+                observables,
+                { it.filterIsInstance(FlashcardViewModel::class.java) }
+            )
         }
     }
 

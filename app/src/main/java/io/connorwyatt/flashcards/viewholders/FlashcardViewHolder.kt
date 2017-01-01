@@ -34,6 +34,7 @@ class FlashcardViewHolder constructor(itemView: View) : RecyclerView.ViewHolder(
             Rating.NEGATIVE -> R.color.colorNegative
             Rating.NEUTRAL -> R.color.colorNeutral
             Rating.NOT_RATED -> R.color.colorGrey
+            else -> R.color.colorGrey
         }
 
         val color = ContextCompat.getColor(layout.context, colorId)
@@ -42,7 +43,7 @@ class FlashcardViewHolder constructor(itemView: View) : RecyclerView.ViewHolder(
         progress.setBarColor(color)
         progress.setUnfilledBarColor(backgroundColor)
 
-        val progressValue = if (rating.value >= 0) rating.value else 0.0
+        val progressValue = if (rating?.value!! >= 0) rating?.value else 0.0
 
         progress.setProgress(progressValue)
 
