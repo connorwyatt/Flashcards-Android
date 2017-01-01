@@ -3,7 +3,6 @@ package io.connorwyatt.flashcards.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.TextInputEditText
 import android.support.v4.app.NavUtils
 import android.support.v7.widget.Toolbar
 import android.view.Menu
@@ -14,14 +13,15 @@ import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.data.entities.Category
 import io.connorwyatt.flashcards.data.entities.Flashcard
 import io.connorwyatt.flashcards.data.viewmodels.FlashcardViewModel
+import io.connorwyatt.flashcards.views.textinput.EnhancedTextInputEditText
 import io.reactivex.Observable
 
 class FlashcardDetailsActivity : BaseActivity()
 {
     private var viewModel: FlashcardViewModel? = null
-    private var titleInput: TextInputEditText? = null
-    private var textInput: TextInputEditText? = null
-    private var categoriesInput: TextInputEditText? = null
+    private var titleInput: EnhancedTextInputEditText? = null
+    private var textInput: EnhancedTextInputEditText? = null
+    private var categoriesInput: EnhancedTextInputEditText? = null
     private var saveButton: Button? = null
 
     //region Activity
@@ -145,9 +145,9 @@ class FlashcardDetailsActivity : BaseActivity()
 
     private fun setUpControls(): Unit
     {
-        titleInput = findViewById(R.id.flashcard_details_title) as TextInputEditText
-        textInput = findViewById(R.id.flashcard_details_text) as TextInputEditText
-        categoriesInput = findViewById(R.id.flashcard_details_categories) as TextInputEditText
+        titleInput = findViewById(R.id.flashcard_details_title) as EnhancedTextInputEditText
+        textInput = findViewById(R.id.flashcard_details_text) as EnhancedTextInputEditText
+        categoriesInput = findViewById(R.id.flashcard_details_categories) as EnhancedTextInputEditText
         saveButton = findViewById(R.id.flashcard_details_save_button) as Button
 
         saveButton!!.setOnClickListener {
