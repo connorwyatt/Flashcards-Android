@@ -27,6 +27,11 @@ data class FlashcardViewModel(
             }
     }
 
+    fun delete(): Observable<Any?>
+    {
+        return FlashcardService.delete(flashcard)
+    }
+
     companion object
     {
         fun get(flashcardId: String, includeRating: Boolean = true):
