@@ -5,16 +5,20 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TextInputEditText
 import android.support.v7.widget.Toolbar
+import android.widget.Button
 import io.connorwyatt.flashcards.R
+import io.connorwyatt.flashcards.data.entities.Category
 import io.connorwyatt.flashcards.data.entities.Flashcard
 import io.connorwyatt.flashcards.data.viewmodels.FlashcardViewModel
 import io.reactivex.Observable
 
 class FlashcardDetailsActivity : BaseActivity()
 {
+    private var viewModel: FlashcardViewModel? = null
     private var titleInput: TextInputEditText? = null
     private var textInput: TextInputEditText? = null
     private var categoriesInput: TextInputEditText? = null
+    private var saveButton: Button? = null
 
     //region Activity
 
@@ -35,16 +39,49 @@ class FlashcardDetailsActivity : BaseActivity()
         return FlashcardViewModel.get(flashcardId, false)
     }
 
+    private fun updateViewModelFromControls(): Unit
+    {
+        viewModel!!.flashcard.title = titleInput!!.text.toString()
+        viewModel!!.flashcard.text = textInput!!.text.toString()
+
+        val categories = parseCategoriesString(categoriesInput!!.text.toString())
+
+        viewModel!!.categories = categories
+    }
+
+    private fun parseCategoriesString(categoriesString: String): List<Category>
+    {
+        val categoryNames = categoriesString.split(", ")
+
+        return categoryNames.map {
+            val category = Category(null)
+            category.name = it
+
+            category
+        }
+    }
+
+    private fun saveViewModel(flashcardViewModel: FlashcardViewModel): Observable<FlashcardViewModel>
+    {
+        return flashcardViewModel.save()
+    }
+
     //endregion
 
     //region UI
 
     private fun initialiseUI(flashcardId: String?): Unit
     {
-        flashcardId?.let {
-            getData(it).subscribe {
-                updateControls(it)
+        if (flashcardId != null)
+        {
+            getData(flashcardId).subscribe {
+                viewModel = it
+                updateControls()
             }
+        }
+        else
+        {
+            viewModel = FlashcardViewModel(Flashcard(null), listOf())
         }
 
         setUpToolbar()
@@ -67,11 +104,21 @@ class FlashcardDetailsActivity : BaseActivity()
         titleInput = findViewById(R.id.flashcard_details_title) as TextInputEditText
         textInput = findViewById(R.id.flashcard_details_text) as TextInputEditText
         categoriesInput = findViewById(R.id.flashcard_details_categories) as TextInputEditText
+        saveButton = findViewById(R.id.flashcard_details_save_button) as Button
+
+        saveButton!!.setOnClickListener {
+            updateViewModelFromControls()
+
+            saveViewModel(viewModel!!).subscribe {
+                viewModel = it
+                updateControls()
+            }
+        }
     }
 
-    private fun updateControls(flashcardViewModel: FlashcardViewModel): Unit
+    private fun updateControls(): Unit
     {
-        val (flashcard, categories) = flashcardViewModel
+        val (flashcard, categories) = viewModel!!
 
         if (flashcard.title != null && flashcard.title!!.isNotEmpty())
             titleInput!!.setText(flashcard.title)

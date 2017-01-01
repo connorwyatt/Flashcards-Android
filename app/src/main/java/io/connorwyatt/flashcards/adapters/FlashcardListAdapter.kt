@@ -61,7 +61,7 @@ class FlashcardListAdapter :
         viewModels.forEach { bundle ->
             if (bundle.flashcard.id!! !in idMap)
             {
-                idMap.add(bundle.flashcard.id)
+                idMap.add(bundle.flashcard.id!!)
             }
         }
     }

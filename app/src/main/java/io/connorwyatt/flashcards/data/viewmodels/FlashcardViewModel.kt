@@ -9,11 +9,24 @@ import io.connorwyatt.flashcards.enums.Rating
 import io.reactivex.Observable
 
 data class FlashcardViewModel(
-    val flashcard: Flashcard,
-    val categories: List<Category>,
-    val rating: Rating? = null
+    var flashcard: Flashcard,
+    var categories: List<Category>,
+    var rating: Rating? = null
 )
 {
+    fun save(): Observable<FlashcardViewModel>
+    {
+        return CategoryService.createCategoriesByName(categories.map { it.name!! })
+            .flatMap { categories ->
+                flashcard.relationships.setRelationships("category", categories.map { it.id!! })
+
+                FlashcardService.save(flashcard)
+            }
+            .flatMap { flashcard ->
+                FlashcardViewModel.get(flashcard.id!!)
+            }
+    }
+
     companion object
     {
         fun get(flashcardId: String, includeRating: Boolean = true):
