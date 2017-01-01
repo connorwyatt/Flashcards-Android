@@ -37,6 +37,13 @@ class FlashcardListActivity : BaseActivity()
         initialiseUI()
     }
 
+    override fun onResume()
+    {
+        super.onResume()
+
+        filterByCategory(filterCategory)
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean
     {
         menuInflater.inflate(R.menu.activity_flashcard_card_list_menu, menu)
@@ -206,21 +213,18 @@ class FlashcardListActivity : BaseActivity()
 
     private fun filterByCategory(category: Category?): Unit
     {
-        if (filterCategory?.id != category?.id)
-        {
-            filterCategory = category
+        filterCategory = category
 
-            if (category !== null)
-            {
-                getDataWithCategoryFilter(category).subscribe {
-                    updateAdapterData(it)
-                }
+        if (category !== null)
+        {
+            getDataWithCategoryFilter(category).subscribe {
+                updateAdapterData(it)
             }
-            else
-            {
-                getData().subscribe {
-                    updateAdapterData(it)
-                }
+        }
+        else
+        {
+            getData().subscribe {
+                updateAdapterData(it)
             }
         }
     }

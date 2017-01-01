@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TextInputEditText
 import android.support.v7.widget.Toolbar
+import android.view.Menu
 import android.widget.Button
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.data.entities.Category
@@ -28,6 +29,20 @@ class FlashcardDetailsActivity : BaseActivity()
         setContentView(R.layout.activity_flashcard_details)
 
         initialiseUI(intent.getStringExtra(IntentExtras.FLASHCARD_ID))
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean
+    {
+        menuInflater.inflate(R.menu.activity_flashcard_details_menu, menu)
+
+        val existsInDatabase = viewModel?.flashcard?.existsInDatabase() ?: false
+
+        if (!existsInDatabase)
+        {
+            menu.findItem(R.id.action_delete).isEnabled = false
+        }
+
+        return super.onCreateOptionsMenu(menu)
     }
 
     //endregion
@@ -76,7 +91,7 @@ class FlashcardDetailsActivity : BaseActivity()
         {
             getData(flashcardId).subscribe {
                 viewModel = it
-                updateControls()
+                updateUI()
             }
         }
         else
@@ -111,9 +126,16 @@ class FlashcardDetailsActivity : BaseActivity()
 
             saveViewModel(viewModel!!).subscribe {
                 viewModel = it
-                updateControls()
+                updateUI()
             }
         }
+    }
+
+    private fun updateUI(): Unit
+    {
+        updateControls()
+
+        invalidateOptionsMenu()
     }
 
     private fun updateControls(): Unit
