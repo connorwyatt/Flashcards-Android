@@ -117,10 +117,17 @@ class FlashcardListActivity : BaseActivity()
         return flashcardsObservable.flatMap { flashcards ->
             val observables = flashcards.map { FlashcardViewModel.getFromFlashcard(it) }
 
-            Observable.combineLatest(
-                observables,
-                { it.filterIsInstance(FlashcardViewModel::class.java) }
-            )
+            if (observables.isNotEmpty())
+            {
+                Observable.combineLatest(
+                    observables,
+                    { it.filterIsInstance(FlashcardViewModel::class.java) }
+                )
+            }
+            else
+            {
+                Observable.just(listOf())
+            }
         }
     }
 
