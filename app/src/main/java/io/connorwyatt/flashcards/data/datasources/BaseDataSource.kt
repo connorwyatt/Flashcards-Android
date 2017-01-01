@@ -67,7 +67,7 @@ abstract class BaseDataSource
                     }
                 }
 
-                return@baseExecuteQuery Observable.just(arrayListOf())
+                return@baseExecuteQuery Observable.just(listOf())
             }
         )
     }
@@ -184,7 +184,6 @@ abstract class BaseDataSource
                         observer.onNext(true)
                         observer.onComplete()
                     }
-
             }
         }
 
