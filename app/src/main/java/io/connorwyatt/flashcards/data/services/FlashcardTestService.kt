@@ -25,9 +25,16 @@ object FlashcardTestService
         return FlashcardService.getByCategory(id).flatMap { flashcards ->
             val observables = flashcards.map { getByFlashcardId(it.id!!) }
 
-            Observable.combineLatest(observables, {
-                it.filterIsInstance(FlashcardTest::class.java)
-            })
+            if (observables.isNotEmpty())
+            {
+                Observable.combineLatest(observables, {
+                    it.filterIsInstance(FlashcardTest::class.java)
+                })
+            }
+            else
+            {
+                Observable.just(listOf())
+            }
         }
     }
 
@@ -53,7 +60,14 @@ object FlashcardTestService
         return getByFlashcardId(flashcardId).flatMap { flashcardTests ->
             val observables = flashcardTests.map { delete(it) }
 
-            return@flatMap Observable.combineLatest(observables, { it })
+            if (observables.isNotEmpty())
+            {
+                Observable.combineLatest(observables, { it }).map { true }
+            }
+            else
+            {
+                Observable.just(true)
+            }
         }
     }
 
@@ -63,8 +77,8 @@ object FlashcardTestService
 
         if (ratings.isNotEmpty())
         {
-        return ratings.sum() / ratings.size
-    }
+            return ratings.sum() / ratings.size
+        }
         else
         {
             return null
