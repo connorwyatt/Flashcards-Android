@@ -25,6 +25,7 @@ object CategoryService
     fun createCategoriesByName(categoryNames: List<String>): Observable<List<Category>>
     {
         val observables = categoryNames.distinctBy { normaliseCategoryName(it) }
+            .filter(String::isNotBlank)
             .map { name ->
                 getByName(name)
                     .flatMap { category ->
