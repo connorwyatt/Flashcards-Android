@@ -4,8 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TextInputEditText
+import android.support.v4.app.NavUtils
 import android.support.v7.widget.Toolbar
 import android.view.Menu
+import android.view.MenuItem
 import android.widget.Button
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.data.entities.Category
@@ -45,6 +47,19 @@ class FlashcardDetailsActivity : BaseActivity()
         return super.onCreateOptionsMenu(menu)
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean
+    {
+        return when (item.itemId)
+        {
+            R.id.action_delete ->
+            {
+                deleteViewModel(viewModel!!)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
     //endregion
 
     //region Data
@@ -76,9 +91,20 @@ class FlashcardDetailsActivity : BaseActivity()
         }
     }
 
-    private fun saveViewModel(flashcardViewModel: FlashcardViewModel): Observable<FlashcardViewModel>
+    private fun saveViewModel(flashcardViewModel: FlashcardViewModel): Unit
     {
-        return flashcardViewModel.save()
+        flashcardViewModel.save().subscribe {
+            viewModel = it
+            updateUI()
+        }
+    }
+
+    private fun deleteViewModel(flashcardViewModel: FlashcardViewModel): Unit
+    {
+        flashcardViewModel.delete()
+            .subscribe {
+                NavUtils.navigateUpFromSameTask(this)
+            }
     }
 
     //endregion
@@ -124,10 +150,7 @@ class FlashcardDetailsActivity : BaseActivity()
         saveButton!!.setOnClickListener {
             updateViewModelFromControls()
 
-            saveViewModel(viewModel!!).subscribe {
-                viewModel = it
-                updateUI()
-            }
+            saveViewModel(viewModel!!)
         }
     }
 
