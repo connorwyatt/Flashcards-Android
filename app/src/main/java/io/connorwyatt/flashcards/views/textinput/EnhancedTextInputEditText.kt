@@ -149,7 +149,7 @@ class EnhancedTextInputEditText : TextInputEditText
             errorMessage?.let {
                 valid = false
 
-                if (touched) setErrorMessage(it)
+                if (touched || dirty) setErrorMessage(it)
 
                 return
             }
@@ -165,7 +165,7 @@ class EnhancedTextInputEditText : TextInputEditText
 
     private fun clearErrorMessage(): Unit
     {
-        textInputLayout?.error = null
+        textInputLayout?.isErrorEnabled = false
     }
 
     //endregion
