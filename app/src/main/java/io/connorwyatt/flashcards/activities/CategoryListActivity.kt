@@ -180,12 +180,12 @@ class CategoryListActivity : BaseActivity()
 
     private fun navigateToCategoryDetails(): Unit
     {
-        //TODO Navigate to Category Details
+        CategoryDetailsActivity.startActivity(this)
     }
 
     private fun navigateToCategoryDetails(category: Category): Unit
     {
-        //TODO Navigate to Category Details
+        CategoryDetailsActivity.startActivity(this, category)
     }
 
     //endregion

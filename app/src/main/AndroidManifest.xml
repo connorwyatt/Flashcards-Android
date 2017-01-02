@@ -24,7 +24,7 @@
         <activity android:name=".activities.legacy.FlashcardTestActivityLegacy" />
         <activity android:name=".activities.CategoryListActivity" />
         <activity
-            android:name=".activities.legacy.CategoryDetailsActivityLegacy"
+            android:name=".activities.CategoryDetailsActivity"
             android:parentActivityName=".activities.CategoryListActivity" />
         <activity android:name=".activities.AuthActivity" />
     </application>
