@@ -129,7 +129,7 @@ class EnhancedTextInputEditText : TextInputEditText
         return { validators.removeAll(listOf(validator)) }
     }
 
-    fun addCustomValidator(validator: (String) -> String, getErrorMessage: (Int, Int) -> String):
+    fun addCustomValidator(validator: (String) -> String?):
         () -> Unit
     {
         validators.add(validator)
