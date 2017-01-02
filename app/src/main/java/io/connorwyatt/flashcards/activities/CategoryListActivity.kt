@@ -5,9 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.CoordinatorLayout
+import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.Toolbar
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.adapters.CategoryListAdapter
 import io.connorwyatt.flashcards.data.services.CategoryService
@@ -103,9 +105,20 @@ class CategoryListActivity : BaseActivity()
 
     private fun initialiseUI(): Unit
     {
+        initialiseToolbar()
+
         initialiseRecycler()
 
         initialiseCoordinatorLayout()
+
+        initialiseFAB()
+    }
+
+    private fun initialiseToolbar()
+    {
+        val toolbar = findViewById(R.id.category_list_toolbar) as Toolbar
+        toolbar.setTitle(R.string.categories_title)
+        setSupportActionBar(toolbar)
     }
 
     private fun initialiseRecycler(): Unit
@@ -122,6 +135,15 @@ class CategoryListActivity : BaseActivity()
     private fun initialiseCoordinatorLayout(): Unit
     {
         coordinatorLayout = findViewById(R.id.category_list_coordinator_layout) as CoordinatorLayout
+    }
+
+    private fun initialiseFAB(): Unit
+    {
+        val fab = findViewById(R.id.category_list_add_button) as FloatingActionButton
+
+        fab.setOnClickListener { view ->
+            navigateToCategoryDetails()
+        }
     }
 
     private fun updateAdapterData(viewModels: List<CategoryViewModel>): Unit
@@ -148,6 +170,15 @@ class CategoryListActivity : BaseActivity()
             )
             .create()
             .show()
+    }
+
+    //endregion
+
+    //region Navigation
+
+    private fun navigateToCategoryDetails(): Unit
+    {
+        //TODO Navigate to Category Details
     }
 
     //endregion
