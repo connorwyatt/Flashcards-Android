@@ -9,6 +9,6 @@ enum class Rating(val value: Double)
 
     companion object
     {
-        fun fromValue(value: Double): Rating? = Rating.values().find { it.value == value }
+        fun fromValue(value: Double): Rating = Rating.values().find { it.value == value } ?: Rating.NOT_RATED
     }
 }
