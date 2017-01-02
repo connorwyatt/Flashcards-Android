@@ -131,6 +131,8 @@ class FlashcardDetailsActivity : BaseActivity()
         setUpToolbar()
 
         setUpControls()
+
+        updateButton()
     }
 
     private fun setUpToolbar(): Unit
@@ -150,6 +152,30 @@ class FlashcardDetailsActivity : BaseActivity()
         categoriesInput = findViewById(R.id.flashcard_details_categories) as EnhancedTextInputEditText
         saveButton = findViewById(R.id.flashcard_details_save_button) as Button
 
+        titleInput!!.addRequiredValidator(getString(R.string.validation_required))
+        titleInput!!.addMaxLengthValidator(80, { actualLength, maxLength ->
+            getString(R.string.validation_max_length, actualLength, maxLength)
+        })
+        titleInput!!.addTextChangedListener { updateUI() }
+
+        textInput!!.addRequiredValidator(getString(R.string.validation_required))
+        textInput!!.addTextChangedListener { updateUI() }
+
+        categoriesInput!!.addCustomValidator(
+            validator@ { value ->
+                val names = value.split(",").map(String::trim)
+                val maxLength = 40
+
+                names.forEach {
+                    if (it.length > maxLength)
+                        return@validator getString(R.string.validation_tags_max_length, maxLength)
+                }
+
+                null
+            }
+        )
+        categoriesInput!!.addTextChangedListener { updateUI() }
+
         saveButton!!.setOnClickListener {
             updateViewModelFromControls()
 
@@ -160,6 +186,8 @@ class FlashcardDetailsActivity : BaseActivity()
     private fun updateUI(): Unit
     {
         updateControls()
+
+        updateButton()
 
         invalidateOptionsMenu()
     }
@@ -179,6 +207,14 @@ class FlashcardDetailsActivity : BaseActivity()
                 categories.map { it.name }.joinToString(separator = ", ")
             )
     }
+
+    private fun updateButton(): Unit
+    {
+        saveButton!!.isEnabled = isValid()
+    }
+
+    private fun isValid()
+        = titleInput!!.isValid() && textInput!!.isValid() && categoriesInput!!.isValid()
 
     private fun showToast(stringResource: Int): Unit
     {
