@@ -9,13 +9,15 @@ import android.widget.EditText
 import android.widget.Switch
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.helpers.auth.AuthHelper
-import io.connorwyatt.flashcards.listeners.SimpleTextWatcher
+import io.connorwyatt.flashcards.views.textinput.EnhancedTextInputEditText
 
 class AuthActivity : AppCompatActivity()
 {
     private val auth = AuthHelper.getInstance()
     private var formState = FormStates.LOGIN
-    private var submitButton: Button? = null
+    lateinit private var email: EnhancedTextInputEditText
+    lateinit private var password: EnhancedTextInputEditText
+    lateinit private var submitButton: Button
 
     override fun onStart()
     {
@@ -48,28 +50,17 @@ class AuthActivity : AppCompatActivity()
 
     private fun initTextFields(): Unit
     {
-        val email = findViewById(R.id.activity_auth_email) as EditText
-        val password = findViewById(R.id.activity_auth_password) as EditText
+        email = findViewById(R.id.activity_auth_email) as EnhancedTextInputEditText
+        password = findViewById(R.id.activity_auth_password) as EnhancedTextInputEditText
 
-        email.addTextChangedListener(
-            object : SimpleTextWatcher()
-            {
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int)
-                {
-                    updateUI()
-                }
-            }
-        )
+        email.addRequiredValidator(getString(R.string.validation_required))
+        email.addMaxLengthValidator(255, { actualLength, maxLength ->
+            getString(R.string.validation_max_length, actualLength, maxLength)
+        })
+        email.addTextChangedListener { updateUI() }
 
-        password.addTextChangedListener(
-            object : SimpleTextWatcher()
-            {
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int)
-                {
-                    updateUI()
-                }
-            }
-        )
+        password.addRequiredValidator(getString(R.string.validation_required))
+        password.addTextChangedListener { updateUI() }
     }
 
     private fun initSwitch(): Unit
@@ -87,7 +78,7 @@ class AuthActivity : AppCompatActivity()
     {
         submitButton = findViewById(R.id.activity_auth_submit_button) as Button
 
-        submitButton!!.setOnClickListener {
+        submitButton.setOnClickListener {
             val (email, password) = getUserInput()
 
             when (formState)
@@ -134,7 +125,7 @@ class AuthActivity : AppCompatActivity()
 
     private fun updateButtonState(): Unit
     {
-        submitButton!!.isEnabled = isValid()
+        submitButton.isEnabled = isValid()
     }
 
     private fun updateButtonLabel(): Unit
@@ -147,43 +138,11 @@ class AuthActivity : AppCompatActivity()
             FormStates.REGISTER -> label = getString(R.string.activity_auth_register)
         }
 
-        label.let { submitButton!!.text = it }
+        label.let { submitButton.text = it }
     }
 
     private fun isValid(): Boolean =
-        getEmailErrorMessage() === null && getPasswordErrorMessage() === null
-
-    private fun getEmailErrorMessage(): String?
-    {
-        val email: String = (findViewById(R.id.activity_auth_email) as EditText).text.toString()
-
-        when
-        {
-            email.length === 0 ->
-            {
-                return getString(R.string.validation_required)
-            }
-            email.length > 255 ->
-            {
-                return getString(R.string.validation_max_length, email.length, 255)
-            }
-            else -> return null
-        }
-    }
-
-    private fun getPasswordErrorMessage(): String?
-    {
-        val password: String = (findViewById(R.id.activity_auth_password) as EditText).text.toString()
-
-        when
-        {
-            password.length === 0 ->
-            {
-                return getString(R.string.validation_required)
-            }
-            else -> return null
-        }
-    }
+        email.isValid() && password.isValid()
 
     private fun onSignIn()
     {
