@@ -22,10 +22,10 @@
             android:name=".activities.FlashcardDetailsActivity"
             android:parentActivityName=".activities.FlashcardListActivity" />
         <activity android:name=".activities.legacy.FlashcardTestActivityLegacy" />
-        <activity android:name=".activities.legacy.CategoriesActivityLegacy" />
+        <activity android:name=".activities.CategoryListActivity" />
         <activity
             android:name=".activities.legacy.CategoryDetailsActivityLegacy"
-            android:parentActivityName=".activities.legacy.CategoriesActivityLegacy" />
+            android:parentActivityName=".activities.CategoryListActivity" />
         <activity android:name=".activities.AuthActivity" />
     </application>
 

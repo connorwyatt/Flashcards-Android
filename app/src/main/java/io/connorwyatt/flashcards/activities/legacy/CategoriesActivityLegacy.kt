@@ -29,7 +29,7 @@ class CategoriesActivityLegacy : BaseActivity()
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_categories)
+        setContentView(R.layout.activity_category_list)
 
         categoryItems = getCategoryListItems().toMutableList()
 
@@ -69,14 +69,14 @@ class CategoriesActivityLegacy : BaseActivity()
 
     private fun setUpToolbar()
     {
-        val toolbar = findViewById(R.id.categories_toolbar) as Toolbar
+        val toolbar = findViewById(R.id.category_list_toolbar) as Toolbar
         toolbar.setTitle(R.string.categories_title)
         setSupportActionBar(toolbar)
     }
 
     private fun setUpRecycler(categoryListItems: List<CategoryListAdapterLegacy.ListItem>)
     {
-        coordinatorLayout = findViewById(R.id.categories_coordinator_layout) as CoordinatorLayout
+        coordinatorLayout = findViewById(R.id.category_list_coordinator_layout) as CoordinatorLayout
         categoryListAdapter = CategoryListAdapterLegacy(categoryListItems)
 
         categoryListAdapter!!.addOnEditListener { category ->
@@ -87,7 +87,7 @@ class CategoriesActivityLegacy : BaseActivity()
             showDeleteCategoryDialog(category)
         }
 
-        val recycler = findViewById(R.id.categories_recycler) as RecyclerView
+        val recycler = findViewById(R.id.category_list_recycler) as RecyclerView
         recycler.adapter = categoryListAdapter
         recycler.layoutManager = LinearLayoutManager(this)
     }
@@ -157,7 +157,7 @@ class CategoriesActivityLegacy : BaseActivity()
 
     private fun setUpFloatingActionButton()
     {
-        val fab = findViewById(R.id.categories_add_button) as FloatingActionButton
+        val fab = findViewById(R.id.category_list_add_button) as FloatingActionButton
 
         fab.setOnClickListener { view ->
             CategoryDetailsActivityLegacy.startActivity(this)

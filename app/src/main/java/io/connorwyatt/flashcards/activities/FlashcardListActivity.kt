@@ -59,7 +59,7 @@ class FlashcardListActivity : BaseActivity()
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean
     {
-        when (item.itemId)
+        return when (item.itemId)
         {
             R.id.action_test ->
             {
@@ -73,14 +73,14 @@ class FlashcardListActivity : BaseActivity()
                 {
                     navigateToFlashcardTest()
                 }
-                return true
+                true
             }
             R.id.action_navigate_to_categories ->
             {
                 navigateToCategoryList()
-                return true
+                true
             }
-            else -> return super.onOptionsItemSelected(item)
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -262,7 +262,7 @@ class FlashcardListActivity : BaseActivity()
 
     private fun navigateToCategoryList(): Unit
     {
-        // TODO Add navigation to CategoryList
+        CategoryListActivity.startActivity(this)
     }
 
     // endregion
