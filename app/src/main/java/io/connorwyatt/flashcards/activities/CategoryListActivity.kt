@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.adapters.CategoryListAdapter
+import io.connorwyatt.flashcards.data.entities.Category
 import io.connorwyatt.flashcards.data.services.CategoryService
 import io.connorwyatt.flashcards.data.viewmodels.CategoryViewModel
 import io.reactivex.Observable
@@ -127,6 +128,7 @@ class CategoryListActivity : BaseActivity()
         recycler.adapter = categoryListAdapter
         recycler.layoutManager = LinearLayoutManager(this)
 
+        categoryListAdapter.addOnEditListener { navigateToCategoryDetails(it.category) }
         categoryListAdapter.addOnDeleteListener { showDeleteCategoryDialog(it) }
 
         refreshUIData()
@@ -177,6 +179,11 @@ class CategoryListActivity : BaseActivity()
     //region Navigation
 
     private fun navigateToCategoryDetails(): Unit
+    {
+        //TODO Navigate to Category Details
+    }
+
+    private fun navigateToCategoryDetails(category: Category): Unit
     {
         //TODO Navigate to Category Details
     }
