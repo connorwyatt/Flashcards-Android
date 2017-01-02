@@ -12,6 +12,7 @@ class EnhancedTextInputEditText : TextInputEditText
     private var touched = false
     private var dirty = false
     private var valid = true
+    private val textChangedListeners: MutableList<() -> Unit> = mutableListOf()
     private val validators: MutableList<(String) -> String?> = mutableListOf()
     private val textInputLayout by lazy {
         getParentTextInputLayout()
@@ -50,12 +51,9 @@ class EnhancedTextInputEditText : TextInputEditText
     {
         super.onFocusChanged(focused, direction, previouslyFocusedRect)
 
-        if (!focused)
-        {
-            touched = true
+        if (!focused) touched = true
 
-            runValidators(editableText.toString())
-        }
+        runValidators(editableText.toString())
     }
 
     override fun onTextChanged(text: CharSequence?, start: Int, lengthBefore: Int, lengthAfter: Int)
@@ -67,7 +65,21 @@ class EnhancedTextInputEditText : TextInputEditText
             dirty = true
 
             runValidators(editableText.toString())
+
+            callTextChangedListeners()
         }
+    }
+
+    fun addTextChangedListener(listener: () -> Unit): () -> Unit
+    {
+        textChangedListeners.add(listener)
+
+        return { textChangedListeners.removeAll(listOf(listener)) }
+    }
+
+    private fun callTextChangedListeners(): Unit
+    {
+        textChangedListeners.forEach { it.invoke() }
     }
 
     //endregion
@@ -94,6 +106,8 @@ class EnhancedTextInputEditText : TextInputEditText
 
         validators.add(validator)
 
+        runValidators(editableText.toString())
+
         return { validators.removeAll(listOf(validator)) }
     }
 
@@ -110,6 +124,8 @@ class EnhancedTextInputEditText : TextInputEditText
 
         validators.add(validator)
 
+        runValidators(editableText.toString())
+
         return { validators.removeAll(listOf(validator)) }
     }
 
@@ -117,6 +133,8 @@ class EnhancedTextInputEditText : TextInputEditText
         () -> Unit
     {
         validators.add(validator)
+
+        runValidators(editableText.toString())
 
         return { validators.removeAll(listOf(validator)) }
     }
@@ -131,7 +149,7 @@ class EnhancedTextInputEditText : TextInputEditText
             errorMessage?.let {
                 valid = false
 
-                setErrorMessage(it)
+                if (touched) setErrorMessage(it)
 
                 return
             }
