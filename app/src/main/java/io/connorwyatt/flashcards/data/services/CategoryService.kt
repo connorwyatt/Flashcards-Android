@@ -2,6 +2,7 @@ package io.connorwyatt.flashcards.data.services
 
 import io.connorwyatt.flashcards.data.datasources.CategoryDataSource
 import io.connorwyatt.flashcards.data.entities.Category
+import io.connorwyatt.flashcards.exceptions.CategoryNameTakenException
 import io.reactivex.Observable
 
 object CategoryService
@@ -47,7 +48,6 @@ object CategoryService
         return Observable.just(listOf())
     }
 
-
     fun save(category: Category): Observable<Category>
     {
         return getByName(category.name!!).flatMap { categories ->
@@ -71,9 +71,6 @@ object CategoryService
             CategoryDataSource().delete(category)
         }
     }
-
-    class CategoryNameTakenException : Exception()
-    {}
 
     private fun normaliseCategoryName(name: String): String = name.trim()
 }

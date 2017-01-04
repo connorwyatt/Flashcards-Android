@@ -33,6 +33,13 @@ class CategoryListActivity : BaseActivity()
         initialiseUI()
     }
 
+    override fun onResume()
+    {
+        super.onResume()
+
+        refreshUIData()
+    }
+
     //endregion
 
     //region Data
