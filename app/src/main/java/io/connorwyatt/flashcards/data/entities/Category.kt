@@ -1,6 +1,8 @@
 package io.connorwyatt.flashcards.data.entities
 
 import com.google.firebase.database.DataSnapshot
+import io.connorwyatt.flashcards.data.services.CategoryService
+import io.reactivex.Observable
 
 class Category(data: DataSnapshot?) : BaseEntity(data)
 {
@@ -23,6 +25,16 @@ class Category(data: DataSnapshot?) : BaseEntity(data)
     }
 
     override fun getType() = "category"
+
+    fun save(): Observable<Category>
+    {
+        return CategoryService.save(this)
+    }
+
+    fun delete(): Observable<Any?>
+    {
+        return CategoryService.delete(this)
+    }
 
     companion object
     {
