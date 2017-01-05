@@ -82,11 +82,11 @@ class FlashcardDetailsActivity : BaseActivity()
 
     private fun parseCategoriesString(categoriesString: String): List<Category>
     {
-        val categoryNames = categoriesString.split(", ")
+        val categoryNames = categoriesString.split(",")
 
         return categoryNames.map {
             val category = Category(null)
-            category.name = it
+            category.name = it.trim()
 
             category
         }
