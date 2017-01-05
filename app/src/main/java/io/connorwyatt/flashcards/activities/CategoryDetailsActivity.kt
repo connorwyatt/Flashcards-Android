@@ -7,8 +7,10 @@ import android.widget.Button
 import android.widget.Toast
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.data.entities.Category
+import io.connorwyatt.flashcards.data.services.CategoryService
 import io.connorwyatt.flashcards.exceptions.CategoryNameTakenException
 import io.connorwyatt.flashcards.views.textinput.EnhancedTextInputEditText
+import io.reactivex.Observable
 
 class CategoryDetailsActivity : BaseActivity()
 {
@@ -23,12 +25,17 @@ class CategoryDetailsActivity : BaseActivity()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_category_details)
 
-        initialiseUI()
+        initialiseUI(intent.getStringExtra(IntentExtras.CATEGORY_ID))
     }
 
     //endregion
 
     //region Data
+
+    private fun getData(categoryId: String): Observable<Category>
+    {
+        return CategoryService.getById(categoryId)
+    }
 
     private fun updateCategoryFromControls(): Unit
     {
@@ -59,9 +66,19 @@ class CategoryDetailsActivity : BaseActivity()
 
     //region UI
 
-    private fun initialiseUI(): Unit
+    private fun initialiseUI(categoryId: String?): Unit
     {
-        category = Category(null)
+        if (categoryId != null)
+        {
+            getData(categoryId).subscribe {
+                category = it
+                updateUI()
+            }
+        }
+        else
+        {
+            category = Category(null)
+        }
 
         initialiseControls()
     }
@@ -118,6 +135,11 @@ class CategoryDetailsActivity : BaseActivity()
             intent.putExtra(CATEGORY_ID, category.id)
 
             context.startActivity(intent)
+        }
+
+        object IntentExtras
+        {
+            val CATEGORY_ID = "CATEGORY_ID"
         }
     }
 }
