@@ -144,6 +144,11 @@ class CategoryDetailsActivity : BaseActivity()
     private fun initialiseControls(): Unit
     {
         nameInput = findViewById(R.id.category_details_name) as EnhancedTextInputEditText
+        nameInput.addRequiredValidator(getString(R.string.validation_required))
+        nameInput.addMaxLengthValidator(40, { actualLength, maxLength ->
+            getString(R.string.validation_max_length, actualLength, maxLength)
+        })
+        nameInput.addTextChangedListener { updateButton() }
 
         saveButton = findViewById(R.id.category_details_save_button) as Button
 
@@ -157,12 +162,21 @@ class CategoryDetailsActivity : BaseActivity()
     private fun updateUI(): Unit
     {
         updateControls()
+
+        updateButton()
     }
 
     private fun updateControls(): Unit
     {
         nameInput.setText(category.name)
     }
+
+    private fun updateButton(): Unit
+    {
+        saveButton.isEnabled = isValid()
+    }
+
+    private fun isValid() = nameInput.isValid()
 
     private fun showToast(messageStringId: Int, vararg values: String)
     {
