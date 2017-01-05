@@ -39,7 +39,10 @@ object FlashcardService
         return getByCategory(categoryId).flatMap { flashcards ->
             val observables = flashcards.map { delete(it) }
 
-            return@flatMap Observable.combineLatest(observables, { it })
+            if (observables.isNotEmpty())
+                Observable.combineLatest(observables, { it })
+            else
+                Observable.just(true)
         }
     }
 }
