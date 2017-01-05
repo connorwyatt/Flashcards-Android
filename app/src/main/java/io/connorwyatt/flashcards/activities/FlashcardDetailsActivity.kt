@@ -156,10 +156,10 @@ class FlashcardDetailsActivity : BaseActivity()
         titleInput!!.addMaxLengthValidator(80, { actualLength, maxLength ->
             getString(R.string.validation_max_length, actualLength, maxLength)
         })
-        titleInput!!.addTextChangedListener { updateUI() }
+        titleInput!!.addTextChangedListener { updateButton() }
 
         textInput!!.addRequiredValidator(getString(R.string.validation_required))
-        textInput!!.addTextChangedListener { updateUI() }
+        textInput!!.addTextChangedListener { updateButton() }
 
         categoriesInput!!.addCustomValidator(
             validator@ { value ->
@@ -174,7 +174,7 @@ class FlashcardDetailsActivity : BaseActivity()
                 null
             }
         )
-        categoriesInput!!.addTextChangedListener { updateUI() }
+        categoriesInput!!.addTextChangedListener { updateButton() }
 
         saveButton!!.setOnClickListener {
             updateViewModelFromControls()
