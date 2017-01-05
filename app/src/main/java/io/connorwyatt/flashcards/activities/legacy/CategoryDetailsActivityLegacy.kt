@@ -114,7 +114,7 @@ class CategoryDetailsActivityLegacy : BaseActivity()
         else
             categoryService.delete(category)
 
-        showToast(R.string.flashcard_details_delete_toast)
+        showToast(R.string.delete_toast)
 
         NavUtils.navigateUpFromSameTask(this)
     }

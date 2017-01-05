@@ -1,8 +1,13 @@
 package io.connorwyatt.flashcards.activities
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.app.NavUtils
+import android.support.v7.widget.Toolbar
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Button
 import android.widget.Toast
 import io.connorwyatt.flashcards.R
@@ -26,6 +31,34 @@ class CategoryDetailsActivity : BaseActivity()
         setContentView(R.layout.activity_category_details)
 
         initialiseUI(intent.getStringExtra(IntentExtras.CATEGORY_ID))
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean
+    {
+        menuInflater.inflate(R.menu.activity_category_details_menu, menu)
+
+        if (!category.existsInDatabase())
+        {
+            menu.findItem(R.id.action_delete).isEnabled = false
+        }
+
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean
+    {
+        when (item.itemId)
+        {
+            R.id.action_delete ->
+            {
+                showDeleteCategoryDialog(category)
+                return true
+            }
+            else ->
+            {
+                return super.onOptionsItemSelected(item)
+            }
+        }
     }
 
     //endregion
@@ -62,6 +95,19 @@ class CategoryDetailsActivity : BaseActivity()
         )
     }
 
+    private fun deleteCategory(category: Category, deleteFlashcards: Boolean): Unit
+    {
+        val observable = if (deleteFlashcards)
+            CategoryService.deleteWithFlashcards(category)
+        else
+            CategoryService.delete(category)
+
+        observable.subscribe {
+            showToast(R.string.delete_toast)
+            NavUtils.navigateUpFromSameTask(this)
+        }
+    }
+
     //endregion
 
     //region UI
@@ -80,7 +126,19 @@ class CategoryDetailsActivity : BaseActivity()
             category = Category(null)
         }
 
+        initialiseToolbar()
+
         initialiseControls()
+    }
+
+    private fun initialiseToolbar(): Unit
+    {
+        val toolbar = findViewById(R.id.category_details_toolbar) as Toolbar
+        setSupportActionBar(toolbar)
+
+        val actionBar = supportActionBar
+        actionBar!!.setDisplayShowTitleEnabled(false)
+        actionBar.setDisplayHomeAsUpEnabled(true)
     }
 
     private fun initialiseControls(): Unit
@@ -115,12 +173,31 @@ class CategoryDetailsActivity : BaseActivity()
         toast.show()
     }
 
+    private fun showDeleteCategoryDialog(category: Category): Unit
+    {
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.delete_category_dialog_title))
+            .setMessage(getString(R.string.delete_category_dialog_message))
+            .setPositiveButton(
+                getString(R.string.delete_category_dialog_yes),
+                { di, i -> deleteCategory(this.category, true) }
+            )
+            .setNegativeButton(
+                getString(R.string.delete_category_dialog_no),
+                { di, i -> deleteCategory(this.category, false) }
+            )
+            .setNeutralButton(
+                getString(R.string.delete_category_dialog_cancel),
+                { di, i -> }
+            )
+            .create()
+            .show()
+    }
+
     //endregion
 
     companion object
     {
-        internal val CATEGORY_ID = "CATEGORY_ID"
-
         fun startActivity(context: Context)
         {
             val intent = Intent(context, CategoryDetailsActivity::class.java)
@@ -132,7 +209,7 @@ class CategoryDetailsActivity : BaseActivity()
         {
             val intent = Intent(context, CategoryDetailsActivity::class.java)
 
-            intent.putExtra(CATEGORY_ID, category.id)
+            intent.putExtra(IntentExtras.CATEGORY_ID, category.id)
 
             context.startActivity(intent)
         }

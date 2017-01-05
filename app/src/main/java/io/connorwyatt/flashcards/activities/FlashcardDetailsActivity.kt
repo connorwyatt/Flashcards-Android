@@ -105,7 +105,7 @@ class FlashcardDetailsActivity : BaseActivity()
     {
         flashcardViewModel.delete()
             .subscribe {
-                showToast(R.string.flashcard_details_delete_toast)
+                showToast(R.string.delete_toast)
                 NavUtils.navigateUpFromSameTask(this)
             }
     }
