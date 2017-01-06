@@ -42,8 +42,8 @@ class FlashcardTestFragmentLegacy : Fragment()
                                                    .flashcard_test_view_pager) as DirectionalViewPager
 
         viewPager.addOnPageSkipListener { skippedItem ->
-                    updateProgressBar()
-                }
+            updateProgressBar()
+        }
 
         updateProgressBar()
     }
@@ -56,23 +56,23 @@ class FlashcardTestFragmentLegacy : Fragment()
 
         viewPager.allowLeftSwipe = false
         viewPager.addOnPageSkipListener { skippedItem: Any ->
-                    val flashcard = skippedItem as FlashcardLegacy
+            val flashcard = skippedItem as FlashcardLegacy
 
-                    if (!flashcardTestMap.containsKey(flashcard.id))
-                    {
-                        skippedFlashcards.add(flashcard.id!!)
-                        val skipMessage = getString(R.string.flashcard_test_skip_toast,
-                                                    flashcard
-                                                        .title)
-                        Toast.makeText(activity,
-                                       skipMessage,
-                                       Toast.LENGTH_SHORT)
-                            .show()
+            if (!flashcardTestMap.containsKey(flashcard.id))
+            {
+                skippedFlashcards.add(flashcard.id!!)
+                val skipMessage = getString(R.string.flashcard_test_skip_toast,
+                                            flashcard
+                                                .title)
+                Toast.makeText(activity,
+                               skipMessage,
+                               Toast.LENGTH_SHORT)
+                    .show()
 
-                        dispatchOnPerformanceBreakdownChangeEvent()
-                    }
-                }
+                dispatchOnPerformanceBreakdownChangeEvent()
             }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
