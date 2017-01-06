@@ -18,7 +18,9 @@ class FlashcardTestActivity : BaseActivity()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_flashcard_test)
 
-        initialiseFragment()
+        val categoryId = intent.getStringExtra(IntentExtras.CATEGORY_ID)
+
+        initialiseFragment(categoryId)
     }
 
     override fun onBackPressed()
@@ -30,11 +32,11 @@ class FlashcardTestActivity : BaseActivity()
 
     //region UI
 
-    private fun initialiseFragment(): Unit
+    private fun initialiseFragment(categoryId: String?): Unit
     {
         flashcardTestFragment =
             fragmentManager.findFragmentByTag(FRAGMENT_TAG) as FlashcardTestFragment?
-            ?: FlashcardTestFragment()
+            ?: FlashcardTestFragment(categoryId)
 
         fragmentManager
             .beginTransaction()
