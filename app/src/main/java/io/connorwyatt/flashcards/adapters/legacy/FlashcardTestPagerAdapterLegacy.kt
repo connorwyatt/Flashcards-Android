@@ -6,15 +6,15 @@ import android.os.Bundle
 import android.support.v4.view.PagerAdapter
 import io.connorwyatt.flashcards.adapters.FixedFragmentStatePagerAdapter
 import io.connorwyatt.flashcards.data.entities.legacy.FlashcardLegacy
-import io.connorwyatt.flashcards.fragments.FlashcardTestSummaryFragment
 import io.connorwyatt.flashcards.fragments.legacy.FlashcardTestCardFragmentLegacy
+import io.connorwyatt.flashcards.fragments.legacy.FlashcardTestSummaryFragmentLegacy
 
 @Deprecated("This is considered legacy.")
 class FlashcardTestPagerAdapterLegacy(fragmentManager: FragmentManager,
                                       private val flashcards: MutableList<FlashcardLegacy>) :
     FixedFragmentStatePagerAdapter(fragmentManager)
 {
-    private val summaryFragment = FlashcardTestSummaryFragment()
+    private val summaryFragment = FlashcardTestSummaryFragmentLegacy()
 
     override fun getCount(): Int
     {

@@ -1,4 +1,4 @@
-package io.connorwyatt.flashcards.fragments
+package io.connorwyatt.flashcards.fragments.legacy
 
 import android.app.Fragment
 import android.os.Bundle
@@ -7,12 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.activities.legacy.FlashcardTestActivityLegacy
 import io.connorwyatt.flashcards.interfaces.IPerformanceBreakdown
 
-class FlashcardTestSummaryFragment : Fragment()
+@Deprecated("This is considered legacy.")
+class FlashcardTestSummaryFragmentLegacy : Fragment()
 {
     private var viewGroup: ViewGroup? = null
     private var performanceBreakdown: IPerformanceBreakdown? = null
