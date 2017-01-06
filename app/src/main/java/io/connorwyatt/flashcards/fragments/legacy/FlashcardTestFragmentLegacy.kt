@@ -41,15 +41,9 @@ class FlashcardTestFragmentLegacy : Fragment()
         val viewPager = viewGroup.findViewById(R.id
                                                    .flashcard_test_view_pager) as DirectionalViewPager
 
-        viewPager.addOnPageSkipListener(
-            object : DirectionalViewPager.OnPageSkipListener
-            {
-                override fun onPageSkip(skippedItem: Any)
-                {
+        viewPager.addOnPageSkipListener { skippedItem ->
                     updateProgressBar()
                 }
-            }
-        )
 
         updateProgressBar()
     }
@@ -61,11 +55,7 @@ class FlashcardTestFragmentLegacy : Fragment()
         viewPager.adapter = flashcardTestPagerAdapter
 
         viewPager.allowLeftSwipe = false
-        viewPager.addOnPageSkipListener(
-            object : DirectionalViewPager.OnPageSkipListener
-            {
-                override fun onPageSkip(skippedItem: Any)
-                {
+        viewPager.addOnPageSkipListener { skippedItem: Any ->
                     val flashcard = skippedItem as FlashcardLegacy
 
                     if (!flashcardTestMap.containsKey(flashcard.id))
@@ -83,8 +73,6 @@ class FlashcardTestFragmentLegacy : Fragment()
                     }
                 }
             }
-        )
-    }
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
