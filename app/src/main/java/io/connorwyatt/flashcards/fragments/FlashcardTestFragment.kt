@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.connorwyatt.flashcards.R
+import io.connorwyatt.flashcards.adapters.FlashcardTestPagerAdapter
 import io.connorwyatt.flashcards.data.entities.Flashcard
 import io.connorwyatt.flashcards.data.services.FlashcardService
 import io.connorwyatt.flashcards.views.directionalviewpager.DirectionalViewPager
@@ -13,6 +14,7 @@ import io.reactivex.Observable
 
 class FlashcardTestFragment(private val categoryId: String?) : Fragment()
 {
+    lateinit private var flashcardTestPagerAdapter: FlashcardTestPagerAdapter
     private var initialCount: Int = 0
 
     //region Activity
@@ -65,13 +67,18 @@ class FlashcardTestFragment(private val categoryId: String?) : Fragment()
 
     private fun initialisePager(viewGroup: ViewGroup, categoryId: String?)
     {
+        flashcardTestPagerAdapter = FlashcardTestPagerAdapter(fragmentManager)
+
         getData(categoryId).subscribe {
+            flashcardTestPagerAdapter.setData(it)
+
             initialCount = it.size
         }
 
         val viewPager =
             viewGroup.findViewById(R.id.flashcard_test_view_pager) as DirectionalViewPager
 
+        viewPager.adapter = flashcardTestPagerAdapter
         viewPager.allowLeftSwipe = false
     }
 
