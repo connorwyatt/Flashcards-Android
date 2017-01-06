@@ -24,7 +24,7 @@ class FlashcardTestSummaryFragmentLegacy : Fragment()
         super.onCreateView(inflater, container, savedInstanceState)
 
         viewGroup = inflater.inflate(
-            R.layout.fragment_flashcard_test_summary_card, container, false) as ViewGroup
+            R.layout.fragment_flashcard_test_summary, container, false) as ViewGroup
 
         val testFragment = (activity as FlashcardTestActivityLegacy).flashcardTestFragment
 
