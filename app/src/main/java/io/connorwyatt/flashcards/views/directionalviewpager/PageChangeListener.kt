@@ -1,7 +1,7 @@
 package io.connorwyatt.flashcards.views.directionalviewpager
 
 import android.support.v4.view.ViewPager
-import io.connorwyatt.flashcards.adapters.legacy.FlashcardTestPagerAdapterLegacy
+import io.connorwyatt.flashcards.adapters.FlashcardTestPagerAdapter
 
 internal class PageChangeListener(private val context: DirectionalViewPager) : ViewPager.OnPageChangeListener
 {
@@ -27,7 +27,7 @@ internal class PageChangeListener(private val context: DirectionalViewPager) : V
             ViewPager.SCROLL_STATE_IDLE ->
                 if (hasPageChanged && !context.allowLeftSwipe && currentPage > previousPage)
                 {
-                    val adapter = context.adapter as FlashcardTestPagerAdapterLegacy
+                    val adapter = context.adapter as FlashcardTestPagerAdapter
 
                     val removedFlashcard = adapter.removeItem(previousPage)
                     context.setCurrentItem(previousPage, false)
