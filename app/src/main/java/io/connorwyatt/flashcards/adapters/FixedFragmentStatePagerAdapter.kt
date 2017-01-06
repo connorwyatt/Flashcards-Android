@@ -165,16 +165,16 @@ abstract class FixedFragmentStatePagerAdapter(private val mFragmentManager: Frag
         mCurTransaction!!.remove(fragment)
     }
 
-    override fun setPrimaryItem(container: ViewGroup, position: Int, item: Any)
+    override fun setPrimaryItem(container: ViewGroup, position: Int, item: Any?)
     {
-        val fragment = item as Fragment
+        val fragment = item as Fragment?
         if (fragment !== mCurrentPrimaryItem)
         {
             mCurrentPrimaryItem?.let {
                 FragmentCompat.setMenuVisibility(mCurrentPrimaryItem, false)
                 FragmentCompat.setUserVisibleHint(mCurrentPrimaryItem, false)
             }
-            fragment.let {
+            fragment?.let {
                 FragmentCompat.setMenuVisibility(fragment, true)
                 FragmentCompat.setUserVisibleHint(fragment, true)
             }
