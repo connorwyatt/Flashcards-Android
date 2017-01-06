@@ -4,6 +4,7 @@ import android.app.Fragment
 import android.app.FragmentManager
 import android.support.v4.view.PagerAdapter
 import io.connorwyatt.flashcards.data.entities.Flashcard
+import io.connorwyatt.flashcards.fragments.FlashcardTestCardFragment
 import io.connorwyatt.flashcards.fragments.FlashcardTestSummaryFragment
 
 class FlashcardTestPagerAdapter(fragmentManager: FragmentManager)
@@ -59,7 +60,7 @@ class FlashcardTestPagerAdapter(fragmentManager: FragmentManager)
 
     private fun getFlashcardFragment(position: Int): Fragment
     {
-        val fragment = Fragment()
+        val fragment = FlashcardTestCardFragment()
 
         return fragment
     }
