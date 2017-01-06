@@ -4,11 +4,12 @@ import android.app.Fragment
 import android.app.FragmentManager
 import android.support.v4.view.PagerAdapter
 import io.connorwyatt.flashcards.data.entities.Flashcard
+import io.connorwyatt.flashcards.fragments.FlashcardTestSummaryFragment
 
 class FlashcardTestPagerAdapter(fragmentManager: FragmentManager)
     : FixedFragmentStatePagerAdapter(fragmentManager)
 {
-    private val summaryFragment = Fragment()
+    private val summaryFragment = FlashcardTestSummaryFragment()
     private var flashcards: MutableList<Flashcard>? = null
 
     //region Pager
@@ -27,12 +28,12 @@ class FlashcardTestPagerAdapter(fragmentManager: FragmentManager)
 
     override fun getFragmentTag(position: Int): String
     {
-        return if (position < count) flashcards?.get(position)?.id!! else "summary"
+        return if (position < flashcards?.size ?: 0) flashcards?.get(position)?.id!! else "summary"
     }
 
     override fun getCount(): Int
     {
-        return flashcards?.size ?: 0
+        return (flashcards?.size ?: 0) + 1
     }
 
     //endregion
