@@ -11,6 +11,8 @@ class FlashcardTestCardFragment : Fragment()
 {
     private var isFlipped = false
 
+    //region Fragment
+
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
@@ -26,18 +28,14 @@ class FlashcardTestCardFragment : Fragment()
         val viewGroup = inflater.inflate(
             R.layout.fragment_flashcard_test_card, container, false) as ViewGroup
 
-        val cardFragment = if (!isFlipped)
-            FlashcardTestCardFrontFragment()
-        else
-            FlashcardTestCardBackFragment()
-
-        childFragmentManager
-            .beginTransaction()
-            .add(R.id.flashcard_test_card_frame, cardFragment)
-            .commit()
+        initialiseUI()
 
         return viewGroup
     }
+
+    //endregion
+
+    //region UI
 
     fun flipCard()
     {
@@ -50,6 +48,35 @@ class FlashcardTestCardFragment : Fragment()
                 .commit()
 
             isFlipped = true
+        }
+    }
+
+    private fun initialiseUI(): Unit
+    {
+        initialiseFragment()
+    }
+
+    private fun initialiseFragment(): Unit
+    {
+        val fragment = if (!isFlipped)
+            FlashcardTestCardFrontFragment()
+        else
+            FlashcardTestCardBackFragment()
+
+
+        childFragmentManager
+            .beginTransaction()
+            .add(R.id.flashcard_test_card_frame, fragment)
+            .commit()
+    }
+
+    //endregion
+
+    companion object
+    {
+        object ArgumentKeys
+        {
+            val FLASHCARD_ID = "FLASHCARD_ID"
         }
     }
 }

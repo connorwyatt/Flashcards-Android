@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.LinearLayout
+import android.widget.TextView
 import io.connorwyatt.flashcards.R
+import io.connorwyatt.flashcards.activities.FlashcardTestActivity
 
 class FlashcardTestCardFrontFragment : Fragment()
 {
@@ -27,6 +29,16 @@ class FlashcardTestCardFrontFragment : Fragment()
     private fun initialiseUI(viewGroup: ViewGroup): Unit
     {
         val parentFragment = parentFragment as FlashcardTestCardFragment
+
+        val flashcardId = parentFragment.arguments.getString(
+            FlashcardTestCardFragment.Companion.ArgumentKeys.FLASHCARD_ID)
+
+        val flashcard = (activity as FlashcardTestActivity).flashcardTestFragment
+            .getFlashcardFromAdapter(flashcardId)
+
+        val titleTextView = viewGroup.findViewById(R.id.flashcard_test_card_title) as TextView
+
+        titleTextView.text = flashcard.title
 
         val flipButton = viewGroup.findViewById(R.id.flashcard_test_card_flip_button) as ImageButton
         flipButton.setOnClickListener { parentFragment.flipCard() }

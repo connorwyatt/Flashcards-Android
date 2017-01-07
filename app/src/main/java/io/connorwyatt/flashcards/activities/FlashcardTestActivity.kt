@@ -8,7 +8,7 @@ import io.connorwyatt.flashcards.fragments.FlashcardTestFragment
 
 class FlashcardTestActivity : BaseActivity()
 {
-    lateinit private var flashcardTestFragment: FlashcardTestFragment
+    lateinit var flashcardTestFragment: FlashcardTestFragment
         private set
 
     //region Activity

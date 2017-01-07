@@ -48,6 +48,8 @@ class FlashcardTestFragment(private val categoryId: String?) : Fragment()
 
     //region Data
 
+    fun getFlashcardFromAdapter(id: String) = flashcardTestPagerAdapter.getFlashcardById(id)
+
     private fun getData(categoryId: String?): Observable<List<Flashcard>>
     {
         return if (categoryId !== null)
@@ -60,12 +62,12 @@ class FlashcardTestFragment(private val categoryId: String?) : Fragment()
 
     //region UI
 
-    private fun initialiseUI(viewGroup: ViewGroup, categoryId: String?)
+    private fun initialiseUI(viewGroup: ViewGroup, categoryId: String?): Unit
     {
         initialisePager(viewGroup, categoryId)
     }
 
-    private fun initialisePager(viewGroup: ViewGroup, categoryId: String?)
+    private fun initialisePager(viewGroup: ViewGroup, categoryId: String?): Unit
     {
         flashcardTestPagerAdapter = FlashcardTestPagerAdapter(fragmentManager)
 

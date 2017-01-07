@@ -2,6 +2,7 @@ package io.connorwyatt.flashcards.adapters
 
 import android.app.Fragment
 import android.app.FragmentManager
+import android.os.Bundle
 import android.support.v4.view.PagerAdapter
 import io.connorwyatt.flashcards.data.entities.Flashcard
 import io.connorwyatt.flashcards.fragments.FlashcardTestCardFragment
@@ -17,9 +18,9 @@ class FlashcardTestPagerAdapter(fragmentManager: FragmentManager)
 
     override fun getItem(position: Int): Fragment
     {
-        val isFlashcard = position < flashcards?.size ?: 0
+        val flashcard = flashcards?.getOrNull(position)
 
-        return if (isFlashcard) getFlashcardFragment(position) else summaryFragment
+        return flashcard?.let { getFlashcardFragment(it) } ?: summaryFragment
     }
 
     override fun getItemPosition(item: Any?): Int
@@ -41,6 +42,11 @@ class FlashcardTestPagerAdapter(fragmentManager: FragmentManager)
 
     //region Data
 
+    fun getFlashcardById(id: String): Flashcard
+    {
+        return flashcards!!.find { it.id!! == id }!!
+    }
+
     fun setData(flashcards: List<Flashcard>): Unit
     {
         this.flashcards = flashcards.toMutableList()
@@ -58,9 +64,16 @@ class FlashcardTestPagerAdapter(fragmentManager: FragmentManager)
 
     //region Fragments
 
-    private fun getFlashcardFragment(position: Int): Fragment
+    private fun getFlashcardFragment(flashcard: Flashcard): Fragment
     {
         val fragment = FlashcardTestCardFragment()
+
+        val arguments = Bundle()
+
+        arguments.putString(
+            FlashcardTestCardFragment.Companion.ArgumentKeys.FLASHCARD_ID, flashcard.id!!)
+        fragment.arguments = arguments
+
 
         return fragment
     }
