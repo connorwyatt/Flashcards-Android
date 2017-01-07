@@ -9,6 +9,8 @@ import io.connorwyatt.flashcards.R
 
 class FlashcardTestCardFragment : Fragment()
 {
+    private var isFlipped = false
+
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
@@ -21,7 +23,33 @@ class FlashcardTestCardFragment : Fragment()
     {
         super.onCreateView(inflater, container, savedInstanceState)
 
-        return inflater.inflate(
+        val viewGroup = inflater.inflate(
             R.layout.fragment_flashcard_test_card, container, false) as ViewGroup
+
+        val cardFragment = if (!isFlipped)
+            FlashcardTestCardFrontFragment()
+        else
+            FlashcardTestCardBackFragment()
+
+        childFragmentManager
+            .beginTransaction()
+            .add(R.id.flashcard_test_card_frame, cardFragment)
+            .commit()
+
+        return viewGroup
+    }
+
+    fun flipCard()
+    {
+        if (!isFlipped)
+        {
+            childFragmentManager
+                .beginTransaction()
+                .setCustomAnimations(R.animator.card_flip_in, R.animator.card_flip_out)
+                .replace(R.id.flashcard_test_card_frame, FlashcardTestCardBackFragment())
+                .commit()
+
+            isFlipped = true
+        }
     }
 }
