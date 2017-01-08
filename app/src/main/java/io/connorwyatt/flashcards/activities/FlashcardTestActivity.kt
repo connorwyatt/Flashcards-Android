@@ -34,14 +34,26 @@ class FlashcardTestActivity : BaseActivity()
 
     private fun initialiseFragment(categoryId: String?): Unit
     {
-        flashcardTestFragment =
-            fragmentManager.findFragmentByTag(FRAGMENT_TAG) as FlashcardTestFragment?
-            ?: FlashcardTestFragment(categoryId)
+        var fragment = fragmentManager.findFragmentByTag(FRAGMENT_TAG) as FlashcardTestFragment?
+
+        if (fragment == null)
+        {
+            fragment = FlashcardTestFragment()
+
+            val arguments = Bundle()
+
+            arguments.putString(
+                FlashcardTestFragment.Companion.ArgumentKeys.CATEGORY_ID, categoryId)
+
+            fragment.arguments = arguments
+        }
 
         fragmentManager
             .beginTransaction()
-            .add(R.id.flashcard_test_frame, flashcardTestFragment, FRAGMENT_TAG)
+            .add(R.id.flashcard_test_frame, fragment, FRAGMENT_TAG)
             .commit()
+
+        flashcardTestFragment = fragment
     }
 
     //endregion

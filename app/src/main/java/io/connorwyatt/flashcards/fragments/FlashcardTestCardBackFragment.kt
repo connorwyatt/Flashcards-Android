@@ -5,13 +5,30 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.activities.FlashcardTestActivity
+import io.connorwyatt.flashcards.data.entities.Flashcard
+import io.connorwyatt.flashcards.enums.Rating
 
 class FlashcardTestCardBackFragment : Fragment()
 {
+    private val buttons: MutableList<ImageButton> = mutableListOf()
+    private var currentButton: ImageButton? = null
+        set(value)
+        {
+            field?.let { it.imageAlpha = 100 }
+
+            value?.imageAlpha = 255
+
+            field = value
+        }
+    lateinit private var flashcardTestFragment: FlashcardTestFragment
+    lateinit private var flashcard: Flashcard
+    private var rating: Rating? = null
+
     //region Fragment
 
     override fun onCreateView(
@@ -27,19 +44,27 @@ class FlashcardTestCardBackFragment : Fragment()
         return viewGroup
     }
 
+    override fun onDestroyView()
+    {
+        super.onDestroyView()
+
+        rating?.let { flashcardTestFragment.rateFlashcard(flashcard, it).subscribe() }
+    }
+
     //endregion
 
     //region UI
 
-    private fun initialiseUI(viewGroup: ViewGroup)
+    private fun initialiseUI(viewGroup: ViewGroup): Unit
     {
-        val parentFragment = parentFragment as FlashcardTestCardFragment
+        flashcardTestFragment = (activity as FlashcardTestActivity).flashcardTestFragment
+
+        parentFragment as FlashcardTestCardFragment
 
         val flashcardId = parentFragment.arguments.getString(
             FlashcardTestCardFragment.Companion.ArgumentKeys.FLASHCARD_ID)
 
-        val flashcard = (activity as FlashcardTestActivity).flashcardTestFragment
-            .getFlashcardFromAdapter(flashcardId)
+        flashcard = flashcardTestFragment.getFlashcardFromAdapter(flashcardId)
 
         val titleTextView = viewGroup.findViewById(R.id.flashcard_test_card_title) as TextView
 
@@ -48,6 +73,32 @@ class FlashcardTestCardBackFragment : Fragment()
         val textTextView = viewGroup.findViewById(R.id.flashcard_test_card_text) as TextView
 
         textTextView.text = flashcard.text
+
+        initialiseButtons(viewGroup)
+    }
+
+    private fun initialiseButtons(viewGroup: ViewGroup): Unit
+    {
+        buttons.add(viewGroup.findViewById(R.id.flashcard_test_card_negative_button) as ImageButton)
+        buttons.add(viewGroup.findViewById(R.id.flashcard_test_card_neutral_button) as ImageButton)
+        buttons.add(viewGroup.findViewById(R.id.flashcard_test_card_positive_button) as ImageButton)
+
+        buttons.forEach {
+            it.imageAlpha = 100
+            it.setOnClickListener {
+                it as ImageButton
+
+                currentButton = it
+
+                rating = when (it.id)
+                {
+                    R.id.flashcard_test_card_positive_button -> Rating.POSITIVE
+                    R.id.flashcard_test_card_neutral_button -> Rating.NEUTRAL
+                    R.id.flashcard_test_card_negative_button -> Rating.NEGATIVE
+                    else -> null
+                }
+            }
+        }
     }
 
     //endregion
