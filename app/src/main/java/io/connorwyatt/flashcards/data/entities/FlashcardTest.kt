@@ -25,6 +25,15 @@ class FlashcardTest(data: DataSnapshot?) : BaseEntity(data)
 
     override fun getType() = "flashcardTest"
 
+    override fun serialise(): MutableMap<String, Any?>
+    {
+        val serialisedEntity = super.serialise()
+
+        rating?.let { serialisedEntity.put(PropertyKeys.rating, it.value) }
+
+        return serialisedEntity
+    }
+
     companion object
     {
         object PropertyKeys
