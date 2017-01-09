@@ -13,12 +13,16 @@ import io.connorwyatt.flashcards.data.services.FlashcardService
 import io.connorwyatt.flashcards.data.services.FlashcardTestService
 import io.connorwyatt.flashcards.enums.Rating
 import io.connorwyatt.flashcards.views.directionalviewpager.DirectionalViewPager
+import io.connorwyatt.flashcards.views.progressbar.ProgressBar
 import io.reactivex.Observable
 
 class FlashcardTestFragment : Fragment()
 {
+    lateinit private var viewGroup: ViewGroup
+    lateinit private var progressBar: ProgressBar
     private var flashcardTestPagerAdapter: FlashcardTestPagerAdapter? = null
     private var flashcards: List<Flashcard>? = null
+    private val flashcardTests = mutableMapOf<String, FlashcardTest>()
 
     //region Activity
 
@@ -34,12 +38,14 @@ class FlashcardTestFragment : Fragment()
     {
         super.onCreateView(inflater, container, savedInstanceState)
 
-        val viewGroup = inflater.inflate(
+        viewGroup = inflater.inflate(
             R.layout.fragment_flashcard_test, container, false) as ViewGroup
 
         val categoryId = arguments.getString(ArgumentKeys.CATEGORY_ID)
 
-        initialiseUI(viewGroup, categoryId)
+        initialiseUI(categoryId)
+
+        updateUI(false)
 
         return viewGroup
     }
@@ -63,6 +69,10 @@ class FlashcardTestFragment : Fragment()
 
         flashcardTest.rating = rating
 
+        flashcardTests.put(flashcard.id, flashcardTest)
+
+        updateUI()
+
         return saveFlashcardTest(flashcardTest)
     }
 
@@ -83,12 +93,14 @@ class FlashcardTestFragment : Fragment()
 
     //region UI
 
-    private fun initialiseUI(viewGroup: ViewGroup, categoryId: String?): Unit
+    private fun initialiseUI(categoryId: String?): Unit
     {
-        initialisePager(viewGroup, categoryId)
+        initialisePager(categoryId)
+
+        initialiseProgressBar()
     }
 
-    private fun initialisePager(viewGroup: ViewGroup, categoryId: String?): Unit
+    private fun initialisePager(categoryId: String?): Unit
     {
         flashcardTestPagerAdapter = FlashcardTestPagerAdapter(fragmentManager)
 
@@ -98,6 +110,8 @@ class FlashcardTestFragment : Fragment()
                 flashcards = it
 
                 flashcardTestPagerAdapter!!.setData(it)
+
+                updateUI()
             }
         }
         else
@@ -110,6 +124,24 @@ class FlashcardTestFragment : Fragment()
 
         viewPager.adapter = flashcardTestPagerAdapter
         viewPager.allowLeftSwipe = false
+    }
+
+    private fun initialiseProgressBar(): Unit
+    {
+        progressBar = viewGroup.findViewById(R.id.flashcard_test_progress_bar) as ProgressBar
+    }
+
+    private fun updateUI(animate: Boolean = true): Unit
+    {
+        updateProgressBar(animate)
+    }
+
+    private fun updateProgressBar(animate: Boolean): Unit
+    {
+        val currentRated = flashcardTests.size.toDouble()
+        val totalCards = flashcards?.size?.toDouble()
+
+        totalCards?.let { progressBar.setProgress(currentRated / totalCards, animate) }
     }
 
     //endregion
