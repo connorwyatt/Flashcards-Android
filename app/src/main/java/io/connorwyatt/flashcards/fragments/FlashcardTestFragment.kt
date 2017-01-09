@@ -124,6 +124,8 @@ class FlashcardTestFragment : Fragment()
 
         viewPager.adapter = flashcardTestPagerAdapter
         viewPager.allowLeftSwipe = false
+
+        viewPager.addOnPageSkipListener { updateUI() }
     }
 
     private fun initialiseProgressBar(): Unit
