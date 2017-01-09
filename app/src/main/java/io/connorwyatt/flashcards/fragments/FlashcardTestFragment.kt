@@ -17,8 +17,8 @@ import io.reactivex.Observable
 
 class FlashcardTestFragment : Fragment()
 {
-    lateinit private var flashcardTestPagerAdapter: FlashcardTestPagerAdapter
-    private var initialCount: Int = 0
+    private var flashcardTestPagerAdapter: FlashcardTestPagerAdapter? = null
+    private var flashcards: List<Flashcard>? = null
 
     //region Activity
 
@@ -53,7 +53,7 @@ class FlashcardTestFragment : Fragment()
 
     //region Data
 
-    fun getFlashcardFromAdapter(id: String) = flashcardTestPagerAdapter.getFlashcardById(id)
+    fun getFlashcardFromAdapter(id: String) = flashcardTestPagerAdapter!!.getFlashcardById(id)
 
     fun rateFlashcard(flashcard: Flashcard, rating: Rating): Observable<FlashcardTest>
     {
@@ -92,10 +92,17 @@ class FlashcardTestFragment : Fragment()
     {
         flashcardTestPagerAdapter = FlashcardTestPagerAdapter(fragmentManager)
 
-        getData(categoryId).subscribe {
-            flashcardTestPagerAdapter.setData(it)
+        if (flashcards == null)
+        {
+            getData(categoryId).subscribe {
+                flashcards = it
 
-            initialCount = it.size
+                flashcardTestPagerAdapter!!.setData(it)
+            }
+        }
+        else
+        {
+            flashcardTestPagerAdapter!!.setData(flashcards!!)
         }
 
         val viewPager =

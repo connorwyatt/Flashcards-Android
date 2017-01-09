@@ -6,10 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.connorwyatt.flashcards.R
+import io.connorwyatt.flashcards.activities.FlashcardTestActivity
+import io.connorwyatt.flashcards.data.entities.Flashcard
+import io.connorwyatt.flashcards.enums.Rating
 
 class FlashcardTestCardFragment : Fragment()
 {
+    lateinit private var flashcardTestFragment: FlashcardTestFragment
+    private var flashcard: Flashcard? = null
     private var isFlipped = false
+    private var rating: Rating? = null
 
     //region Fragment
 
@@ -33,6 +39,13 @@ class FlashcardTestCardFragment : Fragment()
         return viewGroup
     }
 
+    override fun onDestroy()
+    {
+        super.onDestroy()
+
+        rating?.let { flashcardTestFragment.rateFlashcard(flashcard!!, it).subscribe() }
+    }
+
     //endregion
 
     //region UI
@@ -44,7 +57,8 @@ class FlashcardTestCardFragment : Fragment()
             childFragmentManager
                 .beginTransaction()
                 .setCustomAnimations(R.animator.card_flip_in, R.animator.card_flip_out)
-                .replace(R.id.flashcard_test_card_frame, FlashcardTestCardBackFragment())
+                .replace(R.id.flashcard_test_card_frame,
+                         getCardBackFragment())
                 .commit()
 
             isFlipped = true
@@ -58,17 +72,24 @@ class FlashcardTestCardFragment : Fragment()
 
     private fun initialiseFragment(): Unit
     {
-        val fragment = if (!isFlipped)
-            FlashcardTestCardFrontFragment()
-        else
-            FlashcardTestCardBackFragment()
+        flashcardTestFragment = (activity as FlashcardTestActivity).flashcardTestFragment!!
 
+        flashcard = flashcardTestFragment
+            .getFlashcardFromAdapter(arguments.getString(ArgumentKeys.FLASHCARD_ID))
+
+        val fragment = if (!isFlipped)
+            FlashcardTestCardFrontFragment(flashcard!!)
+        else
+            getCardBackFragment()
 
         childFragmentManager
             .beginTransaction()
             .add(R.id.flashcard_test_card_frame, fragment)
             .commit()
     }
+
+    private fun getCardBackFragment()
+        = FlashcardTestCardBackFragment(flashcard!!, rating, { rating = it })
 
     //endregion
 

@@ -9,9 +9,9 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import io.connorwyatt.flashcards.R
-import io.connorwyatt.flashcards.activities.FlashcardTestActivity
+import io.connorwyatt.flashcards.data.entities.Flashcard
 
-class FlashcardTestCardFrontFragment : Fragment()
+class FlashcardTestCardFrontFragment(private val flashcard: Flashcard) : Fragment()
 {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View
@@ -29,12 +29,6 @@ class FlashcardTestCardFrontFragment : Fragment()
     private fun initialiseUI(viewGroup: ViewGroup): Unit
     {
         val parentFragment = parentFragment as FlashcardTestCardFragment
-
-        val flashcardId = parentFragment.arguments.getString(
-            FlashcardTestCardFragment.Companion.ArgumentKeys.FLASHCARD_ID)
-
-        val flashcard = (activity as FlashcardTestActivity).flashcardTestFragment
-            .getFlashcardFromAdapter(flashcardId)
 
         val titleTextView = viewGroup.findViewById(R.id.flashcard_test_card_title) as TextView
 

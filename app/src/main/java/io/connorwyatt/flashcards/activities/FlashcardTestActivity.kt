@@ -8,7 +8,7 @@ import io.connorwyatt.flashcards.fragments.FlashcardTestFragment
 
 class FlashcardTestActivity : BaseActivity()
 {
-    lateinit var flashcardTestFragment: FlashcardTestFragment
+    var flashcardTestFragment: FlashcardTestFragment? = null
         private set
 
     //region Activity
@@ -25,7 +25,7 @@ class FlashcardTestActivity : BaseActivity()
 
     override fun onBackPressed()
     {
-        flashcardTestFragment.onBackPressed { super.onBackPressed() }
+        flashcardTestFragment!!.onBackPressed { super.onBackPressed() }
     }
 
     //endregion
@@ -46,12 +46,12 @@ class FlashcardTestActivity : BaseActivity()
                 FlashcardTestFragment.Companion.ArgumentKeys.CATEGORY_ID, categoryId)
 
             fragment.arguments = arguments
-        }
 
-        fragmentManager
-            .beginTransaction()
-            .add(R.id.flashcard_test_frame, fragment, FRAGMENT_TAG)
-            .commit()
+            fragmentManager
+                .beginTransaction()
+                .add(R.id.flashcard_test_frame, fragment, FRAGMENT_TAG)
+                .commit()
+        }
 
         flashcardTestFragment = fragment
     }

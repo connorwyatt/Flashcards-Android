@@ -13,8 +13,13 @@ import io.connorwyatt.flashcards.activities.FlashcardTestActivity
 import io.connorwyatt.flashcards.data.entities.Flashcard
 import io.connorwyatt.flashcards.enums.Rating
 
-class FlashcardTestCardBackFragment : Fragment()
+class FlashcardTestCardBackFragment(
+    private val flashcard: Flashcard,
+    initialRating: Rating?,
+    private val onRatingChangeListener: (Rating?) -> Unit)
+    : Fragment()
 {
+    lateinit private var viewGroup: ViewGroup
     private val buttons: MutableList<ImageButton> = mutableListOf()
     private var currentButton: ImageButton? = null
         set(value)
@@ -26,8 +31,18 @@ class FlashcardTestCardBackFragment : Fragment()
             field = value
         }
     lateinit private var flashcardTestFragment: FlashcardTestFragment
-    lateinit private var flashcard: Flashcard
     private var rating: Rating? = null
+        set(value)
+        {
+            field = value
+
+            onRatingChangeListener(field)
+        }
+
+    init
+    {
+        rating = initialRating
+    }
 
     //region Fragment
 
@@ -36,35 +51,23 @@ class FlashcardTestCardBackFragment : Fragment()
     {
         super.onCreateView(inflater, container, savedInstanceState)
 
-        val viewGroup = inflater.inflate(
+        viewGroup = inflater.inflate(
             R.layout.fragment_flashcard_test_card_back, container, false) as LinearLayout
 
-        initialiseUI(viewGroup)
+        initialiseUI()
 
         return viewGroup
-    }
-
-    override fun onDestroyView()
-    {
-        super.onDestroyView()
-
-        rating?.let { flashcardTestFragment.rateFlashcard(flashcard, it).subscribe() }
     }
 
     //endregion
 
     //region UI
 
-    private fun initialiseUI(viewGroup: ViewGroup): Unit
+    private fun initialiseUI(): Unit
     {
-        flashcardTestFragment = (activity as FlashcardTestActivity).flashcardTestFragment
+        flashcardTestFragment = (activity as FlashcardTestActivity).flashcardTestFragment!!
 
         parentFragment as FlashcardTestCardFragment
-
-        val flashcardId = parentFragment.arguments.getString(
-            FlashcardTestCardFragment.Companion.ArgumentKeys.FLASHCARD_ID)
-
-        flashcard = flashcardTestFragment.getFlashcardFromAdapter(flashcardId)
 
         val titleTextView = viewGroup.findViewById(R.id.flashcard_test_card_title) as TextView
 
@@ -74,10 +77,10 @@ class FlashcardTestCardBackFragment : Fragment()
 
         textTextView.text = flashcard.text
 
-        initialiseButtons(viewGroup)
+        initialiseButtons()
     }
 
-    private fun initialiseButtons(viewGroup: ViewGroup): Unit
+    private fun initialiseButtons(): Unit
     {
         buttons.add(viewGroup.findViewById(R.id.flashcard_test_card_negative_button) as ImageButton)
         buttons.add(viewGroup.findViewById(R.id.flashcard_test_card_neutral_button) as ImageButton)
@@ -98,6 +101,19 @@ class FlashcardTestCardBackFragment : Fragment()
                     else -> null
                 }
             }
+        }
+
+        rating?.let { setCurrentButtonFromRating(it) }
+    }
+
+    private fun setCurrentButtonFromRating(rating: Rating): Unit
+    {
+        currentButton = when (rating)
+        {
+            Rating.POSITIVE -> viewGroup.findViewById(R.id.flashcard_test_card_positive_button) as ImageButton
+            Rating.NEUTRAL -> viewGroup.findViewById(R.id.flashcard_test_card_neutral_button) as ImageButton
+            Rating.NEGATIVE -> viewGroup.findViewById(R.id.flashcard_test_card_negative_button) as ImageButton
+            else -> null
         }
     }
 
