@@ -1,5 +1,6 @@
 package io.connorwyatt.flashcards.fragments
 
+import android.app.AlertDialog
 import android.app.Fragment
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -54,7 +55,23 @@ class FlashcardTestFragment : Fragment()
 
     fun onBackPressed(callback: () -> Unit): Unit
     {
-        callback.invoke()
+        val totalCompleted = flashcardTests.size + skippedFlashcards.size
+        val isComplete = totalCompleted >= flashcards?.size ?: 0
+
+        if (isComplete)
+        {
+            callback.invoke()
+        }
+        else
+        {
+            AlertDialog.Builder(activity)
+                .setTitle(R.string.flashcard_test_confirmation_title)
+                .setMessage(R.string.flashcard_test_confirmation_message)
+                .setPositiveButton(R.string.flashcard_test_confirmation_yes) { dialogInterface, i -> callback.invoke() }
+                .setNegativeButton(R.string.flashcard_test_confirmation_no) { dialogInterface, i -> }
+                .create()
+                .show()
+        }
     }
 
     //endregion
