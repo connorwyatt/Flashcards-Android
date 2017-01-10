@@ -13,10 +13,12 @@ import io.connorwyatt.flashcards.data.entities.Flashcard
 import io.connorwyatt.flashcards.data.entities.FlashcardTest
 import io.connorwyatt.flashcards.data.services.FlashcardService
 import io.connorwyatt.flashcards.data.services.FlashcardTestService
+import io.connorwyatt.flashcards.data.viewmodels.PerformanceViewModel
 import io.connorwyatt.flashcards.enums.Rating
 import io.connorwyatt.flashcards.views.directionalviewpager.DirectionalViewPager
 import io.connorwyatt.flashcards.views.progressbar.ProgressBar
 import io.reactivex.Observable
+import io.reactivex.subjects.BehaviorSubject
 
 class FlashcardTestFragment : Fragment()
 {
@@ -26,6 +28,7 @@ class FlashcardTestFragment : Fragment()
     private var flashcards: List<Flashcard>? = null
     private val flashcardTests = mutableMapOf<String, FlashcardTest>()
     private var skippedFlashcards = mutableListOf<String>()
+    private val performanceSubject = BehaviorSubject.createDefault(getPerformanceViewModel())
 
     //region Activity
 
@@ -92,8 +95,12 @@ class FlashcardTestFragment : Fragment()
 
         updateUI()
 
+        performanceSubject.onNext(getPerformanceViewModel())
+
         return saveFlashcardTest(flashcardTest)
     }
+
+    fun getPerformanceObservable(): Observable<PerformanceViewModel> = performanceSubject
 
     private fun getData(categoryId: String?): Observable<List<Flashcard>>
     {
@@ -106,6 +113,13 @@ class FlashcardTestFragment : Fragment()
     private fun saveFlashcardTest(flashcardTest: FlashcardTest): Observable<FlashcardTest>
     {
         return FlashcardTestService.save(flashcardTest)
+    }
+
+    private fun getPerformanceViewModel(): PerformanceViewModel
+    {
+        val ratings = flashcardTests.mapNotNull { it.value.rating }
+
+        return PerformanceViewModel(ratings, flashcards?.size ?: 0)
     }
 
     //endregion
@@ -131,11 +145,15 @@ class FlashcardTestFragment : Fragment()
                 flashcardTestPagerAdapter!!.setData(it)
 
                 updateUI()
+
+                performanceSubject.onNext(getPerformanceViewModel())
             }
         }
         else
         {
             flashcardTestPagerAdapter!!.setData(flashcards!!)
+
+            performanceSubject.onNext(getPerformanceViewModel())
         }
 
         val viewPager =
@@ -158,6 +176,8 @@ class FlashcardTestFragment : Fragment()
             }
 
             updateUI()
+
+            performanceSubject.onNext(getPerformanceViewModel())
         }
     }
 
