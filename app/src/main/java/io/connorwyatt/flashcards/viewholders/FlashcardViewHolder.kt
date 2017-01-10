@@ -9,7 +9,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.data.viewmodels.FlashcardViewModel
-import io.connorwyatt.flashcards.enums.Rating
 import io.connorwyatt.flashcards.views.progressbar.ProgressBar
 
 class FlashcardViewHolder constructor(itemView: View) : RecyclerView.ViewHolder(itemView)
@@ -28,14 +27,14 @@ class FlashcardViewHolder constructor(itemView: View) : RecyclerView.ViewHolder(
         this.viewModel = viewModel
         val (flashcard, categories, rating) = viewModel
 
-        val colorId = when (rating)
-        {
-            Rating.POSITIVE -> R.color.colorPositive
-            Rating.NEGATIVE -> R.color.colorNegative
-            Rating.NEUTRAL -> R.color.colorNeutral
-            Rating.NOT_RATED -> R.color.colorGrey
-            else -> R.color.colorGrey
-        }
+        val colorId = rating?.let {
+            when
+            {
+                rating > 2.0 / 3.0 -> R.color.colorPositive
+                rating < 1.0 / 2.0 -> R.color.colorNegative
+                else -> R.color.colorNeutral
+            }
+        } ?: R.color.colorGrey
 
         val color = ContextCompat.getColor(layout.context, colorId)
         val backgroundColor = ColorUtils.setAlphaComponent(color, 128)
@@ -43,7 +42,9 @@ class FlashcardViewHolder constructor(itemView: View) : RecyclerView.ViewHolder(
         progress.setBarColor(color)
         progress.setUnfilledBarColor(backgroundColor)
 
-        val progressValue = if (rating?.value!! >= 0) rating?.value else 0.0
+        val progressValue = rating?.let {
+            if (it >= 0) it else 0.0
+        } ?: 0.0
 
         progress.setProgress(progressValue)
 

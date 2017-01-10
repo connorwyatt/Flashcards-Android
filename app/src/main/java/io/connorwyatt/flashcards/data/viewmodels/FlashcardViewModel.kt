@@ -5,13 +5,12 @@ import io.connorwyatt.flashcards.data.entities.Flashcard
 import io.connorwyatt.flashcards.data.services.CategoryService
 import io.connorwyatt.flashcards.data.services.FlashcardService
 import io.connorwyatt.flashcards.data.services.FlashcardTestService
-import io.connorwyatt.flashcards.enums.Rating
 import io.reactivex.Observable
 
 data class FlashcardViewModel(
     var flashcard: Flashcard,
     var categories: List<Category>,
-    var rating: Rating? = null
+    var averageRating: Double? = null
 )
 {
     fun save(): Observable<FlashcardViewModel>
@@ -54,13 +53,9 @@ data class FlashcardViewModel(
                     var categories = it[1] as List<*>
                     categories = categories.filterIsInstance(Category::class.java)
 
-                    val rating = if (it.size >= 3)
-                    {
-                        Rating.fromValue(it[2] as Double)
-                    }
-                    else null
+                    val averageRating = if (it.size >= 3) it[2] as Double else null
 
-                    FlashcardViewModel(flashcard, categories, rating)
+                    FlashcardViewModel(flashcard, categories, averageRating)
                 }
             )
         }
@@ -84,13 +79,9 @@ data class FlashcardViewModel(
                     var categories = it[0] as List<*>
                     categories = categories.filterIsInstance(Category::class.java)
 
-                    val rating = if (it.size >= 2)
-                    {
-                        Rating.fromValue(it[1] as Double)
-                    }
-                    else null
+                    val averageRating = if (it.size >= 2) it[1] as Double else null
 
-                    FlashcardViewModel(flashcard, categories, rating)
+                    FlashcardViewModel(flashcard, categories, averageRating)
                 }
             )
         }
