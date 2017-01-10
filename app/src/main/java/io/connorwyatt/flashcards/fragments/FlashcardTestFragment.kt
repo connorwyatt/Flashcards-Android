@@ -23,6 +23,7 @@ class FlashcardTestFragment : Fragment()
     private var flashcardTestPagerAdapter: FlashcardTestPagerAdapter? = null
     private var flashcards: List<Flashcard>? = null
     private val flashcardTests = mutableMapOf<String, FlashcardTest>()
+    private var skippedFlashcards = mutableListOf<String>()
 
     //region Activity
 
@@ -125,7 +126,16 @@ class FlashcardTestFragment : Fragment()
         viewPager.adapter = flashcardTestPagerAdapter
         viewPager.allowLeftSwipe = false
 
-        viewPager.addOnPageSkipListener { updateUI() }
+        viewPager.addOnPageSkipListener {
+            val flashcardId = (it as Flashcard).id!!
+
+            if (!flashcardTests.containsKey(flashcardId))
+            {
+                skippedFlashcards.add(flashcardId)
+            }
+
+            updateUI()
+        }
     }
 
     private fun initialiseProgressBar(): Unit
@@ -140,10 +150,14 @@ class FlashcardTestFragment : Fragment()
 
     private fun updateProgressBar(animate: Boolean): Unit
     {
-        val currentRated = flashcardTests.size.toDouble()
+        val ratedCards = flashcardTests.size.toDouble()
+        val skippedCards = skippedFlashcards.size.toDouble()
         val totalCards = flashcards?.size?.toDouble()
 
-        totalCards?.let { progressBar.setProgress(currentRated / totalCards, animate) }
+        totalCards?.let {
+            progressBar.setProgress((ratedCards + skippedCards) / totalCards,
+                                    animate)
+        }
     }
 
     //endregion
