@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.adapters.FlashcardTestPagerAdapter
 import io.connorwyatt.flashcards.data.entities.Flashcard
@@ -127,11 +128,16 @@ class FlashcardTestFragment : Fragment()
         viewPager.allowLeftSwipe = false
 
         viewPager.addOnPageSkipListener {
-            val flashcardId = (it as Flashcard).id!!
+            val flashcard = it as Flashcard
+            val flashcardId = flashcard.id!!
 
             if (!flashcardTests.containsKey(flashcardId))
             {
                 skippedFlashcards.add(flashcardId)
+
+                val skipMessage = getString(R.string.flashcard_test_skip_toast, flashcard.title)
+                Toast.makeText(activity, skipMessage, Toast.LENGTH_SHORT)
+                    .show()
             }
 
             updateUI()
