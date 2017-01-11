@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.activities.FlashcardTestActivity
@@ -26,10 +27,7 @@ class FlashcardTestSummaryFragment : Fragment()
         viewGroup = inflater.inflate(
             R.layout.fragment_flashcard_test_summary, container, false) as ViewGroup
 
-        disposable = (activity as FlashcardTestActivity).flashcardTestFragment!!.getPerformanceObservable()
-            .subscribe {
-                updateValues(it)
-            }
+        initialiseUI()
 
         return viewGroup
     }
@@ -44,6 +42,23 @@ class FlashcardTestSummaryFragment : Fragment()
     //endregion
 
     //region UI
+
+    private fun initialiseUI()
+    {
+        initialiseButton()
+
+        disposable = (activity as FlashcardTestActivity).flashcardTestFragment!!.getPerformanceObservable()
+            .subscribe {
+                updateValues(it)
+            }
+    }
+
+    private fun initialiseButton(): Unit
+    {
+        val button = viewGroup.findViewById(R.id.flashcard_test_summary_finish_button) as Button
+
+        button.setOnClickListener { activity.finish() }
+    }
 
     private fun updateValues(performanceViewModel: PerformanceViewModel): Unit
     {
