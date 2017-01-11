@@ -28,12 +28,16 @@ class FlashcardViewHolder constructor(itemView: View) : RecyclerView.ViewHolder(
         val (flashcard, categories, rating) = viewModel
 
         val colorId = rating?.let {
-            when
+            if (rating >= 0)
             {
-                rating > 2.0 / 3.0 -> R.color.colorPositive
-                rating < 1.0 / 2.0 -> R.color.colorNegative
-                else -> R.color.colorNeutral
+                when
+                {
+                    rating > 2.0 / 3.0 -> R.color.colorPositive
+                    rating < 1.0 / 2.0 -> R.color.colorNegative
+                    else -> R.color.colorNeutral
+                }
             }
+            else null
         } ?: R.color.colorGrey
 
         val color = ContextCompat.getColor(layout.context, colorId)
