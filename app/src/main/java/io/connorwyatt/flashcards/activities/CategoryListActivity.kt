@@ -22,6 +22,7 @@ class CategoryListActivity : BaseActivity()
     lateinit private var coordinatorLayout: CoordinatorLayout
     private val categoryListAdapter = CategoryListAdapter()
     private val removedCategoryIds: MutableSet<String> = mutableSetOf()
+    private var categoryViewModels: List<CategoryViewModel>? = null
 
     //region Activity
 
@@ -46,12 +47,12 @@ class CategoryListActivity : BaseActivity()
 
     private fun getData(): Observable<List<CategoryViewModel>>
     {
-        return CategoryService.getAll().flatMap { categories ->
+        return CategoryService.getAllAsStream().flatMap { categories ->
             val observables = categories.map {
                 CategoryViewModel.getFromCategory(it)
             }
 
-            if (observables.isNotEmpty())
+            val observable = if (observables.isNotEmpty())
             {
                 Observable.combineLatest(
                     observables,
@@ -62,6 +63,8 @@ class CategoryListActivity : BaseActivity()
             {
                 Observable.just(listOf())
             }
+
+            observable.doAfterNext { categoryViewModels = it }
         }
     }
 
@@ -102,10 +105,11 @@ class CategoryListActivity : BaseActivity()
 
     private fun refreshUIData()
     {
-        getData().subscribe {
-            updateAdapterData(it.filterNot { it.category.id!! in removedCategoryIds })
-        }
+        updateAdapterData(getFilteredCategories(categoryViewModels))
     }
+
+    private fun getFilteredCategories(categories: List<CategoryViewModel>?)
+        = categories?.filterNot { it.category.id!! in removedCategoryIds } ?: listOf()
 
     //endregion
 
@@ -138,7 +142,7 @@ class CategoryListActivity : BaseActivity()
         categoryListAdapter.addOnEditListener { navigateToCategoryDetails(it.category) }
         categoryListAdapter.addOnDeleteListener { showDeleteCategoryDialog(it) }
 
-        refreshUIData()
+        getData().subscribe { updateAdapterData(getFilteredCategories(it)) }
     }
 
     private fun initialiseCoordinatorLayout(): Unit
