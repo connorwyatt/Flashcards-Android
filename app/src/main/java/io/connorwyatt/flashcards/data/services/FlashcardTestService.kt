@@ -28,7 +28,7 @@ object FlashcardTestService
             if (observables.isNotEmpty())
             {
                 Observable.combineLatest(observables, {
-                    it.filterIsInstance(FlashcardTest::class.java)
+                    (it[0] as List<*>).filterIsInstance(FlashcardTest::class.java)
                 })
             }
             else
@@ -77,7 +77,7 @@ object FlashcardTestService
 
         if (ratings.isNotEmpty())
         {
-            return ratings.sum() / ratings.size
+            return ratings.sum() / ratings.size.toDouble()
         }
         else
         {

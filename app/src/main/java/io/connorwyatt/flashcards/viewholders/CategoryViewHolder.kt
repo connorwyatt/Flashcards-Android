@@ -11,7 +11,6 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.data.viewmodels.CategoryViewModel
-import io.connorwyatt.flashcards.enums.Rating
 
 class CategoryViewHolder constructor(itemView: View) : RecyclerView.ViewHolder(itemView)
 {
@@ -42,25 +41,28 @@ class CategoryViewHolder constructor(itemView: View) : RecyclerView.ViewHolder(i
         var statusBarColor: Int = ContextCompat.getColor(context, R.color.colorGrey)
 
         rating?.let {
-            when
+            if (it >= 0)
             {
-                it == Rating.POSITIVE ->
+                when
                 {
-                    statusText = context.getString(R.string.category_status_positive)
-                    statusTextColor = ContextCompat.getColor(context, R.color.colorPositiveDark)
-                    statusBarColor = ContextCompat.getColor(context, R.color.colorPositive)
-                }
-                it == Rating.NEGATIVE ->
-                {
-                    statusText = context.getString(R.string.category_status_negative)
-                    statusTextColor = ContextCompat.getColor(context, R.color.colorNegativeDark)
-                    statusBarColor = ContextCompat.getColor(context, R.color.colorNegative)
-                }
-                it == Rating.NEUTRAL ->
-                {
-                    statusText = context.getString(R.string.category_status_neutral)
-                    statusTextColor = ContextCompat.getColor(context, R.color.colorNeutralDark)
-                    statusBarColor = ContextCompat.getColor(context, R.color.colorNeutral)
+                    it > 2.0 / 3.0 ->
+                    {
+                        statusText = context.getString(R.string.category_status_positive)
+                        statusTextColor = ContextCompat.getColor(context, R.color.colorPositiveDark)
+                        statusBarColor = ContextCompat.getColor(context, R.color.colorPositive)
+                    }
+                    it < 1.0 / 2.0 ->
+                    {
+                        statusText = context.getString(R.string.category_status_negative)
+                        statusTextColor = ContextCompat.getColor(context, R.color.colorNegativeDark)
+                        statusBarColor = ContextCompat.getColor(context, R.color.colorNegative)
+                    }
+                    else ->
+                    {
+                        statusText = context.getString(R.string.category_status_neutral)
+                        statusTextColor = ContextCompat.getColor(context, R.color.colorNeutralDark)
+                        statusBarColor = ContextCompat.getColor(context, R.color.colorNeutral)
+                    }
                 }
             }
         }
