@@ -1,88 +1,52 @@
 package io.connorwyatt.flashcards.data.services
 
-import android.content.Context
 import io.connorwyatt.flashcards.data.datasources.FlashcardDataSource
 import io.connorwyatt.flashcards.data.entities.Flashcard
+import io.reactivex.Observable
 
-class FlashcardService(private val context: Context)
+object FlashcardService
 {
-    fun getAll(): List<Flashcard>
+    fun getAll(): Observable<List<Flashcard>>
+        = FlashcardDataSource().getAll(false)
+
+    fun getAllAsStream(): Observable<List<Flashcard>>
+        = FlashcardDataSource().getAll(true)
+
+    fun getById(id: String): Observable<Flashcard>
+        = FlashcardDataSource().getById(id)
+
+    fun getByCategory(categoryId: String): Observable<List<Flashcard>>
+        = FlashcardDataSource().getByCategoryId(categoryId, false)
+
+
+    fun getByCategoryAsStream(categoryId: String): Observable<List<Flashcard>>
+        = FlashcardDataSource().getByCategoryId(categoryId, true)
+
+
+    fun save(flashcard: Flashcard): Observable<Flashcard>
     {
-        val dataSource = FlashcardDataSource(context)
+        val flashcardDataSource = FlashcardDataSource()
 
-        try
-        {
-            dataSource.open()
+        return flashcardDataSource.save(flashcard)
+            .flatMap { getById(it) }
+    }
 
-            return dataSource.all
-        }
-        finally
-        {
-            dataSource.close()
+    fun delete(flashcard: Flashcard): Observable<Any?>
+    {
+        return FlashcardTestService.deleteByFlashcardId(flashcard.id!!).flatMap {
+            FlashcardDataSource().delete(flashcard)
         }
     }
 
-    fun getByCategory(categoryId: Long): List<Flashcard>
+    fun deleteByCategoryId(categoryId: String): Observable<Any?>
     {
-        val dataSource = FlashcardDataSource(context)
+        return getByCategory(categoryId).flatMap { flashcards ->
+            val observables = flashcards.map { delete(it) }
 
-        try
-        {
-            dataSource.open()
-
-            return dataSource.getByCategory(categoryId)
-        }
-        finally
-        {
-            dataSource.close()
-        }
-    }
-
-    fun getById(flashcardId: Long): Flashcard
-    {
-        val dataSource = FlashcardDataSource(context)
-
-        try
-        {
-            dataSource.open()
-
-            return dataSource.getById(flashcardId)
-        }
-        finally
-        {
-            dataSource.close()
-        }
-    }
-
-    fun save(flashcard: Flashcard): Flashcard
-    {
-        val dataSource = FlashcardDataSource(context)
-
-        try
-        {
-            dataSource.open()
-
-            return dataSource.save(flashcard)
-        }
-        finally
-        {
-            dataSource.close()
-        }
-    }
-
-    fun delete(flashcard: Flashcard): Unit
-    {
-        val dataSource = FlashcardDataSource(context)
-
-        try
-        {
-            dataSource.open()
-
-            dataSource.deleteById(flashcard.id!!)
-        }
-        finally
-        {
-            dataSource.close()
+            if (observables.isNotEmpty())
+                Observable.combineLatest(observables, { it })
+            else
+                Observable.just(true)
         }
     }
 }

@@ -3,156 +3,44 @@ package io.connorwyatt.flashcards.activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.TextInputEditText
-import android.support.design.widget.TextInputLayout
 import android.support.v4.app.NavUtils
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.data.entities.Category
 import io.connorwyatt.flashcards.data.entities.Flashcard
-import io.connorwyatt.flashcards.data.services.CategoryService
-import io.connorwyatt.flashcards.data.services.FlashcardService
-import java.util.ArrayList
+import io.connorwyatt.flashcards.data.viewmodels.FlashcardViewModel
+import io.connorwyatt.flashcards.views.textinput.EnhancedTextInputEditText
+import io.reactivex.Observable
 
-class FlashcardDetailsActivity : AppCompatActivity()
+class FlashcardDetailsActivity : BaseActivity()
 {
-    private var flashcard: Flashcard? = Flashcard()
-    private var titleLayout: TextInputLayout? = null
-    private var title: TextInputEditText? = null
-    private var titleTouched = false
-    private var textLayout: TextInputLayout? = null
-    private var text: TextInputEditText? = null
-    private var textTouched = false
-    private var categoriesLayout: TextInputLayout? = null
-    private var categories: TextInputEditText? = null
+    private var viewModel: FlashcardViewModel? = null
+    private var titleInput: EnhancedTextInputEditText? = null
+    private var textInput: EnhancedTextInputEditText? = null
+    private var categoriesInput: EnhancedTextInputEditText? = null
     private var saveButton: Button? = null
 
-    private val categoriesError: String?
-        get()
-        {
-            val categoryNames = splitCategoriesString(categories!!.text.toString())
-
-            categoryNames.forEach {
-                if (it.length > 40)
-                {
-                    return getString(R.string.validation_tags_max_length, 40)
-                }
-            }
-
-            return null
-        }
-
-    private val textError: String?
-        get()
-        {
-            val value = text!!.text.toString()
-
-            if (value.isEmpty())
-            {
-                return getString(R.string.validation_required)
-            }
-            else
-            {
-                return null
-            }
-        }
-
-    private val titleError: String?
-        get()
-        {
-            val value = title!!.text.toString()
-
-            if (value.isEmpty())
-            {
-                return getString(R.string.validation_required)
-            }
-            else if (value.length > 80)
-            {
-                return getString(R.string.validation_max_length, value.length, 80)
-            }
-            else
-            {
-                return null
-            }
-        }
-
-    private val isCreate: Boolean
-        get() = flashcard == null
-
-    private val isValid: Boolean
-        get() = titleError == null && textError == null && categoriesError == null
-
-    private fun setViewFromFlashcard(flashcard: Flashcard)
-    {
-        if (flashcard.title != null && flashcard.title!!.isNotEmpty())
-            title!!.setText(flashcard.title)
-
-        if (flashcard.text != null && flashcard.text!!.isNotEmpty())
-            text!!.setText(flashcard.text)
-
-        if (flashcard.categories.isNotEmpty())
-            categories!!.setText(flashcard.categoriesString)
-    }
+    //region Activity
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_flashcard_details)
 
-        val toolbar = findViewById(R.id.flashcard_details_toolbar) as Toolbar
-        setSupportActionBar(toolbar)
-
-        val actionBar = supportActionBar
-        actionBar!!.setDisplayHomeAsUpEnabled(true)
-        actionBar.setDisplayShowTitleEnabled(false)
-
-        title = findViewById(R.id.flashcard_details_title) as TextInputEditText
-        titleLayout = findViewById(R.id.flashcard_details_title_layout) as TextInputLayout
-        text = findViewById(R.id.flashcard_details_text) as TextInputEditText
-        textLayout = findViewById(R.id.flashcard_details_text_layout) as TextInputLayout
-        categories = findViewById(R.id.flashcard_details_categories) as TextInputEditText
-        categoriesLayout = findViewById(R.id.flashcard_details_categories_layout) as TextInputLayout
-        saveButton = findViewById(R.id.flashcard_details_save_button) as Button
-
-        setInputListeners()
-
-        if (intent.hasExtra(INTENT_EXTRAS.FLASHCARD_ID))
-        {
-            val id = intent.getLongExtra(INTENT_EXTRAS.FLASHCARD_ID, -1)
-
-            val flashcardService = FlashcardService(this)
-            flashcard = flashcardService.getById(id)
-
-            setViewFromFlashcard(flashcard!!)
-        }
-        else if (intent.hasExtra(INTENT_EXTRAS.CATEGORY_ID))
-        {
-            val categoryId = intent.getLongExtra(INTENT_EXTRAS.CATEGORY_ID, -1)
-
-            val categoryService = CategoryService(this)
-            val category = categoryService.getById(categoryId)
-
-            flashcard!!.categories.add(category)
-
-            setViewFromFlashcard(flashcard!!)
-        }
-
-        updateButton()
+        initialiseUI(intent.getStringExtra(IntentExtras.FLASHCARD_ID))
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean
     {
         menuInflater.inflate(R.menu.activity_flashcard_details_menu, menu)
 
-        if (isCreate)
+        val existsInDatabase = viewModel?.flashcard?.existsInDatabase() ?: false
+
+        if (!existsInDatabase)
         {
             menu.findItem(R.id.action_delete).isEnabled = false
         }
@@ -162,277 +50,185 @@ class FlashcardDetailsActivity : AppCompatActivity()
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean
     {
-        when (item.itemId)
+        return when (item.itemId)
         {
             R.id.action_delete ->
             {
-                delete()
-                return true
+                deleteViewModel(viewModel!!)
+                true
             }
-
-            else               -> return super.onOptionsItemSelected(item)
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
-    fun onSaveClick(view: View)
+    //endregion
+
+    //region Data
+
+    private fun getData(flashcardId: String): Observable<FlashcardViewModel>
     {
-        save()
+        return FlashcardViewModel.get(flashcardId, false)
     }
 
-    private fun save()
+    private fun updateViewModelFromControls(): Unit
     {
-        flashcard!!.title = title!!.text.toString()
-        flashcard!!.text = text!!.text.toString()
-        flashcard!!.categories =
-            processCategoriesString(categories!!.text.toString()).toMutableList()
+        viewModel!!.flashcard.title = titleInput!!.text.toString()
+        viewModel!!.flashcard.text = textInput!!.text.toString()
 
-        val flashcardService = FlashcardService(this)
-        flashcard = flashcardService.save(flashcard!!)
+        val categories = parseCategoriesString(categoriesInput!!.text.toString())
 
-        showToast(R.string.save_toast)
-
-        setViewFromFlashcard(flashcard!!)
-        this.invalidateOptionsMenu()
+        viewModel!!.categories = categories
     }
 
-    private fun delete()
+    private fun parseCategoriesString(categoriesString: String): List<Category>
     {
-        val flashcardService = FlashcardService(this)
-        flashcardService.delete(flashcard!!)
+        val categoryNames = categoriesString.split(",")
 
-        showToast(R.string.flashcard_details_delete_toast)
+        return categoryNames.map {
+            val category = Category(null)
+            category.name = it.trim()
 
-        NavUtils.navigateUpFromSameTask(this)
-    }
-
-    private fun showToast(messageStringId: Int)
-    {
-        val context = applicationContext
-        val toastMessage = getString(messageStringId)
-        val duration = Toast.LENGTH_SHORT
-
-        val toast = Toast.makeText(context, toastMessage, duration)
-        toast.show()
-    }
-
-    private fun setInputListeners()
-    {
-        title!!.onFocusChangeListener = View.OnFocusChangeListener { view, isFocused ->
-            if (!isFocused)
-            {
-                titleTouched = true
-
-                val error = titleError
-
-                if (error != null)
-                {
-                    titleLayout!!.error = error
-                }
-                else
-                {
-                    titleLayout!!.isErrorEnabled = false
-                }
-            }
+            category
         }
-
-        text!!.onFocusChangeListener = View.OnFocusChangeListener { view, isFocused ->
-            if (!isFocused)
-            {
-                textTouched = true
-
-                val error = textError
-
-                if (error != null)
-                {
-                    textLayout!!.error = error
-                }
-                else
-                {
-                    textLayout!!.isErrorEnabled = false
-                }
-            }
-        }
-
-        title!!.addTextChangedListener(
-            object : TextWatcher
-            {
-                override fun beforeTextChanged(charSequence: CharSequence,
-                                               i: Int,
-                                               i1: Int,
-                                               i2: Int)
-                {
-                }
-
-                override fun onTextChanged(charSequence: CharSequence,
-                                           i: Int,
-                                           i1: Int,
-                                           i2: Int)
-                {
-                    titleTouched = true
-                }
-
-                override fun afterTextChanged(editable: Editable)
-                {
-                    val error = titleError
-
-                    if (error != null)
-                    {
-                        titleLayout!!.error = error
-                    }
-                    else
-                    {
-                        titleLayout!!.isErrorEnabled = false
-                    }
-
-                    updateButton()
-                }
-            }
-        )
-
-        text!!.addTextChangedListener(
-            object : TextWatcher
-            {
-                override fun beforeTextChanged(charSequence: CharSequence,
-                                               i: Int,
-                                               i1: Int,
-                                               i2: Int)
-                {
-                }
-
-                override fun onTextChanged(charSequence: CharSequence,
-                                           i: Int,
-                                           i1: Int,
-                                           i2: Int)
-                {
-                    textTouched = true
-                }
-
-                override fun afterTextChanged(editable: Editable)
-                {
-                    val error = textError
-
-                    if (error != null)
-                    {
-                        textLayout!!.error = error
-                    }
-                    else
-                    {
-                        textLayout!!.isErrorEnabled = false
-                    }
-
-                    updateButton()
-                }
-            }
-        )
-
-        categories!!.onFocusChangeListener = View.OnFocusChangeListener { view, isFocused ->
-            if (!isFocused)
-            {
-                val error = categoriesError
-
-                if (error != null)
-                {
-                    categoriesLayout!!.error = error
-                }
-                else
-                {
-                    categoriesLayout!!.isErrorEnabled = false
-                }
-            }
-        }
-
-        categories!!.addTextChangedListener(
-            object : TextWatcher
-            {
-                override fun beforeTextChanged(charSequence: CharSequence,
-                                               i: Int,
-                                               i1: Int,
-                                               i2: Int)
-                {
-                }
-
-                override fun onTextChanged(charSequence: CharSequence,
-                                           i: Int,
-                                           i1: Int,
-                                           i2: Int)
-                {
-                }
-
-                override fun afterTextChanged(editable: Editable)
-                {
-                    val error = categoriesError
-
-                    if (error != null)
-                    {
-                        categoriesLayout!!.error = error
-                    }
-                    else
-                    {
-                        categoriesLayout!!.isErrorEnabled = false
-                    }
-
-                    updateButton()
-                }
-            }
-        )
     }
 
-    private fun updateButton()
+    private fun saveViewModel(flashcardViewModel: FlashcardViewModel): Unit
     {
-        if (isValid)
+        flashcardViewModel.save().subscribe {
+            viewModel = it
+            updateUI()
+            showToast(R.string.save_toast)
+        }
+    }
+
+    private fun deleteViewModel(flashcardViewModel: FlashcardViewModel): Unit
+    {
+        flashcardViewModel.delete()
+            .subscribe {
+                showToast(R.string.delete_toast)
+                NavUtils.navigateUpFromSameTask(this)
+            }
+    }
+
+    //endregion
+
+    //region UI
+
+    private fun initialiseUI(flashcardId: String?): Unit
+    {
+        if (flashcardId != null)
         {
-            saveButton!!.isEnabled = true
+            getData(flashcardId).subscribe {
+                viewModel = it
+                updateUI()
+            }
         }
         else
         {
-            saveButton!!.isEnabled = false
+            viewModel = FlashcardViewModel(Flashcard(null), listOf())
         }
+
+        setUpToolbar()
+
+        setUpControls()
+
+        updateButton()
     }
 
-    private fun splitCategoriesString(categoriesString: String): List<String>
+    private fun setUpToolbar(): Unit
     {
-        val categories = ArrayList<String>()
+        val toolbar = findViewById(R.id.flashcard_details_toolbar) as Toolbar
+        setSupportActionBar(toolbar)
 
-        val categoryNames = categoriesString.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        val actionBar = supportActionBar
+        actionBar!!.setDisplayHomeAsUpEnabled(true)
+        actionBar.setDisplayShowTitleEnabled(false)
+    }
 
-        for (categoryName in categoryNames)
-        {
-            val trimmedString = categoryName.trim { it <= ' ' }
+    private fun setUpControls(): Unit
+    {
+        titleInput = findViewById(R.id.flashcard_details_title) as EnhancedTextInputEditText
+        textInput = findViewById(R.id.flashcard_details_text) as EnhancedTextInputEditText
+        categoriesInput = findViewById(R.id.flashcard_details_categories) as EnhancedTextInputEditText
+        saveButton = findViewById(R.id.flashcard_details_save_button) as Button
 
-            if (trimmedString.isNotEmpty())
-            {
-                categories.add(trimmedString)
+        titleInput!!.addRequiredValidator(getString(R.string.validation_required))
+        titleInput!!.addMaxLengthValidator(80, { actualLength, maxLength ->
+            getString(R.string.validation_max_length, actualLength, maxLength)
+        })
+        titleInput!!.addTextChangedListener { updateButton() }
+
+        textInput!!.addRequiredValidator(getString(R.string.validation_required))
+        textInput!!.addTextChangedListener { updateButton() }
+
+        categoriesInput!!.addCustomValidator(
+            validator@ { value ->
+                val names = value.split(",").map(String::trim)
+                val maxLength = 40
+
+                names.forEach {
+                    if (it.length > maxLength)
+                        return@validator getString(R.string.validation_tags_max_length, maxLength)
+                }
+
+                null
             }
+        )
+        categoriesInput!!.addTextChangedListener { updateButton() }
+
+        saveButton!!.setOnClickListener {
+            updateViewModelFromControls()
+
+            saveViewModel(viewModel!!)
         }
-
-        return categories
     }
 
-    private fun processCategoriesString(categoriesString: String): List<Category>
+    private fun updateUI(): Unit
     {
-        val categories = ArrayList<Category>()
+        updateControls()
 
-        val categoryNames = splitCategoriesString(categoriesString)
+        updateButton()
 
-        for (categoryName in categoryNames)
-        {
-            val category = Category()
-            category.name = categoryName
-            categories.add(category)
-        }
-
-        return categories
+        invalidateOptionsMenu()
     }
 
-    object INTENT_EXTRAS
+    private fun updateControls(): Unit
     {
-        var FLASHCARD_ID = "FLASHCARD_ID"
-        var CATEGORY_ID = "CATEGORY_ID"
+        val (flashcard, categories) = viewModel!!
+
+        if (flashcard.title != null && flashcard.title!!.isNotEmpty())
+            titleInput!!.setText(flashcard.title)
+
+        if (flashcard.text != null && flashcard.text!!.isNotEmpty())
+            textInput!!.setText(flashcard.text)
+
+        if (categories.isNotEmpty())
+            categoriesInput!!.setText(
+                categories.map { it.name }.joinToString(separator = ", ")
+            )
     }
+
+    private fun updateButton(): Unit
+    {
+        saveButton!!.isEnabled = isValid()
+    }
+
+    private fun isValid()
+        = titleInput!!.isValid() && textInput!!.isValid() && categoriesInput!!.isValid()
+
+    private fun showToast(stringResource: Int): Unit
+    {
+        val toastMessage = getString(stringResource)
+        val duration = Toast.LENGTH_SHORT
+
+        val toast = Toast.makeText(this, toastMessage, duration)
+        toast.show()
+    }
+
+    //endregion
 
     companion object
     {
-
         fun startActivity(context: Context)
         {
             val intent = Intent(context, FlashcardDetailsActivity::class.java)
@@ -444,18 +240,14 @@ class FlashcardDetailsActivity : AppCompatActivity()
         {
             val intent = Intent(context, FlashcardDetailsActivity::class.java)
 
-            intent.putExtra(INTENT_EXTRAS.FLASHCARD_ID, flashcard.id)
+            intent.putExtra(IntentExtras.FLASHCARD_ID, flashcard.id)
 
             context.startActivity(intent)
         }
 
-        fun startActivityWithCategory(context: Context, category: Category)
+        object IntentExtras
         {
-            val intent = Intent(context, FlashcardDetailsActivity::class.java)
-
-            intent.putExtra(INTENT_EXTRAS.CATEGORY_ID, category.id)
-
-            context.startActivity(intent)
+            val FLASHCARD_ID = "FLASHCARD_ID"
         }
     }
 }

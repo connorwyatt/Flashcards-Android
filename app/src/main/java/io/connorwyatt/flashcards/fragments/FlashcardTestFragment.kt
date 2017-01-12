@@ -12,99 +12,31 @@ import io.connorwyatt.flashcards.adapters.FlashcardTestPagerAdapter
 import io.connorwyatt.flashcards.data.entities.Flashcard
 import io.connorwyatt.flashcards.data.entities.FlashcardTest
 import io.connorwyatt.flashcards.data.services.FlashcardService
-import io.connorwyatt.flashcards.interfaces.IPerformanceBreakdown
-import io.connorwyatt.flashcards.utils.ListUtils
+import io.connorwyatt.flashcards.data.services.FlashcardTestService
+import io.connorwyatt.flashcards.data.viewmodels.PerformanceViewModel
+import io.connorwyatt.flashcards.enums.Rating
 import io.connorwyatt.flashcards.views.directionalviewpager.DirectionalViewPager
 import io.connorwyatt.flashcards.views.progressbar.ProgressBar
-import java.util.ArrayList
-import java.util.HashMap
+import io.reactivex.Observable
+import io.reactivex.subjects.BehaviorSubject
 
 class FlashcardTestFragment : Fragment()
 {
-    val performanceBreakdown = createPerformanceBreakdown()
-    private var initialCount: Int = 0
-    private val flashcardTestMap = HashMap<Long, FlashcardTest>()
-    private val skippedFlashcards = ArrayList<Long>()
+    lateinit private var viewGroup: ViewGroup
+    lateinit private var progressBar: ProgressBar
     private var flashcardTestPagerAdapter: FlashcardTestPagerAdapter? = null
-    private var progressBar: ProgressBar? = null
-    private var flashcards: MutableList<Flashcard>? = null
-    private val changeListeners = ArrayList<IPerformanceBreakdown.OnPerformanceBreakdownChangeListener>()
+    private var flashcards: List<Flashcard>? = null
+    private val flashcardTests = mutableMapOf<String, FlashcardTest>()
+    private var skippedFlashcards = mutableListOf<String>()
+    private val performanceSubject = BehaviorSubject.createDefault(getPerformanceViewModel())
 
-    private val completedCardsCount: Int
-        get() = performanceBreakdown.ratedTotal + performanceBreakdown.skipCount
-
-    private fun setUpProgressBar(viewGroup: ViewGroup)
-    {
-        progressBar = viewGroup.findViewById(R.id
-                                                 .flashcard_test_progress_bar) as ProgressBar
-        val viewPager = viewGroup.findViewById(R.id
-                                                   .flashcard_test_view_pager) as DirectionalViewPager
-
-        viewPager.addOnPageSkipListener(
-            object : DirectionalViewPager.OnPageSkipListener
-            {
-                override fun onPageSkip(skippedItem: Any)
-                {
-                    updateProgressBar()
-                }
-            }
-        )
-
-        updateProgressBar()
-    }
-
-    private fun setUpViewPager(viewGroup: ViewGroup)
-    {
-        val viewPager = viewGroup.findViewById(R.id
-                                                   .flashcard_test_view_pager) as DirectionalViewPager
-        viewPager.adapter = flashcardTestPagerAdapter
-
-        viewPager.allowLeftSwipe = false
-        viewPager.addOnPageSkipListener(
-            object : DirectionalViewPager.OnPageSkipListener
-            {
-                override fun onPageSkip(skippedItem: Any)
-                {
-                    val flashcard = skippedItem as Flashcard
-
-                    if (!flashcardTestMap.containsKey(flashcard.id))
-                    {
-                        skippedFlashcards.add(flashcard.id!!)
-                        val skipMessage = getString(R.string.flashcard_test_skip_toast,
-                                                    flashcard
-                                                        .title)
-                        Toast.makeText(activity,
-                                       skipMessage,
-                                       Toast.LENGTH_SHORT)
-                            .show()
-
-                        dispatchOnPerformanceBreakdownChangeEvent()
-                    }
-                }
-            }
-        )
-    }
+    //region Activity
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
 
         retainInstance = true
-
-        val intent = activity.intent
-
-        val flashcardService = FlashcardService(activity)
-        if (intent.hasExtra(EXTRA_KEYS.CATEGORY_ID))
-        {
-            flashcards = flashcardService
-                .getByCategory(intent.getLongExtra(EXTRA_KEYS.CATEGORY_ID, -1)).toMutableList()
-        }
-        else
-        {
-            flashcards = flashcardService.getAll().toMutableList()
-        }
-
-        initialCount = flashcards!!.size
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup,
@@ -112,128 +44,172 @@ class FlashcardTestFragment : Fragment()
     {
         super.onCreateView(inflater, container, savedInstanceState)
 
-        val viewGroup = inflater.inflate(R.layout.fragment_flashcard_test,
-                                         container, false) as ViewGroup
+        viewGroup = inflater.inflate(
+            R.layout.fragment_flashcard_test, container, false) as ViewGroup
 
-        flashcardTestPagerAdapter = FlashcardTestPagerAdapter(fragmentManager, flashcards!!)
+        val categoryId = arguments.getString(ArgumentKeys.CATEGORY_ID)
 
-        setUpViewPager(viewGroup)
+        initialiseUI(categoryId)
 
-        setUpProgressBar(viewGroup)
+        updateUI(false)
 
         return viewGroup
     }
 
-    fun onBackPressed(runnable: Runnable)
+    fun onBackPressed(callback: () -> Unit): Unit
     {
-        val totalCompleted = performanceBreakdown.ratedTotal + performanceBreakdown
-            .skipCount
-        val isComplete = totalCompleted >= initialCount
+        val totalCompleted = flashcardTests.size + skippedFlashcards.size
+        val isComplete = totalCompleted >= flashcards?.size ?: 0
 
         if (isComplete)
         {
-            runnable.run()
+            callback.invoke()
         }
         else
         {
             AlertDialog.Builder(activity)
                 .setTitle(R.string.flashcard_test_confirmation_title)
                 .setMessage(R.string.flashcard_test_confirmation_message)
-                .setPositiveButton(R.string.flashcard_test_confirmation_yes) { dialogInterface, i -> runnable.run() }
+                .setPositiveButton(R.string.flashcard_test_confirmation_yes) { dialogInterface, i -> callback.invoke() }
                 .setNegativeButton(R.string.flashcard_test_confirmation_no) { dialogInterface, i -> }
                 .create()
                 .show()
         }
     }
 
-    fun updateFlashcardTest(flashcardTest: FlashcardTest)
+    //endregion
+
+    //region Data
+
+    fun getFlashcardFromAdapter(id: String) = flashcardTestPagerAdapter!!.getFlashcardById(id)
+
+    fun rateFlashcard(flashcard: Flashcard, rating: Rating): Observable<FlashcardTest>
     {
-        flashcardTestMap.put(flashcardTest.flashcardId!!, flashcardTest)
-        dispatchOnPerformanceBreakdownChangeEvent()
+        val flashcardTest = FlashcardTest(null)
+
+        flashcardTest.relationships.setRelationships("flashcard", listOf(flashcard.id!!))
+
+        flashcardTest.rating = rating
+
+        flashcardTests.put(flashcard.id, flashcardTest)
+
+        updateUI()
+
+        performanceSubject.onNext(getPerformanceViewModel())
+
+        return saveFlashcardTest(flashcardTest)
     }
 
-    private fun updateProgressBar()
-    {
-        val percent = completedCardsCount.toDouble() / initialCount.toDouble()
+    fun getPerformanceObservable(): Observable<PerformanceViewModel> = performanceSubject
 
-        progressBar!!.setProgress(percent, true)
+    private fun getData(categoryId: String?): Observable<List<Flashcard>>
+    {
+        return if (categoryId !== null)
+            FlashcardService.getByCategory(categoryId)
+        else
+            FlashcardService.getAll()
     }
 
-    private fun dispatchOnPerformanceBreakdownChangeEvent()
+    private fun saveFlashcardTest(flashcardTest: FlashcardTest): Observable<FlashcardTest>
     {
-        for (changeListener in changeListeners)
+        return FlashcardTestService.save(flashcardTest)
+    }
+
+    private fun getPerformanceViewModel(): PerformanceViewModel
+    {
+        val ratings = flashcardTests.mapNotNull { it.value.rating }
+
+        return PerformanceViewModel(ratings, flashcards?.size ?: 0)
+    }
+
+    //endregion
+
+    //region UI
+
+    private fun initialiseUI(categoryId: String?): Unit
+    {
+        initialisePager(categoryId)
+
+        initialiseProgressBar()
+    }
+
+    private fun initialisePager(categoryId: String?): Unit
+    {
+        flashcardTestPagerAdapter = FlashcardTestPagerAdapter(fragmentManager)
+
+        if (flashcards == null)
         {
-            changeListener.onChange()
+            getData(categoryId).subscribe {
+                flashcards = it
+
+                flashcardTestPagerAdapter!!.setData(it)
+
+                updateUI()
+
+                performanceSubject.onNext(getPerformanceViewModel())
+            }
+        }
+        else
+        {
+            flashcardTestPagerAdapter!!.setData(flashcards!!)
+
+            performanceSubject.onNext(getPerformanceViewModel())
+        }
+
+        val viewPager =
+            viewGroup.findViewById(R.id.flashcard_test_view_pager) as DirectionalViewPager
+
+        viewPager.adapter = flashcardTestPagerAdapter
+        viewPager.allowLeftSwipe = false
+
+        viewPager.addOnPageSkipListener {
+            val flashcard = it as Flashcard
+            val flashcardId = flashcard.id!!
+
+            if (!flashcardTests.containsKey(flashcardId))
+            {
+                skippedFlashcards.add(flashcardId)
+
+                val skipMessage = getString(R.string.flashcard_test_skip_toast, flashcard.title)
+                Toast.makeText(activity, skipMessage, Toast.LENGTH_SHORT)
+                    .show()
+            }
+
+            updateUI()
+
+            performanceSubject.onNext(getPerformanceViewModel())
         }
     }
 
-    private fun createPerformanceBreakdown(): IPerformanceBreakdown
+    private fun initialiseProgressBar(): Unit
     {
-        return object : IPerformanceBreakdown
-        {
-            override val negativeCount: Int
-                get() = getRatingCount(FlashcardTest.Rating.NEGATIVE)
+        progressBar = viewGroup.findViewById(R.id.flashcard_test_progress_bar) as ProgressBar
+    }
 
-            override val negativePercent: Double
-                get() = getPercentage(negativeCount, ratedTotal)
+    private fun updateUI(animate: Boolean = true): Unit
+    {
+        updateProgressBar(animate)
+    }
 
-            override val neutralCount: Int
-                get() = getRatingCount(FlashcardTest.Rating.NEUTRAL)
+    private fun updateProgressBar(animate: Boolean): Unit
+    {
+        val ratedCards = flashcardTests.size.toDouble()
+        val skippedCards = skippedFlashcards.size.toDouble()
+        val totalCards = flashcards?.size?.toDouble()
 
-            override val neutralPercent: Double
-                get() = getPercentage(neutralCount, ratedTotal)
-
-            override val positiveCount: Int
-                get() = getRatingCount(FlashcardTest.Rating.POSITIVE)
-
-            override val positivePercent: Double
-                get() = getPercentage(positiveCount, ratedTotal)
-
-            override val ratedTotal: Int
-                get() = flashcardTestMap.size
-
-            override val skipCount: Int
-                get() = skippedFlashcards.size
-
-            override val skipPercent: Double
-                get() = getPercentage(skipCount, total)
-
-            override val total: Int
-                get() = initialCount
-
-            override fun addOnPerformanceBreakdownChangeListener(listener: IPerformanceBreakdown.OnPerformanceBreakdownChangeListener)
-            {
-                changeListeners.add(listener)
-            }
-
-            override fun removeOnPerformanceBreakdownChangeListener(listener: IPerformanceBreakdown.OnPerformanceBreakdownChangeListener)
-            {
-                changeListeners.remove(listener)
-            }
-
-            override fun clearOnPerformanceBreakdownChangeListener()
-            {
-                changeListeners.clear()
-            }
-
-            private fun getRatingCount(rating: FlashcardTest.Rating): Int
-            {
-                return ListUtils.filter(ArrayList(flashcardTestMap.values)) { flashcardTest -> flashcardTest.rating === rating }.size
-            }
-
-            private fun getPercentage(count: Int, total: Int): Double
-            {
-                var percentage = count.toDouble() / total.toDouble()
-
-                if (java.lang.Double.isNaN(percentage)) percentage = 0.0
-
-                return percentage
-            }
+        totalCards?.let {
+            progressBar.setProgress((ratedCards + skippedCards) / totalCards,
+                                    animate)
         }
     }
 
-    object EXTRA_KEYS
+    //endregion
+
+    companion object
     {
-        var CATEGORY_ID = "CATEGORY_ID"
+        object ArgumentKeys
+        {
+            val CATEGORY_ID = "CATEGORY_ID"
+        }
     }
 }

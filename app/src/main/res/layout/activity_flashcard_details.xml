@@ -4,7 +4,7 @@
     android:id="@+id/activity_flashcard_details"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="io.connorwyatt.flashcards.activities.FlashcardDetailsActivity">
+    tools:context=".activities.FlashcardDetailsActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/flashcard_details_toolbar"
@@ -51,7 +51,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <android.support.design.widget.TextInputEditText
+                        <io.connorwyatt.flashcards.views.textinput.EnhancedTextInputEditText
                             android:id="@+id/flashcard_details_title"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -63,7 +63,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <android.support.design.widget.TextInputEditText
+                        <io.connorwyatt.flashcards.views.textinput.EnhancedTextInputEditText
                             android:id="@+id/flashcard_details_text"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -75,7 +75,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <android.support.design.widget.TextInputEditText
+                        <io.connorwyatt.flashcards.views.textinput.EnhancedTextInputEditText
                             android:id="@+id/flashcard_details_categories"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -87,7 +87,6 @@
                         style="@style/Base.Widget.AppCompat.Button.Colored"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:onClick="onSaveClick"
                         android:text="@string/flashcard_details_save" />
 
                 </LinearLayout>

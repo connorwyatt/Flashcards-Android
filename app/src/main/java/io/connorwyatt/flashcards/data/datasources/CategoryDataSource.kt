@@ -1,146 +1,76 @@
 package io.connorwyatt.flashcards.data.datasources
 
-import android.content.ContentValues
-import android.content.Context
-import android.database.Cursor
-import android.database.sqlite.SQLiteDatabase
-import io.connorwyatt.flashcards.data.contracts.CategoryContract
-import io.connorwyatt.flashcards.data.entities.BaseColumnsTimeline
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.Query
 import io.connorwyatt.flashcards.data.entities.Category
-import io.connorwyatt.flashcards.exceptions.SQLNoRowsAffectedException
-import java.util.ArrayList
+import io.reactivex.Observable
 
-class CategoryDataSource : BaseDataSource
+class CategoryDataSource : BaseDataSource()
 {
-    private val allColumns = arrayOf(BaseColumnsTimeline._ID, CategoryContract.Columns.NAME)
-
-    constructor(context: Context) : super(context)
+    fun getAll(stream: Boolean): Observable<List<Category>>
     {
+        return executeQueryList(
+            { getCategoriesQuery(userId = it.uid) },
+            { Observable.just(Category(it)) },
+            Category::class.java,
+            stream
+        )
     }
 
-    internal constructor(database: SQLiteDatabase) : super(database)
+    fun getById(id: String): Observable<Category>
     {
+        return executeQuerySingle(
+            { getCategoryQuery(userId = it.uid, categoryId = id) },
+            { Observable.just(Category(it)) }
+        )
     }
 
-    val all: List<Category>
-        get()
-        {
-            val categories = ArrayList<Category>()
-
-            val cursor = database!!
-                .query(CategoryContract.TABLE_NAME, allColumns, null, null, null, null, null)
-
-            cursor.moveToFirst()
-
-            while (!cursor.isAfterLast)
-            {
-                val category = cursorToCategory(cursor)
-                categories.add(category)
-                cursor.moveToNext()
-            }
-
-            cursor.close()
-
-            return categories
-        }
-
-    fun getById(id: Long): Category
+    fun getByFlashcardId(id: String): Observable<List<Category>>
     {
-        val cursor = database!!.query(CategoryContract.TABLE_NAME,
-                                      allColumns, BaseColumnsTimeline._ID + " = " + id, null,
-                                      null, null, null)
-
-        cursor.moveToFirst()
-
-        val category = cursorToCategory(cursor)
-
-        cursor.close()
-
-        return category
+        return executeQueryRelationship(
+            getQuery = { getCategoriesQuery(userId = it.uid) },
+            resourceId = id,
+            resourceName = "flashcard",
+            parser = { Observable.just(Category(it)) },
+            clazz = Category::class.java
+        )
     }
 
-    fun getByName(name: String): Category?
+    fun getByName(name: String): Observable<List<Category>>
     {
-        var category: Category? = null
-
-        val cursor = database!!.query(
-            CategoryContract.TABLE_NAME, allColumns,
-            "${CategoryContract.Columns.NAME} LIKE '$name'", null, null, null, null)
-
-        if (cursor.count > 0)
-        {
-            cursor.moveToFirst()
-
-            category = cursorToCategory(cursor)
-
-            cursor.close()
-        }
-
-        return category
+        return executeQueryList(
+            { getCategoryNameQuery(userId = it.uid, categoryName = name) },
+            { Observable.just(Category(it)) },
+            Category::class.java
+        )
     }
 
-    fun save(category: Category): Category
+    fun save(category: Category): Observable<String>
     {
-        val values = ContentValues()
-        values.put(CategoryContract.Columns.NAME, category.name)
-
-        val savedCategoryId: Long?
-
-        if (!category.existsInDatabase())
-        {
-            addCreateTimestamp(values)
-            savedCategoryId = database!!.insertOrThrow(CategoryContract.TABLE_NAME, null, values)
-        }
-        else
-        {
-            savedCategoryId = category.id
-            addUpdateTimestamp(values)
-            val rowsAffected = database!!.update(CategoryContract.TABLE_NAME,
-                                                 values,
-                                                 BaseColumnsTimeline._ID + " = " + savedCategoryId,
-                                                 null)
-
-            if (rowsAffected == 0)
-            {
-                throw SQLNoRowsAffectedException()
-            }
-        }
-
-        return getById(savedCategoryId!!)
+        return executeSave(
+            resource = category,
+            getCreateReference = { getCategoriesQuery(userId = it.uid).push() },
+            getUpdateReference = { getCategoryQuery(userId = it.uid, categoryId = category.id!!) }
+        )
     }
 
-    fun deleteById(id: Long)
+    fun delete(category: Category): Observable<Any?>
     {
-        try
-        {
-            database!!.beginTransaction()
-
-            val rowsAffected = database!!.delete(CategoryContract.TABLE_NAME,
-                                                 BaseColumnsTimeline._ID + " = " + id, null)
-
-            if (rowsAffected == 0)
-            {
-                throw SQLNoRowsAffectedException()
-            }
-
-            database!!.setTransactionSuccessful()
-        }
-        catch (e: Exception)
-        {
-            database!!.endTransaction()
-            throw e
-        }
-
-        database!!.endTransaction()
+        return executeDelete(
+            resource = category,
+            getReference = { getCategoryQuery(userId = it.uid, categoryId = category.id!!) }
+        )
     }
 
-    private fun cursorToCategory(cursor: Cursor): Category
-    {
-        val category = Category()
+    private fun getCategoriesQuery(userId: String): DatabaseReference =
+        getUserDataQuery(userId).child("category")
 
-        category.id = cursor.getLong(0)
-        category.name = cursor.getString(1)
+    private fun getCategoryQuery(userId: String, categoryId: String): DatabaseReference =
+        getCategoriesQuery(userId).child(categoryId)
 
-        return category
-    }
+    private fun getCategoryNameQuery(userId: String, categoryName: String): Query =
+        getCategoriesQuery(userId)
+            .orderByChild("name")
+            .startAt(categoryName)
+            .endAt(categoryName)
 }

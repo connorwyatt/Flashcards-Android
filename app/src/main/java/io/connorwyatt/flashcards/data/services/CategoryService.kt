@@ -1,143 +1,76 @@
 package io.connorwyatt.flashcards.data.services
 
-import android.content.Context
 import io.connorwyatt.flashcards.data.datasources.CategoryDataSource
-import io.connorwyatt.flashcards.data.datasources.FlashcardDataSource
 import io.connorwyatt.flashcards.data.entities.Category
-import io.connorwyatt.flashcards.data.entities.Flashcard
+import io.connorwyatt.flashcards.exceptions.CategoryNameTakenException
+import io.reactivex.Observable
 
-class CategoryService(private val context: Context)
+object CategoryService
 {
-    fun getById(categoryId: Long): Category
+    fun getAll(): Observable<List<Category>>
+        = CategoryDataSource().getAll(stream = false)
+
+    fun getAllAsStream(): Observable<List<Category>>
+        = CategoryDataSource().getAll(stream = true)
+
+    fun getById(id: String): Observable<Category>
+        = CategoryDataSource().getById(id)
+
+    fun getByFlashcardId(id: String): Observable<List<Category>>
+        = CategoryDataSource().getByFlashcardId(id)
+
+    fun getByName(name: String): Observable<List<Category>>
     {
-        val dataSource = CategoryDataSource(context)
+        val normalisedName = normaliseCategoryName(name)
 
-        try
+        return CategoryDataSource().getByName(normalisedName)
+    }
+
+    fun createCategoriesByName(categoryNames: List<String>): Observable<List<Category>>
+    {
+        val observables = categoryNames.distinctBy { normaliseCategoryName(it) }
+            .filter(String::isNotBlank)
+            .map { name ->
+                getByName(name)
+                    .flatMap { category ->
+                        category.singleOrNull()?.let { return@flatMap Observable.just(it) }
+
+                        val newCategory = Category(null)
+                        newCategory.name = name
+
+                        return@flatMap save(newCategory)
+                    }
+            }
+
+        if (observables.isNotEmpty())
         {
-            dataSource.open()
-
-            return dataSource.getById(categoryId)
+            return Observable.combineLatest(observables,
+                                            { it.filterIsInstance(Category::class.java) })
         }
-        finally
-        {
-            dataSource.close()
+
+        return Observable.just(listOf())
+    }
+
+    fun save(category: Category): Observable<Category>
+    {
+        return getByName(category.name!!)
+            .flatMap { categories ->
+                if (categories.isEmpty())
+                    CategoryDataSource().save(category).flatMap { getById(it) }
+                else
+                    Observable.error<Category>(CategoryNameTakenException())
+            }
+    }
+
+    fun delete(category: Category): Observable<Any?>
+        = CategoryDataSource().delete(category)
+
+    fun deleteWithFlashcards(category: Category): Observable<Any?>
+    {
+        return FlashcardService.deleteByCategoryId(category.id!!).flatMap {
+            CategoryDataSource().delete(category)
         }
     }
 
-    fun getAll(): List<Category>
-    {
-        val dataSource = CategoryDataSource(context)
-
-        try
-        {
-            dataSource.open()
-
-            return dataSource.all
-        }
-        finally
-        {
-            dataSource.close()
-        }
-    }
-
-    fun save(category: Category): Category
-    {
-        val dataSource = CategoryDataSource(context)
-
-        try
-        {
-            dataSource.open()
-
-            return dataSource.save(category)
-        }
-        finally
-        {
-            dataSource.close()
-        }
-    }
-
-    fun delete(category: Category): Unit
-    {
-        val dataSource = CategoryDataSource(context)
-
-        try
-        {
-            dataSource.open()
-
-            dataSource.deleteById(category.id!!)
-        }
-        finally
-        {
-            dataSource.close()
-        }
-    }
-
-    fun deleteWithFlashcards(category: Category): Unit
-    {
-        val flashcardDataSource = FlashcardDataSource(context)
-
-        try
-        {
-            flashcardDataSource.open()
-
-            flashcardDataSource.deleteByCategory(category.id!!)
-
-            delete(category)
-        }
-        finally
-        {
-            flashcardDataSource.close()
-        }
-    }
-
-    fun getFlashcardsForCategory(categoryId: Long): List<Flashcard>
-    {
-        val dataSource = FlashcardDataSource(context)
-
-        try
-        {
-            dataSource.open()
-
-            return dataSource.getByCategory(categoryId)
-        }
-        finally
-        {
-            dataSource.close()
-        }
-    }
-
-    fun isCategoryNameTaken(name: String): Boolean
-    {
-        val dataSource = CategoryDataSource(context)
-
-        try
-        {
-            dataSource.open()
-
-            return dataSource.getByName(name) !== null
-        }
-        finally
-        {
-            dataSource.close()
-        }
-    }
-
-    fun getAverageRatingForCategory(categoryId: Long): Double?
-    {
-        val flashcardTestService = FlashcardTestService(context)
-        val flashcards = getFlashcardsForCategory(categoryId)
-
-        val ratings = flashcards.mapNotNull { flashcard ->
-            flashcardTestService.getAverageRatingForFlashcard(flashcard.id!!)
-        }
-
-        if (ratings.isNotEmpty())
-        {
-            return ratings.sum() / ratings.size.toDouble()
-        }
-        else
-        {
-            return null
-        }
-    }
+    private fun normaliseCategoryName(name: String): String = name.trim()
 }

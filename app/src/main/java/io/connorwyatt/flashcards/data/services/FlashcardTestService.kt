@@ -1,62 +1,87 @@
 package io.connorwyatt.flashcards.data.services
 
-import android.content.Context
 import io.connorwyatt.flashcards.data.datasources.FlashcardTestDataSource
 import io.connorwyatt.flashcards.data.entities.FlashcardTest
+import io.reactivex.Observable
 
-class FlashcardTestService(private val context: Context)
+object FlashcardTestService
 {
-    fun getAverageRatingForFlashcard(id: Long): Double?
+    fun getById(id: String): Observable<FlashcardTest>
+        = FlashcardTestDataSource().getById(id)
+
+
+    fun getByFlashcardId(id: String): Observable<List<FlashcardTest>>
+        = FlashcardTestDataSource().getByFlashcardId(id)
+
+    fun getAverageRatingForFlashcard(id: String): Observable<Double>
     {
-        val dataSource = FlashcardTestDataSource(context)
-        val flashcardTests: List<FlashcardTest>
-
-        try
-        {
-            dataSource.open()
-
-            flashcardTests = dataSource.getByFlashcardId(id)
+        return getByFlashcardId(id).map { tests ->
+            averageFlashcardTests(tests) ?: -1.0
         }
-        finally
-        {
-            dataSource.close()
-        }
-
-        var averageRating: Double? = null
-
-        if (flashcardTests.isNotEmpty())
-        {
-            var total = 0.0
-
-            for (flashcardTest in flashcardTests)
-            {
-                when (flashcardTest.rating)
-                {
-                    FlashcardTest.Rating.POSITIVE -> total += 1.0
-                    FlashcardTest.Rating.NEUTRAL  -> total += 0.5
-                    FlashcardTest.Rating.NEGATIVE -> total += 0.0
-                }
-            }
-
-            averageRating = total / flashcardTests.size.toDouble()
-        }
-
-        return averageRating
     }
 
-    fun save(flashcardTest: FlashcardTest): FlashcardTest
+    fun getByCategoryId(id: String): Observable<List<FlashcardTest>>
     {
-        val dataSource = FlashcardTestDataSource(context)
+        return FlashcardService.getByCategory(id).flatMap { flashcards ->
+            val observables = flashcards.map { getByFlashcardId(it.id!!) }
 
-        try
-        {
-            dataSource.open()
-
-            return dataSource.save(flashcardTest)
+            if (observables.isNotEmpty())
+            {
+                Observable.combineLatest(observables, {
+                    (it[0] as List<*>).filterIsInstance(FlashcardTest::class.java)
+                })
+            }
+            else
+            {
+                Observable.just(listOf())
+            }
         }
-        finally
+    }
+
+    fun getAverageRatingForCategory(id: String): Observable<Double>
+    {
+        return getByCategoryId(id).map { tests ->
+            averageFlashcardTests(tests) ?: -1.0
+        }
+    }
+
+    fun save(flashcardTest: FlashcardTest): Observable<FlashcardTest>
+    {
+        return FlashcardTestDataSource().save(flashcardTest).flatMap {
+            getById(it)
+        }
+    }
+
+    fun delete(flashcardTest: FlashcardTest): Observable<Any?>
+        = FlashcardTestDataSource().delete(flashcardTest)
+
+    fun deleteByFlashcardId(flashcardId: String): Observable<Any?>
+    {
+        return getByFlashcardId(flashcardId).flatMap { flashcardTests ->
+            val observables = flashcardTests.map { delete(it) }
+
+            if (observables.isNotEmpty())
+            {
+                Observable.combineLatest(observables, { it }).map { true }
+            }
+            else
+            {
+                Observable.just(true)
+            }
+        }
+    }
+
+    private fun averageFlashcardTests(tests: List<FlashcardTest>): Double?
+    {
+        val ratings = tests.mapNotNull { it.rating?.value }
+
+        if (ratings.isNotEmpty())
         {
-            dataSource.close()
+            return ratings.sum() / ratings.size.toDouble()
+        }
+        else
+        {
+            return null
         }
     }
 }

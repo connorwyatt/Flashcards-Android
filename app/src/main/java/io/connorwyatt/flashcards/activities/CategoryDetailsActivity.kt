@@ -4,58 +4,33 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.TextInputEditText
-import android.support.design.widget.TextInputLayout
 import android.support.v4.app.NavUtils
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.Toast
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.data.entities.Category
-import io.connorwyatt.flashcards.data.entities.FlashcardTest
 import io.connorwyatt.flashcards.data.services.CategoryService
+import io.connorwyatt.flashcards.exceptions.CategoryNameTakenException
+import io.connorwyatt.flashcards.views.textinput.EnhancedTextInputEditText
+import io.reactivex.Observable
 
-class CategoryDetailsActivity : AppCompatActivity()
+class CategoryDetailsActivity : BaseActivity()
 {
-    private var category: Category = Category()
-    private var name: TextInputEditText? = null
-    private var nameLayout: TextInputLayout? = null
-    private var saveButton: Button? = null
-    private val categoryService = CategoryService(this)
+    lateinit private var category: Category
+    lateinit private var nameInput: EnhancedTextInputEditText
+    lateinit private var saveButton: Button
+
+    //region Activity
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_category_details)
 
-        name = findViewById(R.id.category_details_name) as TextInputEditText
-        nameLayout = findViewById(R.id.category_details_name_layout) as TextInputLayout
-
-        setUpTextListeners()
-
-        saveButton = findViewById(R.id.category_details_save_button) as Button
-
-        saveButton!!.setOnClickListener { save() }
-
-        if (intent.hasExtra(CATEGORY_ID))
-        {
-            category = categoryService.getById(intent.getLongExtra(CATEGORY_ID, -1))
-            updateViewFromCategory(category)
-        }
-
-        updateButton()
-
-        val toolbar = findViewById(R.id.category_details_toolbar) as Toolbar
-        setSupportActionBar(toolbar)
-
-        val actionBar = supportActionBar
-        actionBar!!.setDisplayShowTitleEnabled(false)
-        actionBar.setDisplayHomeAsUpEnabled(true)
+        initialiseUI(intent.getStringExtra(IntentExtras.CATEGORY_ID))
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean
@@ -79,66 +54,129 @@ class CategoryDetailsActivity : AppCompatActivity()
                 showDeleteCategoryDialog(category)
                 return true
             }
-            else               ->
+            else ->
             {
                 return super.onOptionsItemSelected(item)
             }
         }
     }
 
-    private fun save()
+    //endregion
+
+    //region Data
+
+    private fun getData(categoryId: String): Observable<Category>
     {
-        category.name = name!!.text.toString()
+        return CategoryService.getById(categoryId)
+    }
 
-        val nameTaken = categoryService.isCategoryNameTaken(category.name!!)
+    private fun updateCategoryFromControls(): Unit
+    {
+        category.name = nameInput.editableText.toString()
+    }
 
-        if (nameTaken)
+    private fun saveCategory(category: Category): Unit
+    {
+        category.save().subscribe(
+            {
+                this.category = it
+                updateUI()
+                showToast(R.string.save_toast)
+            },
+            {
+                when (it)
+                {
+                    is CategoryNameTakenException ->
+                    {
+                        showToast(R.string.category_name_taken, category.name!!)
+                    }
+                }
+            }
+        )
+    }
+
+    private fun deleteCategory(category: Category, deleteFlashcards: Boolean): Unit
+    {
+        val observable = if (deleteFlashcards)
+            CategoryService.deleteWithFlashcards(category)
+        else
+            CategoryService.delete(category)
+
+        observable.subscribe {
+            showToast(R.string.delete_toast)
+            NavUtils.navigateUpFromSameTask(this)
+        }
+    }
+
+    //endregion
+
+    //region UI
+
+    private fun initialiseUI(categoryId: String?): Unit
+    {
+        if (categoryId != null)
         {
-            showToast(R.string.category_name_taken, category.name!!)
-
-            return
+            getData(categoryId).subscribe {
+                category = it
+                updateUI()
+            }
+        }
+        else
+        {
+            category = Category(null)
         }
 
-        category = categoryService.save(category)
+        initialiseToolbar()
 
-        showToast(R.string.save_toast)
-        invalidateOptionsMenu()
-        updateViewFromCategory(category)
+        initialiseControls()
+    }
+
+    private fun initialiseToolbar(): Unit
+    {
+        val toolbar = findViewById(R.id.category_details_toolbar) as Toolbar
+        setSupportActionBar(toolbar)
+
+        val actionBar = supportActionBar
+        actionBar!!.setDisplayShowTitleEnabled(false)
+        actionBar.setDisplayHomeAsUpEnabled(true)
+    }
+
+    private fun initialiseControls(): Unit
+    {
+        nameInput = findViewById(R.id.category_details_name) as EnhancedTextInputEditText
+        nameInput.addRequiredValidator(getString(R.string.validation_required))
+        nameInput.addMaxLengthValidator(40, { actualLength, maxLength ->
+            getString(R.string.validation_max_length, actualLength, maxLength)
+        })
+        nameInput.addTextChangedListener { updateButton() }
+
+        saveButton = findViewById(R.id.category_details_save_button) as Button
+
+        saveButton.setOnClickListener {
+            updateCategoryFromControls()
+
+            saveCategory(category)
+        }
+    }
+
+    private fun updateUI(): Unit
+    {
+        updateControls()
+
         updateButton()
     }
 
-    private fun deleteCategory(category: Category, deleteFlashcards: Boolean = false)
+    private fun updateControls(): Unit
     {
-        if (deleteFlashcards)
-            categoryService.deleteWithFlashcards(category)
-        else
-            categoryService.delete(category)
-
-        showToast(R.string.flashcard_details_delete_toast)
-
-        NavUtils.navigateUpFromSameTask(this)
+        nameInput.setText(category.name)
     }
 
-    private fun showDeleteCategoryDialog(category: Category)
+    private fun updateButton(): Unit
     {
-        AlertDialog.Builder(this)
-            .setTitle(getString(R.string.delete_category_dialog_title))
-            .setMessage(getString(R.string.delete_category_dialog_message))
-            .setPositiveButton(
-                getString(R.string.delete_category_dialog_yes),
-                { dialogInterface, i -> deleteCategory(category, true) }
-            )
-            .setNegativeButton(
-                getString(R.string.delete_category_dialog_no),
-                { dialogInterface, i -> deleteCategory(category) }
-            )
-            .setNeutralButton(
-                getString(R.string.delete_category_dialog_cancel),
-                { dialogInterface, i -> }
-            )
-            .create()
-            .show()
+        saveButton.isEnabled = isValid()
     }
+
+    private fun isValid() = nameInput.isValid()
 
     private fun showToast(messageStringId: Int, vararg values: String)
     {
@@ -149,104 +187,50 @@ class CategoryDetailsActivity : AppCompatActivity()
         toast.show()
     }
 
-    private fun updateViewFromCategory(category: Category)
+    private fun showDeleteCategoryDialog(category: Category): Unit
     {
-        name!!.setText(category.name)
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.delete_category_dialog_title))
+            .setMessage(getString(R.string.delete_category_dialog_message))
+            .setPositiveButton(
+                getString(R.string.delete_category_dialog_yes),
+                { di, i -> deleteCategory(this.category, true) }
+            )
+            .setNegativeButton(
+                getString(R.string.delete_category_dialog_no),
+                { di, i -> deleteCategory(this.category, false) }
+            )
+            .setNeutralButton(
+                getString(R.string.delete_category_dialog_cancel),
+                { di, i -> }
+            )
+            .create()
+            .show()
     }
 
-    private fun updateButton()
+    //endregion
+
+    companion object
     {
-        saveButton!!.isEnabled = isValid()
-    }
-
-    private fun isValid(): Boolean
-    {
-        return getNameError() === null
-    }
-
-    private fun getNameError(): String?
-    {
-        val value = name!!.text.toString()
-        val maxLength = 40
-
-        when
-        {
-            value.length === 0       ->
-            {
-                return getString(R.string.validation_required)
-            }
-            value.length > maxLength ->
-            {
-                return getString(R.string.validation_max_length, value.length, maxLength)
-            }
-        }
-
-        return null
-    }
-
-    private fun setUpTextListeners()
-    {
-        fun updateNameError()
-        {
-            val error = getNameError()
-
-            if (error !== null)
-            {
-                nameLayout!!.error = error
-            }
-            else
-            {
-                nameLayout!!.isErrorEnabled = false
-            }
-        }
-
-        name!!.setOnFocusChangeListener { view, isFocused ->
-            if (!isFocused)
-            {
-                updateNameError()
-            }
-        }
-
-        name!!.addTextChangedListener(
-            object : TextWatcher
-            {
-                override fun afterTextChanged(s: Editable?)
-                {
-                }
-
-                override fun beforeTextChanged(s: CharSequence?,
-                                               start: Int,
-                                               count: Int,
-                                               after: Int)
-                {
-                }
-
-                override fun onTextChanged(s: CharSequence?,
-                                           start: Int,
-                                           before: Int,
-                                           count: Int)
-                {
-                    updateNameError()
-                    updateButton()
-                }
-            }
-        )
-    }
-
-    companion object Activities
-    {
-        internal val CATEGORY_ID = "CATEGORY_ID"
-
-        fun startActivity(context: Context, category: Category? = null)
+        fun startActivity(context: Context)
         {
             val intent = Intent(context, CategoryDetailsActivity::class.java)
 
-            if (category !== null)
-            {
-                intent.putExtra(CATEGORY_ID, category.id)
-            }
+            context.startActivity(intent)
+        }
+
+        fun startActivity(context: Context, category: Category)
+        {
+            val intent = Intent(context, CategoryDetailsActivity::class.java)
+
+            intent.putExtra(IntentExtras.CATEGORY_ID, category.id)
 
             context.startActivity(intent)
+        }
+
+        object IntentExtras
+        {
+            val CATEGORY_ID = "CATEGORY_ID"
         }
     }
 }

@@ -4,12 +4,10 @@ import android.content.Context
 import android.support.v4.view.ViewPager
 import android.util.AttributeSet
 
-import java.util.ArrayList
-
 class DirectionalViewPager : ViewPager
 {
     var allowLeftSwipe = true
-    private val onPageSkipListeners = ArrayList<OnPageSkipListener>()
+    private val onPageSkipListeners: MutableList<(Any) -> Unit> = mutableListOf()
 
     constructor(context: Context) : super(context)
     {
@@ -21,33 +19,23 @@ class DirectionalViewPager : ViewPager
         init()
     }
 
-    fun addOnPageSkipListener(listener: OnPageSkipListener)
+    fun addOnPageSkipListener(listener: (Any) -> Unit)
     {
         onPageSkipListeners.add(listener)
     }
 
-    fun clearOnPageSkipListeners()
-    {
-        onPageSkipListeners.clear()
-    }
-
-    fun removeOnPageSkipListener(listener: OnPageSkipListener)
+    fun removeOnPageSkipListener(listener: (Any) -> Unit)
     {
         onPageSkipListeners.remove(listener)
     }
 
     fun notifySkipped(skippedItem: Any)
     {
-        onPageSkipListeners.forEach { it.onPageSkip(skippedItem) }
+        onPageSkipListeners.forEach { it.invoke(skippedItem) }
     }
 
     private fun init()
     {
         addOnPageChangeListener(PageChangeListener(this))
-    }
-
-    interface OnPageSkipListener
-    {
-        fun onPageSkip(skippedItem: Any)
     }
 }
