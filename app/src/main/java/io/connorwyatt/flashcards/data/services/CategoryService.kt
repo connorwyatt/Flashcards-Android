@@ -8,7 +8,10 @@ import io.reactivex.Observable
 object CategoryService
 {
     fun getAll(): Observable<List<Category>>
-        = CategoryDataSource().getAll()
+        = CategoryDataSource().getAll(stream = false)
+
+    fun getAllAsStream(): Observable<List<Category>>
+        = CategoryDataSource().getAll(stream = true)
 
     fun getById(id: String): Observable<Category>
         = CategoryDataSource().getById(id)

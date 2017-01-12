@@ -100,7 +100,7 @@ class FlashcardListActivity : BaseActivity()
 
     fun getDropdownCategories(): Observable<List<DropdownItem<Category?>>>
     {
-        return CategoryService.getAll().map { categories ->
+        return CategoryService.getAllAsStream().map { categories ->
             val dropdownItems = categories.map { category ->
                 DropdownItem<Category?>(value = category.name!!, data = category)
             }

@@ -7,12 +7,13 @@ import io.reactivex.Observable
 
 class CategoryDataSource : BaseDataSource()
 {
-    fun getAll(): Observable<List<Category>>
+    fun getAll(stream: Boolean): Observable<List<Category>>
     {
         return executeQueryList(
             { getCategoriesQuery(userId = it.uid) },
             { Observable.just(Category(it)) },
-            Category::class.java
+            Category::class.java,
+            stream
         )
     }
 
