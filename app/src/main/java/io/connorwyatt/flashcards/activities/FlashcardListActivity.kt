@@ -90,12 +90,12 @@ class FlashcardListActivity : BaseActivity()
 
     fun getData(): Observable<List<FlashcardViewModel>>
     {
-        return mapFlashcardsToViewModels(FlashcardService.getAll())
+        return mapFlashcardsToViewModels(FlashcardService.getAllAsStream())
     }
 
     fun getDataWithCategoryFilter(category: Category): Observable<List<FlashcardViewModel>>
     {
-        return mapFlashcardsToViewModels(FlashcardService.getByCategory(category.id!!))
+        return mapFlashcardsToViewModels(FlashcardService.getByCategoryAsStream(category.id!!))
     }
 
     fun getDropdownCategories(): Observable<List<DropdownItem<Category?>>>

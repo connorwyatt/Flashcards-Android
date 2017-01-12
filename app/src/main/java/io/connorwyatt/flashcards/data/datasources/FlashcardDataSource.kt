@@ -6,31 +6,33 @@ import io.reactivex.Observable
 
 class FlashcardDataSource : BaseDataSource()
 {
-    fun getAll(): Observable<List<Flashcard>>
+    fun getAll(stream: Boolean): Observable<List<Flashcard>>
     {
         return executeQueryList(
-            { getFlashcardsQuery(userId = it.uid) },
-            { Observable.just(Flashcard(it)) },
-            Flashcard::class.java
+            getQuery = { getFlashcardsQuery(userId = it.uid) },
+            parser = { Observable.just(Flashcard(it)) },
+            clazz = Flashcard::class.java,
+            stream = stream
         )
     }
 
     fun getById(id: String): Observable<Flashcard>
     {
         return executeQuerySingle(
-            { getFlashcardQuery(userId = it.uid, flashcardId = id) },
-            { Observable.just(Flashcard(it)) }
+            getQuery = { getFlashcardQuery(userId = it.uid, flashcardId = id) },
+            parser = { Observable.just(Flashcard(it)) }
         )
     }
 
-    fun getByCategoryId(id: String): Observable<List<Flashcard>>
+    fun getByCategoryId(id: String, stream: Boolean): Observable<List<Flashcard>>
     {
         return executeQueryRelationship(
             getQuery = { getFlashcardsQuery(userId = it.uid) },
             resourceName = "category",
             resourceId = id,
             parser = { Observable.just(Flashcard(it)) },
-            clazz = Flashcard::class.java
+            clazz = Flashcard::class.java,
+            stream = stream
         )
     }
 

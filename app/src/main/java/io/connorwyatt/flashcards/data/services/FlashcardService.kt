@@ -7,17 +7,21 @@ import io.reactivex.Observable
 object FlashcardService
 {
     fun getAll(): Observable<List<Flashcard>>
-        = FlashcardDataSource().getAll()
+        = FlashcardDataSource().getAll(false)
+
+    fun getAllAsStream(): Observable<List<Flashcard>>
+        = FlashcardDataSource().getAll(true)
 
     fun getById(id: String): Observable<Flashcard>
         = FlashcardDataSource().getById(id)
 
     fun getByCategory(categoryId: String): Observable<List<Flashcard>>
-    {
-        val flashcardDataSource = FlashcardDataSource()
+        = FlashcardDataSource().getByCategoryId(categoryId, false)
 
-        return flashcardDataSource.getByCategoryId(categoryId)
-    }
+
+    fun getByCategoryAsStream(categoryId: String): Observable<List<Flashcard>>
+        = FlashcardDataSource().getByCategoryId(categoryId, true)
+
 
     fun save(flashcard: Flashcard): Observable<Flashcard>
     {
