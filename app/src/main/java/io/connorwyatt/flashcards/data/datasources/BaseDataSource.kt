@@ -7,6 +7,7 @@ import io.connorwyatt.flashcards.helpers.auth.AuthHelper
 import io.connorwyatt.flashcards.helpers.auth.exceptions.NotSignedInException
 import io.connorwyatt.flashcards.listeners.SimpleValueEventListener
 import io.reactivex.Observable
+import io.reactivex.ObservableEmitter
 
 abstract class BaseDataSource
 {
@@ -22,38 +23,46 @@ abstract class BaseDataSource
         return query
     }
 
-    protected fun <T> executeQuerySingle(query: (FirebaseUser) -> Query,
-                                         parser: (DataSnapshot) -> Observable<T>): Observable<T>
+    protected fun <T> executeQuerySingle(getQuery: (FirebaseUser) -> Query,
+                                         parser: (DataSnapshot) -> Observable<T>,
+                                         stream: Boolean = false): Observable<T>
     {
-        return baseExecuteQuery<T>(query, parser)
+        return baseExecuteQuery<T>(getQuery, parser, stream)
     }
 
-    protected fun <T> executeQueryList(query: (FirebaseUser) -> Query,
+    protected fun <T> executeQueryList(getQuery: (FirebaseUser) -> Query,
                                        parser: (DataSnapshot) -> Observable<T>,
-                                       clazz: Class<T>): Observable<List<T>>
+                                       clazz: Class<T>,
+                                       stream: Boolean = false): Observable<List<T>>
     {
-        return baseExecuteQuery<List<T>>(query, { dataSnapshot ->
-            if (dataSnapshot.hasChildren())
-            {
-                dataSnapshot.children?.map { parser(it) }?.let {
-                    return@baseExecuteQuery Observable
-                        .combineLatest(it, { it.filterIsInstance(clazz) })
+        return baseExecuteQuery<List<T>>(
+            getQuery,
+            { dataSnapshot ->
+                if (dataSnapshot.hasChildren())
+                {
+                    dataSnapshot.children?.map { parser(it) }?.let {
+                        return@baseExecuteQuery Observable
+                            .combineLatest(it,
+                                           { it.filterIsInstance(clazz) })
+                    }
                 }
-            }
 
-            return@baseExecuteQuery Observable.just(listOf())
-        })
+                return@baseExecuteQuery Observable.just(listOf())
+            },
+            stream
+        )
     }
 
-    protected fun <T> executeQueryRelationship(query: (FirebaseUser) -> Query,
+    protected fun <T> executeQueryRelationship(getQuery: (FirebaseUser) -> Query,
                                                resourceName: String,
                                                resourceId: String,
                                                parser: (DataSnapshot) -> Observable<T>,
-                                               clazz: Class<T>): Observable<List<T>>
+                                               clazz: Class<T>,
+                                               stream: Boolean = false): Observable<List<T>>
     {
         return baseExecuteQuery<List<T>>(
             { user ->
-                query(user)
+                getQuery(user)
                     .orderByChild("_relationships/$resourceName/$resourceId")
                     .startAt(true)
                     .endAt(true)
@@ -68,68 +77,107 @@ abstract class BaseDataSource
                 }
 
                 return@baseExecuteQuery Observable.just(listOf())
-            }
+            },
+            stream
         )
     }
 
     protected fun executeSave(resource: BaseEntity,
-                              createReference: (FirebaseUser) -> DatabaseReference,
-                              updateReference: (FirebaseUser) -> DatabaseReference): Observable<String>
+                              getCreateReference: (FirebaseUser) -> DatabaseReference,
+                              getUpdateReference: (FirebaseUser) -> DatabaseReference): Observable<String>
     {
         return baseSave(resource = resource,
-                        createReference = createReference,
-                        updateReference = updateReference)
+                        getCreateReference = getCreateReference,
+                        getUpdateReference = getUpdateReference)
     }
 
     protected fun executeDelete(resource: BaseEntity,
-                                reference: (FirebaseUser) -> DatabaseReference): Observable<Any?>
+                                getReference: (FirebaseUser) -> DatabaseReference): Observable<Any?>
     {
         return baseDelete(resource = resource,
-                          reference = reference)
+                          reference = getReference)
     }
 
-    private fun <T> baseExecuteQuery(query: (FirebaseUser) -> Query,
-                                     processData: (DataSnapshot) -> Observable<T>): Observable<T>
+    private fun <T> baseExecuteQuery(getQuery: (FirebaseUser) -> Query,
+                                     processData: (DataSnapshot) -> Observable<T>,
+                                     stream: Boolean): Observable<T>
     {
         authHelper.currentUser?.let { user ->
             return Observable.create { observer ->
-                query(user).addListenerForSingleValueEvent(
-                    object : SimpleValueEventListener()
-                    {
-                        override fun onDataChange(dataSnapshot: DataSnapshot?)
-                        {
-                            dataSnapshot?.let(processData)?.let {
-                                it.subscribe(
-                                    {
-                                        observer.onNext(it)
-                                        observer.onComplete()
-                                    }, {
-                                        observer.onError(Exception()) // TODO Replace with more appropriate exception
-                                    }
-                                )
+                val emitFn = getEmitFn<T>(observer, stream)
 
-                                return
-                            }
+                val valueEventListener = getValueEventListener<T>(observer, processData, emitFn)
 
-                            observer.onError(Exception())  // TODO Replace with more appropriate exception
-                        }
+                val userQuery = getQuery(user)
 
-                        override fun onCancelled(error: DatabaseError?)
-                        {
-                            val exception = error?.toException() ?: Exception()  // TODO Replace with more appropriate exception
-
-                            observer.onError(exception)
-                        }
-                    })
+                if (stream)
+                {
+                    userQuery.addValueEventListener(valueEventListener)
+                }
+                else
+                {
+                    userQuery.addListenerForSingleValueEvent(valueEventListener)
+                }
             }
         }
 
         return Observable.error(NotSignedInException())
     }
 
+    private fun <T> getEmitFn(observer: ObservableEmitter<T>,
+                              stream: Boolean): (T) -> Unit
+    {
+        return if (stream)
+        {
+            { it: T ->
+                observer.onNext(it)
+            }
+        }
+        else
+        {
+            { it: T ->
+                observer.onNext(it)
+                observer.onComplete()
+            }
+        }
+    }
+
+    private fun <T> getValueEventListener(observer: ObservableEmitter<T>,
+                                          processData: (DataSnapshot) -> Observable<T>,
+                                          emitFn: (T) -> Unit): SimpleValueEventListener
+    {
+        return object : SimpleValueEventListener()
+        {
+            override fun onDataChange(dataSnapshot: DataSnapshot?)
+            {
+                dataSnapshot?.let(processData)?.let {
+                    it.subscribe(
+                        {
+                            emitFn(it)
+                        },
+                        {
+                            observer.onError(Exception()) // TODO Replace with more appropriate exception
+                        }
+                    )
+
+                    return
+                }
+
+                observer.onError(Exception())  // TODO Replace with more appropriate exception
+            }
+
+            override fun onCancelled(error: DatabaseError?)
+            {
+                val exception = error?.toException() ?: Exception()  // TODO Replace with more appropriate exception
+
+                observer.onError(exception)
+            }
+        }
+    }
+
     private fun baseSave(resource: BaseEntity,
-                         createReference: (FirebaseUser) -> DatabaseReference,
-                         updateReference: (FirebaseUser) -> DatabaseReference): Observable<String>
+                         getCreateReference: (FirebaseUser) -> DatabaseReference,
+                         getUpdateReference: (FirebaseUser) -> DatabaseReference): Observable<String>
     {
         authHelper.currentUser?.let { user ->
             return Observable.create { observer ->
@@ -138,12 +186,12 @@ abstract class BaseDataSource
                 if (resource.existsInDatabase())
                 {
                     resource.timestamps.modifiedNow()
-                    reference = updateReference(user)
+                    reference = getUpdateReference(user)
                 }
                 else
                 {
                     resource.timestamps.createdNow()
-                    reference = createReference(user)
+                    reference = getCreateReference(user)
                 }
 
                 val updates = getUpdates(reference, user, reference.key, resource)

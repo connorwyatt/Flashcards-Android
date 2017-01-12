@@ -50,16 +50,13 @@ object CategoryService
 
     fun save(category: Category): Observable<Category>
     {
-        return getByName(category.name!!).flatMap { categories ->
-            if (categories.isEmpty())
-            {
-                return@flatMap CategoryDataSource().save(category).flatMap { getById(it) }
+        return getByName(category.name!!)
+            .flatMap { categories ->
+                if (categories.isEmpty())
+                    CategoryDataSource().save(category).flatMap { getById(it) }
+                else
+                    Observable.error<Category>(CategoryNameTakenException())
             }
-            else
-            {
-                return@flatMap Observable.error<Category>(CategoryNameTakenException())
-            }
-        }
     }
 
     fun delete(category: Category): Observable<Any?>

@@ -26,7 +26,7 @@ class FlashcardDataSource : BaseDataSource()
     fun getByCategoryId(id: String): Observable<List<Flashcard>>
     {
         return executeQueryRelationship(
-            query = { getFlashcardsQuery(userId = it.uid) },
+            getQuery = { getFlashcardsQuery(userId = it.uid) },
             resourceName = "category",
             resourceId = id,
             parser = { Observable.just(Flashcard(it)) },
@@ -38,8 +38,11 @@ class FlashcardDataSource : BaseDataSource()
     {
         return executeSave(
             resource = flashcard,
-            createReference = { getFlashcardsQuery(userId = it.uid).push() },
-            updateReference = { getFlashcardQuery(userId = it.uid, flashcardId = flashcard.id!!) }
+            getCreateReference = { getFlashcardsQuery(userId = it.uid).push() },
+            getUpdateReference = {
+                getFlashcardQuery(userId = it.uid,
+                                  flashcardId = flashcard.id!!)
+            }
         )
     }
 
@@ -47,7 +50,7 @@ class FlashcardDataSource : BaseDataSource()
     {
         return executeDelete(
             resource = flashcard,
-            reference = { getFlashcardQuery(userId = it.uid, flashcardId = flashcard.id!!) }
+            getReference = { getFlashcardQuery(userId = it.uid, flashcardId = flashcard.id!!) }
         )
     }
 
