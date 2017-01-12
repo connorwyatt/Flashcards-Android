@@ -3,12 +3,15 @@
     package="io.connorwyatt.flashcards">
 
     <application
+        android:name=".FlashcardsApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.FlashcardCardListActivity">
+        <activity
+            android:name=".activities.FlashcardListActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -17,12 +20,13 @@
         </activity>
         <activity
             android:name=".activities.FlashcardDetailsActivity"
-            android:parentActivityName=".activities.FlashcardCardListActivity" />
+            android:parentActivityName=".activities.FlashcardListActivity" />
         <activity android:name=".activities.FlashcardTestActivity" />
-        <activity android:name=".activities.CategoriesActivity" />
+        <activity android:name=".activities.CategoryListActivity" />
         <activity
             android:name=".activities.CategoryDetailsActivity"
-            android:parentActivityName=".activities.CategoriesActivity" />
+            android:parentActivityName=".activities.CategoryListActivity" />
+        <activity android:name=".activities.AuthActivity" />
     </application>
 
 </manifest>
