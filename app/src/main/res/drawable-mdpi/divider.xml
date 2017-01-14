@@ -1,4 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2016-2017 Connor Wyatt <connorwyatt1@gmail.com>.
+  ~
+  ~ This file can not be copied and/or distributed without the express permission of Connor Wyatt.
+  -->
+
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <size android:height="1dp" />
     <solid android:color="@color/colorTextDivider" />
