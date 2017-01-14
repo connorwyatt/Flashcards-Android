@@ -17,62 +17,53 @@ import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.data.viewmodels.FlashcardViewModel
 import io.connorwyatt.flashcards.views.progressbar.ProgressBar
 
-class FlashcardViewHolder constructor(itemView: View) : RecyclerView.ViewHolder(itemView)
-{
-    private var viewModel: FlashcardViewModel? = null
-    private val cv = itemView.findViewById(R.id.flashcard_card) as CardView
-    private val layout = itemView.findViewById(R.id.flashcard_card_layout) as LinearLayout
-    private val bodyLayout = itemView.findViewById(R.id.flashcard_card_body_layout) as LinearLayout
-    private val progress = itemView.findViewById(R.id.flashcard_card_rating) as ProgressBar
-    private val titleText = itemView.findViewById(R.id.flashcard_card_title) as TextView
-    private val textText = itemView.findViewById(R.id.flashcard_card_text) as TextView
-    private val categoriesText = itemView.findViewById(R.id.flashcard_card_categories) as TextView
+class FlashcardViewHolder constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
+  private var viewModel: FlashcardViewModel? = null
+  private val cv = itemView.findViewById(R.id.flashcard_card) as CardView
+  private val layout = itemView.findViewById(R.id.flashcard_card_layout) as LinearLayout
+  private val bodyLayout = itemView.findViewById(R.id.flashcard_card_body_layout) as LinearLayout
+  private val progress = itemView.findViewById(R.id.flashcard_card_rating) as ProgressBar
+  private val titleText = itemView.findViewById(R.id.flashcard_card_title) as TextView
+  private val textText = itemView.findViewById(R.id.flashcard_card_text) as TextView
+  private val categoriesText = itemView.findViewById(R.id.flashcard_card_categories) as TextView
 
-    fun setData(viewModel: FlashcardViewModel): Unit
-    {
-        this.viewModel = viewModel
-        val (flashcard, categories, rating) = viewModel
+  fun setData(viewModel: FlashcardViewModel): Unit {
+    this.viewModel = viewModel
+    val (flashcard, categories, rating) = viewModel
 
-        val colorId = rating?.let {
-            if (rating >= 0)
-            {
-                when
-                {
-                    rating > 2.0 / 3.0 -> R.color.colorPositive
-                    rating < 1.0 / 2.0 -> R.color.colorNegative
-                    else -> R.color.colorNeutral
-                }
-            }
-            else null
-        } ?: R.color.colorGrey
-
-        val color = ContextCompat.getColor(layout.context, colorId)
-        val backgroundColor = ColorUtils.setAlphaComponent(color, 128)
-
-        progress.setBarColor(color)
-        progress.setUnfilledBarColor(backgroundColor)
-
-        val progressValue = rating?.let {
-            if (it >= 0) it else 0.0
-        } ?: 0.0
-
-        progress.setProgress(progressValue)
-
-        titleText.text = flashcard.title
-        textText.text = flashcard.text
-
-        if (categories.isNotEmpty())
-        {
-            categoriesText.text = categories.map { it.name }.joinToString(separator = ", ")
+    val colorId = rating?.let {
+      if (rating >= 0) {
+        when {
+          rating > 2.0 / 3.0 -> R.color.colorPositive
+          rating < 1.0 / 2.0 -> R.color.colorNegative
+          else -> R.color.colorNeutral
         }
-        else
-        {
-            bodyLayout.removeView(categoriesText)
-        }
-    }
+      } else null
+    } ?: R.color.colorGrey
 
-    fun setOnCardClickListener(listener: (FlashcardViewModel) -> Unit): Unit
-    {
-        cv.setOnClickListener { listener(viewModel!!) }
+    val color = ContextCompat.getColor(layout.context, colorId)
+    val backgroundColor = ColorUtils.setAlphaComponent(color, 128)
+
+    progress.setBarColor(color)
+    progress.setUnfilledBarColor(backgroundColor)
+
+    val progressValue = rating?.let {
+      if (it >= 0) it else 0.0
+    } ?: 0.0
+
+    progress.setProgress(progressValue)
+
+    titleText.text = flashcard.title
+    textText.text = flashcard.text
+
+    if (categories.isNotEmpty()) {
+      categoriesText.text = categories.map { it.name }.joinToString(separator = ", ")
+    } else {
+      bodyLayout.removeView(categoriesText)
     }
+  }
+
+  fun setOnCardClickListener(listener: (FlashcardViewModel) -> Unit): Unit {
+    cv.setOnClickListener { listener(viewModel!!) }
+  }
 }

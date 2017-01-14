@@ -13,160 +13,146 @@ import android.support.design.widget.TextInputLayout
 import android.util.AttributeSet
 import android.view.View
 
-class EnhancedTextInputEditText : TextInputEditText
-{
-    private var touched = false
-    private var dirty = false
-    private var valid = true
-    private val textChangedListeners: MutableList<() -> Unit> = mutableListOf()
-    private val validators: MutableList<(String) -> String?> = mutableListOf()
-    private val textInputLayout by lazy {
-        getParentTextInputLayout()
+class EnhancedTextInputEditText : TextInputEditText {
+  private var touched = false
+  private var dirty = false
+  private var valid = true
+  private val textChangedListeners: MutableList<() -> Unit> = mutableListOf()
+  private val validators: MutableList<(String) -> String?> = mutableListOf()
+  private val textInputLayout by lazy {
+    getParentTextInputLayout()
+  }
+
+  constructor(context: Context) : super(context)
+
+  constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
+
+  constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) :
+    super(context, attrs, defStyleAttr)
+
+  private fun getParentTextInputLayout(): TextInputLayout? {
+    var parent = parent
+
+    while (parent is View) {
+      if (parent is TextInputLayout) return parent
+
+      parent = parent.getParent()
     }
 
-    constructor(context: Context) : super(context)
+    return null
+  }
 
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
+  //region Listeners
 
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) :
-        super(context, attrs, defStyleAttr)
+  override fun onFocusChanged(focused: Boolean, direction: Int, previouslyFocusedRect: Rect?) {
+    super.onFocusChanged(focused, direction, previouslyFocusedRect)
 
-    private fun getParentTextInputLayout(): TextInputLayout?
-    {
-        var parent = parent
+    if (!focused) touched = true
 
-        while (parent is View)
-        {
-            if (parent is TextInputLayout) return parent
+    runValidators(editableText.toString())
+  }
 
-            parent = parent.getParent()
-        }
+  override fun onTextChanged(text: CharSequence?, start: Int, lengthBefore: Int, lengthAfter: Int) {
+    super.onTextChanged(text, start, lengthBefore, lengthAfter)
 
-        return null
+    if (lengthBefore != lengthAfter) {
+      dirty = true
+
+      runValidators(editableText.toString())
+
+      callTextChangedListeners()
+    }
+  }
+
+  fun addTextChangedListener(listener: () -> Unit): () -> Unit {
+    textChangedListeners.add(listener)
+
+    return { textChangedListeners.removeAll(listOf(listener)) }
+  }
+
+  private fun callTextChangedListeners(): Unit {
+    textChangedListeners.forEach { it.invoke() }
+  }
+
+  //endregion
+
+  //region Status Accessors
+
+  fun isInputTouched() = touched
+  fun isInputUntouched() = !touched
+  fun isInputDirty() = dirty
+  fun isInputPristine() = !dirty
+
+  //endregion
+
+  //region Validation
+
+  fun isValid() = valid
+  fun isInvalid() = !valid
+
+  fun addRequiredValidator(errorMessage: String): () -> Unit {
+    val validator = { value: String ->
+      if (value.isEmpty()) errorMessage else null
     }
 
-    //region Listeners
+    validators.add(validator)
 
-    override fun onFocusChanged(focused: Boolean, direction: Int, previouslyFocusedRect: Rect?)
-    {
-        super.onFocusChanged(focused, direction, previouslyFocusedRect)
+    runValidators(editableText.toString())
 
-        if (!focused) touched = true
+    return { validators.removeAll(listOf(validator)) }
+  }
 
-        runValidators(editableText.toString())
+  fun addMaxLengthValidator(maxLength: Int, getErrorMessage: (Int, Int) -> String): () -> Unit {
+    val validator = { value: String ->
+      var errorMessage: String? = null
+
+      if (value.length > maxLength)
+        errorMessage = getErrorMessage.invoke(value.length, maxLength)
+
+      errorMessage
     }
 
-    override fun onTextChanged(text: CharSequence?, start: Int, lengthBefore: Int, lengthAfter: Int)
-    {
-        super.onTextChanged(text, start, lengthBefore, lengthAfter)
+    validators.add(validator)
 
-        if (lengthBefore != lengthAfter)
-        {
-            dirty = true
+    runValidators(editableText.toString())
 
-            runValidators(editableText.toString())
+    return { validators.removeAll(listOf(validator)) }
+  }
 
-            callTextChangedListeners()
-        }
+  fun addCustomValidator(validator: (String) -> String?):
+    () -> Unit {
+    validators.add(validator)
+
+    runValidators(editableText.toString())
+
+    return { validators.removeAll(listOf(validator)) }
+  }
+
+  private fun runValidators(value: String): Unit {
+    valid = true
+
+    validators.forEach { validator ->
+      val errorMessage = validator.invoke(value)
+
+      errorMessage?.let {
+        valid = false
+
+        if (touched || dirty) setErrorMessage(it)
+
+        return
+      }
     }
 
-    fun addTextChangedListener(listener: () -> Unit): () -> Unit
-    {
-        textChangedListeners.add(listener)
+    clearErrorMessage()
+  }
 
-        return { textChangedListeners.removeAll(listOf(listener)) }
-    }
+  private fun setErrorMessage(message: String): Unit {
+    textInputLayout?.error = message
+  }
 
-    private fun callTextChangedListeners(): Unit
-    {
-        textChangedListeners.forEach { it.invoke() }
-    }
+  private fun clearErrorMessage(): Unit {
+    textInputLayout?.isErrorEnabled = false
+  }
 
-    //endregion
-
-    //region Status Accessors
-
-    fun isInputTouched() = touched
-    fun isInputUntouched() = !touched
-    fun isInputDirty() = dirty
-    fun isInputPristine() = !dirty
-
-    //endregion
-
-    //region Validation
-
-    fun isValid() = valid
-    fun isInvalid() = !valid
-
-    fun addRequiredValidator(errorMessage: String): () -> Unit
-    {
-        val validator = { value: String ->
-            if (value.isEmpty()) errorMessage else null
-        }
-
-        validators.add(validator)
-
-        runValidators(editableText.toString())
-
-        return { validators.removeAll(listOf(validator)) }
-    }
-
-    fun addMaxLengthValidator(maxLength: Int, getErrorMessage: (Int, Int) -> String): () -> Unit
-    {
-        val validator = { value: String ->
-            var errorMessage: String? = null
-
-            if (value.length > maxLength)
-                errorMessage = getErrorMessage.invoke(value.length, maxLength)
-
-            errorMessage
-        }
-
-        validators.add(validator)
-
-        runValidators(editableText.toString())
-
-        return { validators.removeAll(listOf(validator)) }
-    }
-
-    fun addCustomValidator(validator: (String) -> String?):
-        () -> Unit
-    {
-        validators.add(validator)
-
-        runValidators(editableText.toString())
-
-        return { validators.removeAll(listOf(validator)) }
-    }
-
-    private fun runValidators(value: String): Unit
-    {
-        valid = true
-
-        validators.forEach { validator ->
-            val errorMessage = validator.invoke(value)
-
-            errorMessage?.let {
-                valid = false
-
-                if (touched || dirty) setErrorMessage(it)
-
-                return
-            }
-        }
-
-        clearErrorMessage()
-    }
-
-    private fun setErrorMessage(message: String): Unit
-    {
-        textInputLayout?.error = message
-    }
-
-    private fun clearErrorMessage(): Unit
-    {
-        textInputLayout?.isErrorEnabled = false
-    }
-
-    //endregion
+  //endregion
 }
