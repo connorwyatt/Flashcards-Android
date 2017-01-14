@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2016-2017 Connor Wyatt <connorwyatt1@gmail.com>.
+ *
+ * This file can not be copied and/or distributed without the express permission of Connor Wyatt.
+ */
+
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
