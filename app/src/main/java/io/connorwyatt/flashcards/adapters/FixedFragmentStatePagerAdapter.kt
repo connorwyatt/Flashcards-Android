@@ -74,205 +74,173 @@ import java.util.ArrayList
  * * complete}
  */
 abstract class FixedFragmentStatePagerAdapter(private val mFragmentManager: FragmentManager) :
-    PagerAdapter()
-{
-    private var mCurTransaction: FragmentTransaction? = null
+  PagerAdapter() {
+  private var mCurTransaction: FragmentTransaction? = null
 
-    private val mSavedState = ArrayList<Fragment.SavedState?>()
-    private var mSavedFragmentTags = ArrayList<String?>()
-    private val mFragments = ArrayList<Fragment?>()
-    private var mCurrentPrimaryItem: Fragment? = null
+  private val mSavedState = ArrayList<Fragment.SavedState?>()
+  private var mSavedFragmentTags = ArrayList<String?>()
+  private val mFragments = ArrayList<Fragment?>()
+  private var mCurrentPrimaryItem: Fragment? = null
 
-    override fun startUpdate(container: ViewGroup)
-    {
+  override fun startUpdate(container: ViewGroup) {
+  }
+
+  override fun instantiateItem(container: ViewGroup, position: Int): Any {
+    // If we already have this item instantiated, there is nothing
+    // to do.  This can happen when we are restoring the entire pager
+    // from its saved state, where the fragment manager has already
+    // taken care of restoring the fragments we previously had instantiated.
+    if (mFragments.size > position) {
+      val f = mFragments[position]
+      f?.let {
+        return it
+      }
     }
 
-    override fun instantiateItem(container: ViewGroup, position: Int): Any
-    {
-        // If we already have this item instantiated, there is nothing
-        // to do.  This can happen when we are restoring the entire pager
-        // from its saved state, where the fragment manager has already
-        // taken care of restoring the fragments we previously had instantiated.
-        if (mFragments.size > position)
-        {
-            val f = mFragments[position]
-            f?.let {
-                return it
-            }
-        }
-
-        if (mCurTransaction == null)
-        {
-            mCurTransaction = mFragmentManager.beginTransaction()
-        }
-
-        val fragment = getItem(position)
-        val fragmentTag = getFragmentTag(position)
-        if (DEBUG) Log.v(TAG.substring(0, 22), "Adding item #$position: f=$fragment t=$fragmentTag")
-        if (mSavedState.size > position)
-        {
-            val savedTag = mSavedFragmentTags[position]
-            if (TextUtils.equals(fragmentTag, savedTag))
-            {
-                val fss = mSavedState[position]
-                fss.let {
-                    fragment.setInitialSavedState(it)
-                }
-            }
-        }
-        while (mFragments.size <= position)
-        {
-            mFragments.add(null)
-        }
-        FragmentCompat.setMenuVisibility(fragment, false)
-        FragmentCompat.setUserVisibleHint(fragment, false)
-        mFragments[position] = fragment
-        mCurTransaction!!.add(container.id, fragment)
-
-        return fragment
+    if (mCurTransaction == null) {
+      mCurTransaction = mFragmentManager.beginTransaction()
     }
 
-    override fun destroyItem(container: ViewGroup, position: Int, item: Any)
-    {
-        val fragment = item as Fragment
-
-        if (mCurTransaction == null)
-        {
-            mCurTransaction = mFragmentManager.beginTransaction()
+    val fragment = getItem(position)
+    val fragmentTag = getFragmentTag(position)
+    if (DEBUG) Log.v(TAG.substring(0, 22), "Adding item #$position: f=$fragment t=$fragmentTag")
+    if (mSavedState.size > position) {
+      val savedTag = mSavedFragmentTags[position]
+      if (TextUtils.equals(fragmentTag, savedTag)) {
+        val fss = mSavedState[position]
+        fss.let {
+          fragment.setInitialSavedState(it)
         }
-        if (DEBUG)
-            Log.v(TAG.substring(0, 22),
-                  "Removing item #$position: f=$item v=${item.view} t=${fragment.tag}")
-        while (mSavedState.size <= position)
-        {
-            mSavedState.add(null)
-            mSavedFragmentTags.add(null)
+      }
+    }
+    while (mFragments.size <= position) {
+      mFragments.add(null)
+    }
+    FragmentCompat.setMenuVisibility(fragment, false)
+    FragmentCompat.setUserVisibleHint(fragment, false)
+    mFragments[position] = fragment
+    mCurTransaction!!.add(container.id, fragment)
+
+    return fragment
+  }
+
+  override fun destroyItem(container: ViewGroup, position: Int, item: Any) {
+    val fragment = item as Fragment
+
+    if (mCurTransaction == null) {
+      mCurTransaction = mFragmentManager.beginTransaction()
+    }
+    if (DEBUG)
+      Log.v(TAG.substring(0, 22),
+            "Removing item #$position: f=$item v=${item.view} t=${fragment.tag}")
+    while (mSavedState.size <= position) {
+      mSavedState.add(null)
+      mSavedFragmentTags.add(null)
+    }
+    mSavedState[position] = mFragmentManager.saveFragmentInstanceState(fragment)
+    mSavedFragmentTags[position] = fragment.tag
+    mFragments.set(position, null)
+
+    mCurTransaction!!.remove(fragment)
+  }
+
+  override fun setPrimaryItem(container: ViewGroup, position: Int, item: Any?) {
+    val fragment = item as Fragment?
+    if (fragment !== mCurrentPrimaryItem) {
+      mCurrentPrimaryItem?.let {
+        FragmentCompat.setMenuVisibility(mCurrentPrimaryItem, false)
+        FragmentCompat.setUserVisibleHint(mCurrentPrimaryItem, false)
+      }
+      fragment?.let {
+        FragmentCompat.setMenuVisibility(fragment, true)
+        FragmentCompat.setUserVisibleHint(fragment, true)
+      }
+      mCurrentPrimaryItem = fragment
+    }
+  }
+
+  override fun finishUpdate(container: ViewGroup) {
+    if (mCurTransaction != null) {
+      mCurTransaction!!.commitAllowingStateLoss()
+      mCurTransaction = null
+      mFragmentManager.executePendingTransactions()
+    }
+  }
+
+  override fun isViewFromObject(view: View, item: Any): Boolean {
+    return (item as Fragment).view === view
+  }
+
+  override fun saveState(): Parcelable {
+    var state: Bundle? = null
+    if (mSavedState.isNotEmpty()) {
+      state = Bundle()
+      val fss = arrayOfNulls<Fragment.SavedState>(mSavedState.size)
+      mSavedState.toArray(fss)
+      state.putParcelableArray("states", fss)
+      state.putStringArrayList("tags", mSavedFragmentTags)
+    }
+    mFragments.indices.forEach {
+      val f = mFragments[it]
+      if (f != null && f.isAdded) {
+        if (state == null) {
+          state = Bundle()
         }
-        mSavedState[position] = mFragmentManager.saveFragmentInstanceState(fragment)
-        mSavedFragmentTags[position] = fragment.tag
-        mFragments.set(position, null)
-
-        mCurTransaction!!.remove(fragment)
+        val key = "f$it"
+        mFragmentManager.putFragment(state, key, f)
+      }
     }
+    return state!!
+  }
 
-    override fun setPrimaryItem(container: ViewGroup, position: Int, item: Any?)
-    {
-        val fragment = item as Fragment?
-        if (fragment !== mCurrentPrimaryItem)
-        {
-            mCurrentPrimaryItem?.let {
-                FragmentCompat.setMenuVisibility(mCurrentPrimaryItem, false)
-                FragmentCompat.setUserVisibleHint(mCurrentPrimaryItem, false)
+  override fun restoreState(state: Parcelable?, loader: ClassLoader?) {
+    if (state != null) {
+      val bundle = state as Bundle?
+      bundle!!.classLoader = loader
+      val fss = bundle.getParcelableArray("states")
+      mSavedState.clear()
+      mFragments.clear()
+
+      val tags = bundle.getStringArrayList("tags")
+      if (tags != null) {
+        mSavedFragmentTags = tags
+      } else {
+        mSavedFragmentTags.clear()
+      }
+      if (fss != null) {
+        fss.indices.forEach { mSavedState.add(fss[it] as Fragment.SavedState) }
+      }
+      val keys = bundle.keySet()
+      keys.forEach {
+        if (it.startsWith("f")) {
+          val index = Integer.parseInt(it.substring(1))
+          val f = mFragmentManager.getFragment(bundle, it)
+          if (f != null) {
+            while (mFragments.size <= index) {
+              mFragments.add(null)
             }
-            fragment?.let {
-                FragmentCompat.setMenuVisibility(fragment, true)
-                FragmentCompat.setUserVisibleHint(fragment, true)
-            }
-            mCurrentPrimaryItem = fragment
+            FragmentCompat.setMenuVisibility(f, false)
+            mFragments[index] = f
+          } else {
+            Log.w(TAG.substring(0, 22), "Bad fragment at key $it")
+          }
         }
+      }
     }
+  }
 
-    override fun finishUpdate(container: ViewGroup)
-    {
-        if (mCurTransaction != null)
-        {
-            mCurTransaction!!.commitAllowingStateLoss()
-            mCurTransaction = null
-            mFragmentManager.executePendingTransactions()
-        }
-    }
+  /**
+   * Return the Fragment associated with a specified position.
+   */
+  abstract fun getItem(position: Int): Fragment
 
-    override fun isViewFromObject(view: View, item: Any): Boolean
-    {
-        return (item as Fragment).view === view
-    }
+  /**
+   * Return the unique tag associated with a specified position.
+   */
+  abstract fun getFragmentTag(position: Int): String
 
-    override fun saveState(): Parcelable
-    {
-        var state: Bundle? = null
-        if (mSavedState.isNotEmpty())
-        {
-            state = Bundle()
-            val fss = arrayOfNulls<Fragment.SavedState>(mSavedState.size)
-            mSavedState.toArray(fss)
-            state.putParcelableArray("states", fss)
-            state.putStringArrayList("tags", mSavedFragmentTags)
-        }
-        mFragments.indices.forEach {
-            val f = mFragments[it]
-            if (f != null && f.isAdded)
-            {
-                if (state == null)
-                {
-                    state = Bundle()
-                }
-                val key = "f$it"
-                mFragmentManager.putFragment(state, key, f)
-            }
-        }
-        return state!!
-    }
-
-    override fun restoreState(state: Parcelable?, loader: ClassLoader?)
-    {
-        if (state != null)
-        {
-            val bundle = state as Bundle?
-            bundle!!.classLoader = loader
-            val fss = bundle.getParcelableArray("states")
-            mSavedState.clear()
-            mFragments.clear()
-
-            val tags = bundle.getStringArrayList("tags")
-            if (tags != null)
-            {
-                mSavedFragmentTags = tags
-            }
-            else
-            {
-                mSavedFragmentTags.clear()
-            }
-            if (fss != null)
-            {
-                fss.indices.forEach { mSavedState.add(fss[it] as Fragment.SavedState) }
-            }
-            val keys = bundle.keySet()
-            keys.forEach {
-                if (it.startsWith("f"))
-                {
-                    val index = Integer.parseInt(it.substring(1))
-                    val f = mFragmentManager.getFragment(bundle, it)
-                    if (f != null)
-                    {
-                        while (mFragments.size <= index)
-                        {
-                            mFragments.add(null)
-                        }
-                        FragmentCompat.setMenuVisibility(f, false)
-                        mFragments[index] = f
-                    }
-                    else
-                    {
-                        Log.w(TAG.substring(0, 22), "Bad fragment at key $it")
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Return the Fragment associated with a specified position.
-     */
-    abstract fun getItem(position: Int): Fragment
-
-    /**
-     * Return the unique tag associated with a specified position.
-     */
-    abstract fun getFragmentTag(position: Int): String
-
-    companion object
-    {
-        private val TAG = "FixedFragmentStatePagerAdapter"
-        private val DEBUG = false
-    }
+  companion object {
+    private val TAG = "FixedFragmentStatePagerAdapter"
+    private val DEBUG = false
+  }
 }

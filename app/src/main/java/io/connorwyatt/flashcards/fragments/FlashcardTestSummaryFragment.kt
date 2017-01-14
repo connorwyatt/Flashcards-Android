@@ -18,78 +18,71 @@ import io.connorwyatt.flashcards.activities.FlashcardTestActivity
 import io.connorwyatt.flashcards.data.viewmodels.PerformanceViewModel
 import io.reactivex.disposables.Disposable
 
-class FlashcardTestSummaryFragment : Fragment()
-{
-    lateinit private var viewGroup: ViewGroup
-    lateinit private var disposable: Disposable
+class FlashcardTestSummaryFragment : Fragment() {
+  lateinit private var viewGroup: ViewGroup
+  lateinit private var disposable: Disposable
 
-    //region Activity
+  //region Activity
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View
-    {
-        super.onCreateView(inflater, container, savedInstanceState)
+  override fun onCreateView(
+    inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
+    super.onCreateView(inflater, container, savedInstanceState)
 
-        viewGroup = inflater.inflate(
-            R.layout.fragment_flashcard_test_summary, container, false) as ViewGroup
+    viewGroup = inflater.inflate(
+      R.layout.fragment_flashcard_test_summary, container, false) as ViewGroup
 
-        initialiseUI()
+    initialiseUI()
 
-        return viewGroup
-    }
+    return viewGroup
+  }
 
-    override fun onDestroyView()
-    {
-        super.onDestroyView()
+  override fun onDestroyView() {
+    super.onDestroyView()
 
-        disposable.dispose()
-    }
+    disposable.dispose()
+  }
 
-    //endregion
+  //endregion
 
-    //region UI
+  //region UI
 
-    private fun initialiseUI()
-    {
-        initialiseButton()
+  private fun initialiseUI() {
+    initialiseButton()
 
-        disposable = (activity as FlashcardTestActivity).flashcardTestFragment!!.getPerformanceObservable()
-            .subscribe {
-                updateValues(it)
-            }
-    }
+    disposable = (activity as FlashcardTestActivity).flashcardTestFragment!!.getPerformanceObservable()
+      .subscribe {
+        updateValues(it)
+      }
+  }
 
-    private fun initialiseButton(): Unit
-    {
-        val button = viewGroup.findViewById(R.id.flashcard_test_summary_finish_button) as Button
+  private fun initialiseButton(): Unit {
+    val button = viewGroup.findViewById(R.id.flashcard_test_summary_finish_button) as Button
 
-        button.setOnClickListener { activity.finish() }
-    }
+    button.setOnClickListener { activity.finish() }
+  }
 
-    private fun updateValues(performanceViewModel: PerformanceViewModel): Unit
-    {
-        (viewGroup.findViewById(R.id.flashcard_test_summary_positive_percent) as TextView).text =
-            getString(R.string.percentage, toPercent(performanceViewModel.positivePercent))
-        (viewGroup.findViewById(R.id.flashcard_test_summary_positive_count) as TextView).text =
-            performanceViewModel.positiveCount.toString()
-        (viewGroup.findViewById(R.id.flashcard_test_summary_neutral_percent) as TextView).text =
-            getString(R.string.percentage, toPercent(performanceViewModel.neutralPercent))
-        (viewGroup.findViewById(R.id.flashcard_test_summary_neutral_count) as TextView).text =
-            performanceViewModel.neutralCount.toString()
-        (viewGroup.findViewById(R.id.flashcard_test_summary_negative_percent) as TextView).text =
-            getString(R.string.percentage, toPercent(performanceViewModel.negativePercent))
-        (viewGroup.findViewById(R.id.flashcard_test_summary_negative_count) as TextView).text =
-            performanceViewModel.negativeCount.toString()
-        (viewGroup.findViewById(R.id.flashcard_test_summary_skip_count) as TextView).text =
-            resources.getQuantityString(R.plurals.flashcard_test_summary_skip_count,
-                                        performanceViewModel.skipCount,
-                                        performanceViewModel.skipCount)
-    }
+  private fun updateValues(performanceViewModel: PerformanceViewModel): Unit {
+    (viewGroup.findViewById(R.id.flashcard_test_summary_positive_percent) as TextView).text =
+      getString(R.string.percentage, toPercent(performanceViewModel.positivePercent))
+    (viewGroup.findViewById(R.id.flashcard_test_summary_positive_count) as TextView).text =
+      performanceViewModel.positiveCount.toString()
+    (viewGroup.findViewById(R.id.flashcard_test_summary_neutral_percent) as TextView).text =
+      getString(R.string.percentage, toPercent(performanceViewModel.neutralPercent))
+    (viewGroup.findViewById(R.id.flashcard_test_summary_neutral_count) as TextView).text =
+      performanceViewModel.neutralCount.toString()
+    (viewGroup.findViewById(R.id.flashcard_test_summary_negative_percent) as TextView).text =
+      getString(R.string.percentage, toPercent(performanceViewModel.negativePercent))
+    (viewGroup.findViewById(R.id.flashcard_test_summary_negative_count) as TextView).text =
+      performanceViewModel.negativeCount.toString()
+    (viewGroup.findViewById(R.id.flashcard_test_summary_skip_count) as TextView).text =
+      resources.getQuantityString(R.plurals.flashcard_test_summary_skip_count,
+                                  performanceViewModel.skipCount,
+                                  performanceViewModel.skipCount)
+  }
 
-    private fun toPercent(decimal: Double): Long
-    {
-        return Math.round(decimal * 100)
-    }
+  private fun toPercent(decimal: Double): Long {
+    return Math.round(decimal * 100)
+  }
 
-    //endregion
+  //endregion
 }

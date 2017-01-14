@@ -15,42 +15,37 @@ import android.widget.TextView
 
 class GenericArrayAdapter<T> constructor(context: Context,
                                          private val itemList: List<DropdownItem<T>>) :
-    ArrayAdapter<DropdownItem<T>>(context, 0, itemList)
-{
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View
-    {
-        return getViewForLayout(android.R.layout.simple_spinner_item,
-                                position,
-                                convertView,
-                                parent)
+  ArrayAdapter<DropdownItem<T>>(context, 0, itemList) {
+  override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+    return getViewForLayout(android.R.layout.simple_spinner_item,
+                            position,
+                            convertView,
+                            parent)
+  }
+
+  override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+    return getViewForLayout(android.R.layout.simple_spinner_dropdown_item,
+                            position,
+                            convertView,
+                            parent)
+  }
+
+  private fun getViewForLayout(layout: Int,
+                               position: Int,
+                               convertView: View?,
+                               parent: ViewGroup): View {
+    val item = getItem(position)
+    var view = convertView
+
+    if (view == null) {
+      view = LayoutInflater
+        .from(context)
+        .inflate(layout, parent, false)
     }
 
-    override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View
-    {
-        return getViewForLayout(android.R.layout.simple_spinner_dropdown_item,
-                                position,
-                                convertView,
-                                parent)
-    }
+    val text = view!!.findViewById(android.R.id.text1) as TextView
+    text.text = item.value
 
-    private fun getViewForLayout(layout: Int,
-                                 position: Int,
-                                 convertView: View?,
-                                 parent: ViewGroup): View
-    {
-        val item = getItem(position)
-        var view = convertView
-
-        if (view == null)
-        {
-            view = LayoutInflater
-                .from(context)
-                .inflate(layout, parent, false)
-        }
-
-        val text = view!!.findViewById(android.R.id.text1) as TextView
-        text.text = item.value
-
-        return view
-    }
+    return view
+  }
 }

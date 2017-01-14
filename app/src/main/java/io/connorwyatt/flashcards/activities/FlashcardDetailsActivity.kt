@@ -22,8 +22,7 @@ import io.connorwyatt.flashcards.data.viewmodels.FlashcardViewModel
 import io.connorwyatt.flashcards.views.textinput.EnhancedTextInputEditText
 import io.reactivex.Observable
 
-class FlashcardDetailsActivity : BaseActivity()
-{
+class FlashcardDetailsActivity : BaseActivity() {
     private var viewModel: FlashcardViewModel? = null
     private var titleInput: EnhancedTextInputEditText? = null
     private var textInput: EnhancedTextInputEditText? = null
@@ -32,52 +31,44 @@ class FlashcardDetailsActivity : BaseActivity()
 
     //region Activity
 
-    override fun onCreate(savedInstanceState: Bundle?)
-    {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_flashcard_details)
 
         initialiseUI(intent.getStringExtra(IntentExtras.FLASHCARD_ID))
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean
-    {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.activity_flashcard_details_menu, menu)
 
         val existsInDatabase = viewModel?.flashcard?.existsInDatabase() ?: false
 
-        if (!existsInDatabase)
-        {
+        if (!existsInDatabase) {
             menu.findItem(R.id.action_delete).isEnabled = false
-        }
+    }
 
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean
-    {
-        return when (item.itemId)
-        {
-            R.id.action_delete ->
-            {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_delete -> {
                 deleteViewModel(viewModel!!)
                 true
             }
             else -> super.onOptionsItemSelected(item)
-        }
+    }
     }
 
     //endregion
 
     //region Data
 
-    private fun getData(flashcardId: String): Observable<FlashcardViewModel>
-    {
+    private fun getData(flashcardId: String): Observable<FlashcardViewModel> {
         return FlashcardViewModel.get(flashcardId, false)
     }
 
-    private fun updateViewModelFromControls(): Unit
-    {
+    private fun updateViewModelFromControls(): Unit {
         viewModel!!.flashcard.title = titleInput!!.text.toString()
         viewModel!!.flashcard.text = textInput!!.text.toString()
 
@@ -86,8 +77,7 @@ class FlashcardDetailsActivity : BaseActivity()
         viewModel!!.categories = categories
     }
 
-    private fun parseCategoriesString(categoriesString: String): List<Category>
-    {
+    private fun parseCategoriesString(categoriesString: String): List<Category> {
         val categoryNames = categoriesString.split(",")
 
         return categoryNames.map {
@@ -95,20 +85,18 @@ class FlashcardDetailsActivity : BaseActivity()
             category.name = it.trim()
 
             category
-        }
+    }
     }
 
-    private fun saveViewModel(flashcardViewModel: FlashcardViewModel): Unit
-    {
+    private fun saveViewModel(flashcardViewModel: FlashcardViewModel): Unit {
         flashcardViewModel.save().subscribe {
             viewModel = it
             updateUI()
             showToast(R.string.save_toast)
-        }
+    }
     }
 
-    private fun deleteViewModel(flashcardViewModel: FlashcardViewModel): Unit
-    {
+    private fun deleteViewModel(flashcardViewModel: FlashcardViewModel): Unit {
         flashcardViewModel.delete()
             .subscribe {
                 showToast(R.string.delete_toast)
@@ -120,17 +108,13 @@ class FlashcardDetailsActivity : BaseActivity()
 
     //region UI
 
-    private fun initialiseUI(flashcardId: String?): Unit
-    {
-        if (flashcardId != null)
-        {
+    private fun initialiseUI(flashcardId: String?): Unit {
+        if (flashcardId != null) {
             getData(flashcardId).subscribe {
                 viewModel = it
                 updateUI()
             }
-        }
-        else
-        {
+        } else {
             viewModel = FlashcardViewModel(Flashcard(null), listOf())
         }
 
@@ -141,8 +125,7 @@ class FlashcardDetailsActivity : BaseActivity()
         updateButton()
     }
 
-    private fun setUpToolbar(): Unit
-    {
+    private fun setUpToolbar(): Unit {
         val toolbar = findViewById(R.id.flashcard_details_toolbar) as Toolbar
         setSupportActionBar(toolbar)
 
@@ -151,11 +134,11 @@ class FlashcardDetailsActivity : BaseActivity()
         actionBar.setDisplayShowTitleEnabled(false)
     }
 
-    private fun setUpControls(): Unit
-    {
+    private fun setUpControls(): Unit {
         titleInput = findViewById(R.id.flashcard_details_title) as EnhancedTextInputEditText
         textInput = findViewById(R.id.flashcard_details_text) as EnhancedTextInputEditText
-        categoriesInput = findViewById(R.id.flashcard_details_categories) as EnhancedTextInputEditText
+        categoriesInput = findViewById(
+            R.id.flashcard_details_categories) as EnhancedTextInputEditText
         saveButton = findViewById(R.id.flashcard_details_save_button) as Button
 
         titleInput!!.addRequiredValidator(getString(R.string.validation_required))
@@ -186,11 +169,10 @@ class FlashcardDetailsActivity : BaseActivity()
             updateViewModelFromControls()
 
             saveViewModel(viewModel!!)
-        }
+    }
     }
 
-    private fun updateUI(): Unit
-    {
+    private fun updateUI(): Unit {
         updateControls()
 
         updateButton()
@@ -198,8 +180,7 @@ class FlashcardDetailsActivity : BaseActivity()
         invalidateOptionsMenu()
     }
 
-    private fun updateControls(): Unit
-    {
+    private fun updateControls(): Unit {
         val (flashcard, categories) = viewModel!!
 
         if (flashcard.title != null && flashcard.title!!.isNotEmpty())
@@ -214,16 +195,14 @@ class FlashcardDetailsActivity : BaseActivity()
             )
     }
 
-    private fun updateButton(): Unit
-    {
+    private fun updateButton(): Unit {
         saveButton!!.isEnabled = isValid()
     }
 
     private fun isValid()
         = titleInput!!.isValid() && textInput!!.isValid() && categoriesInput!!.isValid()
 
-    private fun showToast(stringResource: Int): Unit
-    {
+    private fun showToast(stringResource: Int): Unit {
         val toastMessage = getString(stringResource)
         val duration = Toast.LENGTH_SHORT
 
@@ -233,17 +212,14 @@ class FlashcardDetailsActivity : BaseActivity()
 
     //endregion
 
-    companion object
-    {
-        fun startActivity(context: Context)
-        {
+    companion object {
+        fun startActivity(context: Context) {
             val intent = Intent(context, FlashcardDetailsActivity::class.java)
 
             context.startActivity(intent)
         }
 
-        fun startActivityWithFlashcard(context: Context, flashcard: Flashcard)
-        {
+        fun startActivityWithFlashcard(context: Context, flashcard: Flashcard) {
             val intent = Intent(context, FlashcardDetailsActivity::class.java)
 
             intent.putExtra(IntentExtras.FLASHCARD_ID, flashcard.id)
@@ -251,9 +227,8 @@ class FlashcardDetailsActivity : BaseActivity()
             context.startActivity(intent)
         }
 
-        object IntentExtras
-        {
+        object IntentExtras {
             val FLASHCARD_ID = "FLASHCARD_ID"
-        }
+    }
     }
 }
