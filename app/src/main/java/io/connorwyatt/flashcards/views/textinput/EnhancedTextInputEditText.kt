@@ -13,7 +13,8 @@ import android.support.design.widget.TextInputLayout
 import android.util.AttributeSet
 import android.view.View
 
-class EnhancedTextInputEditText : TextInputEditText {
+open class EnhancedTextInputEditText : TextInputEditText {
+  private var isInitialised = false
   private var touched = false
   private var dirty = false
   private var valid = true
@@ -29,6 +30,10 @@ class EnhancedTextInputEditText : TextInputEditText {
 
   constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) :
     super(context, attrs, defStyleAttr)
+
+  init {
+    isInitialised = true
+  }
 
   private fun getParentTextInputLayout(): TextInputLayout? {
     var parent = parent
@@ -53,14 +58,16 @@ class EnhancedTextInputEditText : TextInputEditText {
   }
 
   override fun onTextChanged(text: CharSequence?, start: Int, lengthBefore: Int, lengthAfter: Int) {
-    super.onTextChanged(text, start, lengthBefore, lengthAfter)
+    if (isInitialised) {
+      super.onTextChanged(text, start, lengthBefore, lengthAfter)
 
-    if (lengthBefore != lengthAfter) {
-      dirty = true
+      if (lengthBefore != lengthAfter) {
+        dirty = true
 
-      runValidators(editableText.toString())
+        runValidators(editableText.toString())
 
-      callTextChangedListeners()
+        callTextChangedListeners()
+      }
     }
   }
 
