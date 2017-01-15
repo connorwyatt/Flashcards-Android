@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2016-2017 Connor Wyatt <connorwyatt1@gmail.com>.
+ *
+ * This file can not be copied and/or distributed without the express permission of Connor Wyatt.
+ */
+
 package io.connorwyatt.flashcards;
 
 import android.content.Context;
@@ -7,7 +13,7 @@ import android.support.test.runner.AndroidJUnit4;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Instrumentation test, which will execute on an Android device.

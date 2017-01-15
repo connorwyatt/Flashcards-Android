@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2016-2017 Connor Wyatt <connorwyatt1@gmail.com>.
+ *
+ * This file can not be copied and/or distributed without the express permission of Connor Wyatt.
+ */
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
@@ -8,8 +14,8 @@ android {
         applicationId "io.connorwyatt.flashcards"
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode 2
-        versionName "1.1"
+        versionCode 3
+        versionName "1.1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

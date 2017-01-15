@@ -1,8 +1,14 @@
+/*
+ * Copyright (c) 2016-2017 Connor Wyatt <connorwyatt1@gmail.com>.
+ *
+ * This file can not be copied and/or distributed without the express permission of Connor Wyatt.
+ */
+
 package io.connorwyatt.flashcards;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Example local unit test, which will execute on the development machine (host).

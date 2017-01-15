@@ -1,3 +1,9 @@
+<!--
+  ~ Copyright (c) 2016-2017 Connor Wyatt <connorwyatt1@gmail.com>.
+  ~
+  ~ This file can not be copied and/or distributed without the express permission of Connor Wyatt.
+  -->
+
 <resources>
     <!-- Example customization of dimensions originally defined in res/values/dimens.xml
          (such as screen margins) for screens with more than 820dp of available width. This

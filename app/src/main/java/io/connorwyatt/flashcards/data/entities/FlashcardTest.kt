@@ -1,44 +1,44 @@
+/*
+ * Copyright (c) 2016-2017 Connor Wyatt <connorwyatt1@gmail.com>.
+ *
+ * This file can not be copied and/or distributed without the express permission of Connor Wyatt.
+ */
+
 package io.connorwyatt.flashcards.data.entities
 
 import com.google.firebase.database.DataSnapshot
 import io.connorwyatt.flashcards.enums.Rating
 
-class FlashcardTest(data: DataSnapshot?) : BaseEntity(data)
-{
-    var rating: Rating?
+class FlashcardTest(data: DataSnapshot?) : BaseEntity(data) {
+  var rating: Rating?
 
-    init
-    {
-        val values = data?.value as? Map<*, *>
+  init {
+    val values = data?.value as? Map<*, *>
 
-        val ratingValue = values?.get(PropertyKeys.rating)?.let {
-            when (it)
-            {
-                is Long -> it.toDouble()
-                is Double -> it
-                else -> null
-            }
-        }
-
-        rating = ratingValue?.let { Rating.fromValue(it) }
+    val ratingValue = values?.get(PropertyKeys.rating)?.let {
+      when (it) {
+        is Long -> it.toDouble()
+        is Double -> it
+        else -> null
+      }
     }
 
-    override fun getType() = "flashcardTest"
+    rating = ratingValue?.let { Rating.fromValue(it) }
+  }
 
-    override fun serialise(): MutableMap<String, Any?>
-    {
-        val serialisedEntity = super.serialise()
+  override fun getType() = "flashcardTest"
 
-        rating?.let { serialisedEntity.put(PropertyKeys.rating, it.value) }
+  override fun serialise(): MutableMap<String, Any?> {
+    val serialisedEntity = super.serialise()
 
-        return serialisedEntity
+    rating?.let { serialisedEntity.put(PropertyKeys.rating, it.value) }
+
+    return serialisedEntity
+  }
+
+  companion object {
+    object PropertyKeys {
+      val rating = "rating"
     }
-
-    companion object
-    {
-        object PropertyKeys
-        {
-            val rating = "rating"
-        }
-    }
+  }
 }
