@@ -6,6 +6,8 @@
 
 package io.connorwyatt.flashcards.activities
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.LinearLayoutManager
@@ -37,6 +39,10 @@ class FlashcardListActivity : BaseActivity() {
   override fun onCreate(savedInstanceState: Bundle?): Unit {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_flashcard_list)
+  }
+
+  override fun onStart() {
+    super.onStart()
 
     initialiseUI()
   }
@@ -237,4 +243,12 @@ class FlashcardListActivity : BaseActivity() {
   }
 
   // endregion
+
+  companion object {
+    fun startActivity(context: Context) {
+      val intent = Intent(context, FlashcardListActivity::class.java)
+
+      context.startActivity(intent)
+    }
+  }
 }

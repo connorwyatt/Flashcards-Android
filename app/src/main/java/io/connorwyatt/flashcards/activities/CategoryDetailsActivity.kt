@@ -33,8 +33,14 @@ class CategoryDetailsActivity : BaseActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_category_details)
+  }
 
-    initialiseUI(intent.getStringExtra(IntentExtras.CATEGORY_ID))
+  override fun onStart() {
+    super.onStart()
+
+    val categoryId = intent.getStringExtra(IntentExtras.CATEGORY_ID)
+
+    initialiseUI(categoryId)
   }
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
