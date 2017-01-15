@@ -24,17 +24,17 @@ class AuthActivity : AppCompatActivity() {
   lateinit private var password: EnhancedTextInputEditText
   lateinit private var submitButton: Button
 
-  override fun onStart() {
-    super.onStart()
+  override fun onCreate(savedInstanceState: Bundle?): Unit {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_auth)
 
     if (auth.isSignedIn) {
       onSignIn()
     }
   }
 
-  override fun onCreate(savedInstanceState: Bundle?): Unit {
-    super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_auth)
+  override fun onStart() {
+    super.onStart()
 
     initUI()
 
@@ -133,6 +133,7 @@ class AuthActivity : AppCompatActivity() {
     email.isValid() && password.isValid()
 
   private fun onSignIn() {
+    FlashcardListActivity.startActivity(this)
     finish()
   }
 

@@ -34,6 +34,10 @@ class CategoryListActivity : BaseActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_category_list)
+  }
+
+  override fun onStart() {
+    super.onStart()
 
     initialiseUI()
   }
