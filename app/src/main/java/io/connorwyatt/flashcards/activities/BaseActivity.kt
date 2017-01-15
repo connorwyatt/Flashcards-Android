@@ -6,17 +6,19 @@
 
 package io.connorwyatt.flashcards.activities
 
+import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import io.connorwyatt.flashcards.helpers.auth.AuthHelper
 
 open class BaseActivity : AppCompatActivity() {
   protected val auth = AuthHelper.getInstance()
 
-  override fun onStart(): Unit {
-    super.onStart()
+  override fun onCreate(savedInstanceState: Bundle?): Unit {
+    super.onCreate(savedInstanceState)
 
     if (!auth.isSignedIn) {
       AuthActivity.startActivity(this)
+      finish()
     }
   }
 

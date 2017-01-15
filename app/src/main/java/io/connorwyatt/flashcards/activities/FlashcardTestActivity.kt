@@ -21,6 +21,10 @@ class FlashcardTestActivity : BaseActivity() {
   override fun onCreate(savedInstanceState: Bundle?): Unit {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_flashcard_test)
+  }
+
+  override fun onStart() {
+    super.onStart()
 
     val categoryId = intent.getStringExtra(IntentExtras.CATEGORY_ID)
 
