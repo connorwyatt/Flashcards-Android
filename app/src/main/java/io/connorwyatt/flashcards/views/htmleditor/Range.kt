@@ -6,4 +6,4 @@
 
 package io.connorwyatt.flashcards.views.htmleditor
 
-data class Selection(val start: Int, val end: Int)
+data class Range(val start: Int, val end: Int)

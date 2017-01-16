@@ -7,9 +7,6 @@
 package io.connorwyatt.flashcards.views.htmleditor
 
 import android.content.Context
-import android.graphics.Typeface
-import android.text.style.StyleSpan
-import android.text.style.UnderlineSpan
 import android.util.AttributeSet
 import io.connorwyatt.flashcards.views.htmleditor.utils.StyleUtils
 import io.connorwyatt.flashcards.views.textinput.EnhancedTextInputEditText
@@ -33,14 +30,29 @@ class HTMLEditor : EnhancedTextInputEditText {
       return
     }
 
-    val selection = Selection(selectionStart, selectionEnd)
+    val range = getRange()
 
     when (editorAction) {
-      HTMLEditorAction.BOLD -> StyleUtils.style(editableText, selection, StyleSpan(Typeface.BOLD))
-      HTMLEditorAction.ITALIC -> StyleUtils.style(editableText, selection,
-                                                  StyleSpan(Typeface.ITALIC))
-      HTMLEditorAction.UNDERLINE -> StyleUtils.style(editableText, selection, UnderlineSpan())
+      HTMLEditorAction.BOLD -> StyleUtils.bold(editableText, range)
+      HTMLEditorAction.ITALIC -> StyleUtils.italic(editableText, range)
+      HTMLEditorAction.UNDERLINE -> StyleUtils.underline(editableText, range)
     }
+  }
+
+  //endregion
+
+  //region Selection
+
+  private fun getRange(): Range {
+    var start = selectionStart
+    var end = selectionEnd
+
+    if (start > end) {
+      start = selectionEnd
+      end = selectionStart
+    }
+
+    return Range(start, end)
   }
 
   //endregion
