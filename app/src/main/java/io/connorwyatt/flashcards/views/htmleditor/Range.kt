@@ -6,4 +6,6 @@
 
 package io.connorwyatt.flashcards.views.htmleditor
 
-data class Range(val start: Int, val end: Int)
+data class Range(val start: Int, val end: Int) {
+  val size = end - start
+}
