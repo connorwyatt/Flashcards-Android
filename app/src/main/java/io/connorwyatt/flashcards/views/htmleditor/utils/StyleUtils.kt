@@ -21,7 +21,9 @@ object StyleUtils {
     val selectionBehaviour =
       if (selection.size > 0) SelectionBehaviour.NO_EXPAND else SelectionBehaviour.EXPAND_TO_WORD
 
-    addSpan(spannable, selection, selectionBehaviour, { StyleSpan(Typeface.BOLD) }, { selection ->
+    val modifiedSelection = expandSelection(spannable, selection, selectionBehaviour)
+
+    addSpan(spannable, modifiedSelection, { StyleSpan(Typeface.BOLD) }, { selection ->
       spannable.getSpans(selection.start - 1, selection.end + 1, StyleSpan::class.java)
         .filter { it.style == Typeface.BOLD }
     })
@@ -31,7 +33,9 @@ object StyleUtils {
     val selectionBehaviour =
       if (selection.size > 0) SelectionBehaviour.NO_EXPAND else SelectionBehaviour.EXPAND_TO_WORD
 
-    addSpan(spannable, selection, selectionBehaviour, { StyleSpan(Typeface.ITALIC) }, { selection ->
+    val modifiedSelection = expandSelection(spannable, selection, selectionBehaviour)
+
+    addSpan(spannable, modifiedSelection, { StyleSpan(Typeface.ITALIC) }, { selection ->
       spannable.getSpans(selection.start - 1, selection.end + 1, StyleSpan::class.java)
         .filter { it.style == Typeface.ITALIC }
     })
@@ -41,7 +45,9 @@ object StyleUtils {
     val selectionBehaviour =
       if (selection.size > 0) SelectionBehaviour.NO_EXPAND else SelectionBehaviour.EXPAND_TO_WORD
 
-    addSpan(spannable, selection, selectionBehaviour, { UnderlineSpan() }, { selection ->
+    val modifiedSelection = expandSelection(spannable, selection, selectionBehaviour)
+
+    addSpan(spannable, modifiedSelection, { UnderlineSpan() }, { selection ->
       spannable.getSpans(selection.start - 1, selection.end + 1, UnderlineSpan::class.java)
         .toList()
     })
@@ -55,24 +61,21 @@ object StyleUtils {
    * It the selection is completely contained within a span, the span will be removed.
    */
   private fun <T> addSpan(spannable: Spannable, selection: Range,
-                          selectionBehaviour: SelectionBehaviour,
                           what: () -> Any, getSpans: (Range) -> List<T>): Unit {
-    val modifiedSelection = expandSelection(spannable, selection, selectionBehaviour)
-
     var isRemove = false
-    var newSpanStart = modifiedSelection.start
-    var newSpanEnd = modifiedSelection.end
+    var newSpanStart = selection.start
+    var newSpanEnd = selection.end
 
-    getSpans(modifiedSelection).forEach {
+    getSpans(selection).forEach {
       val spanStart = spannable.getSpanStart(it)
       val spanEnd = spannable.getSpanEnd(it)
 
-      if (spanStart <= modifiedSelection.end || spanEnd >= modifiedSelection.start) {
+      if (spanStart <= selection.end || spanEnd >= selection.start) {
         if (spanStart < newSpanStart) newSpanStart = spanStart
         if (spanEnd > newSpanEnd) newSpanEnd = spanEnd
       }
 
-      if (spanStart <= modifiedSelection.start && spanEnd >= modifiedSelection.end) {
+      if (spanStart <= selection.start && spanEnd >= selection.end) {
         isRemove = true
         newSpanStart = spanStart
         newSpanEnd = spanEnd
@@ -82,12 +85,12 @@ object StyleUtils {
     }
 
     if (isRemove) {
-      if (newSpanStart != modifiedSelection.start)
+      if (newSpanStart != selection.start)
         spannable.setSpan(
-          what(), newSpanStart, modifiedSelection.start, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
-      if (modifiedSelection.end != newSpanEnd)
+          what(), newSpanStart, selection.start, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+      if (selection.end != newSpanEnd)
         spannable.setSpan(
-          what(), modifiedSelection.end, newSpanEnd, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+          what(), selection.end, newSpanEnd, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
     } else {
       spannable.setSpan(what(), newSpanStart, newSpanEnd, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
     }
