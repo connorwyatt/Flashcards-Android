@@ -7,6 +7,7 @@
 package io.connorwyatt.flashcards.views.htmleditor
 
 import android.content.Context
+import android.text.Html
 import android.util.AttributeSet
 import io.connorwyatt.flashcards.views.htmleditor.utils.StyleUtils
 import io.connorwyatt.flashcards.views.textinput.EnhancedTextInputEditText
@@ -22,6 +23,18 @@ class HTMLEditor : EnhancedTextInputEditText {
     super(context, attrs, defStyleAttr)
 
   //endregion
+
+  fun getHtml(): String {
+    val html = Html.toHtml(editableText)
+
+    return html.trim('\n')
+  }
+
+  fun setHtml(html: String): Unit {
+    val strippedHtml = Html.fromHtml(html).trim('\n')
+
+    setText(strippedHtml)
+  }
 
   //region Actions
 
