@@ -1,0 +1,51 @@
+/*
+ * Copyright (c) 2016-2017 Connor Wyatt <connorwyatt1@gmail.com>.
+ *
+ * This file can not be copied and/or distributed without the express permission of Connor Wyatt.
+ */
+
+package io.connorwyatt.flashcards.fragments
+
+import android.app.Fragment
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageButton
+import io.connorwyatt.flashcards.R
+
+class EditorToolbarFragment : Fragment() {
+  private val listeners = mutableListOf<(EditorToolbarAction) -> Unit>()
+
+  //region Fragment
+
+  override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
+                            savedInstanceState: Bundle?): View {
+    super.onCreateView(inflater, container, savedInstanceState)
+
+    val viewGroup = inflater?.inflate(
+      R.layout.fragment_editor_toolbar, container, false) as ViewGroup
+
+    initialiseButtons(viewGroup)
+
+    return viewGroup
+  }
+
+  //endregion
+
+  fun addListener(listener: (EditorToolbarAction) -> Unit): () -> Unit {
+    listeners.add(listener)
+
+    return { listeners.removeAll(listOf(listener)) }
+  }
+
+  private fun initialiseButtons(viewGroup: ViewGroup): Unit {
+    val boldButton = viewGroup.findViewById(R.id.fragment_editor_toolbar_bold) as ImageButton
+
+    boldButton.setOnClickListener { callListeners(EditorToolbarAction.BOLD) }
+  }
+
+  private fun callListeners(action: EditorToolbarAction): Unit {
+    listeners.forEach { it(action) }
+  }
+}

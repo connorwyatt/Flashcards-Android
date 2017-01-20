@@ -19,12 +19,10 @@ open class BaseActivity : AppCompatActivity() {
     if (!auth.isSignedIn) {
       AuthActivity.startActivity(this)
       finish()
+    } else {
+      onCreateAfterAuth(savedInstanceState)
     }
   }
 
-  fun signOut(): Unit {
-    auth.signOut()
-
-    recreate()
-  }
+  open fun onCreateAfterAuth(savedInstanceState: Bundle?): Unit {}
 }

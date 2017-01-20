@@ -26,6 +26,7 @@
         <activity
             android:name=".activities.FlashcardDetailsActivity"
             android:parentActivityName=".activities.FlashcardListActivity" />
+        <activity android:name=".activities.FlashcardContentsEditorActivity" />
         <activity android:name=".activities.FlashcardTestActivity" />
         <activity android:name=".activities.CategoryListActivity" />
         <activity
