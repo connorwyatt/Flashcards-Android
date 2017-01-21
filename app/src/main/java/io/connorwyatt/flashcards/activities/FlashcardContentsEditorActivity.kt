@@ -103,6 +103,10 @@ class FlashcardContentsEditorActivity : BaseActivity() {
       EditorToolbarAction.ALIGN_LEFT -> editor.setAlignLeft()
       EditorToolbarAction.ALIGN_CENTER -> editor.setAlignCenter()
       EditorToolbarAction.ALIGN_RIGHT -> editor.setAlignRight()
+      EditorToolbarAction.BULLET_LIST -> editor.setBullets()
+      EditorToolbarAction.NUMBER_LIST -> editor.setNumbers()
+      EditorToolbarAction.INDENT -> editor.setIndent()
+      EditorToolbarAction.OUTDENT -> editor.setOutdent()
     }
   }
 

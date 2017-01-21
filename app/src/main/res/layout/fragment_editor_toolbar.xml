@@ -55,6 +55,7 @@
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="56dp"
             android:layout_height="56dp"
+            android:layout_marginLeft="24dp"
             android:padding="12dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_format_align_left_white" />
@@ -76,6 +77,43 @@
             android:padding="12dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_format_align_right_white" />
+
+        <ImageButton
+            android:id="@+id/fragment_editor_toolbar_bullet_list"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginLeft="24dp"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_format_list_bulleted_white" />
+
+        <ImageButton
+            android:id="@+id/fragment_editor_toolbar_number_list"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_format_list_numbered_white" />
+
+        <ImageButton
+            android:id="@+id/fragment_editor_toolbar_indent"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_format_indent_increase_white" />
+
+        <ImageButton
+            android:id="@+id/fragment_editor_toolbar_outdent"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_format_indent_decrease_white" />
 
     </LinearLayout>
 

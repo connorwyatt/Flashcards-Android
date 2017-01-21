@@ -62,7 +62,11 @@ class EditorToolbarFragment : Fragment() {
       Pair(R.id.fragment_editor_toolbar_strikethrough, EditorToolbarAction.STRIKETHROUGH),
       Pair(R.id.fragment_editor_toolbar_align_left, EditorToolbarAction.ALIGN_LEFT),
       Pair(R.id.fragment_editor_toolbar_align_center, EditorToolbarAction.ALIGN_CENTER),
-      Pair(R.id.fragment_editor_toolbar_align_right, EditorToolbarAction.ALIGN_RIGHT)
+      Pair(R.id.fragment_editor_toolbar_align_right, EditorToolbarAction.ALIGN_RIGHT),
+      Pair(R.id.fragment_editor_toolbar_bullet_list, EditorToolbarAction.BULLET_LIST),
+      Pair(R.id.fragment_editor_toolbar_number_list, EditorToolbarAction.NUMBER_LIST),
+      Pair(R.id.fragment_editor_toolbar_indent, EditorToolbarAction.INDENT),
+      Pair(R.id.fragment_editor_toolbar_outdent, EditorToolbarAction.OUTDENT)
     )
   }
 }
