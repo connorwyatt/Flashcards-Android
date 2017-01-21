@@ -100,6 +100,9 @@ class FlashcardContentsEditorActivity : BaseActivity() {
       EditorToolbarAction.ITALIC -> editor.setItalic()
       EditorToolbarAction.UNDERLINE -> editor.setUnderline()
       EditorToolbarAction.STRIKETHROUGH -> editor.setStrikeThrough()
+      EditorToolbarAction.ALIGN_LEFT -> editor.setAlignLeft()
+      EditorToolbarAction.ALIGN_CENTER -> editor.setAlignCenter()
+      EditorToolbarAction.ALIGN_RIGHT -> editor.setAlignRight()
     }
   }
 

@@ -50,6 +50,33 @@
             android:scaleType="fitCenter"
             android:src="@drawable/ic_strikethrough_s_white" />
 
+        <ImageButton
+            android:id="@+id/fragment_editor_toolbar_align_left"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_format_align_left_white" />
+
+        <ImageButton
+            android:id="@+id/fragment_editor_toolbar_align_center"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_format_align_center_white" />
+
+        <ImageButton
+            android:id="@+id/fragment_editor_toolbar_align_right"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_format_align_right_white" />
+
     </LinearLayout>
 
 </HorizontalScrollView>

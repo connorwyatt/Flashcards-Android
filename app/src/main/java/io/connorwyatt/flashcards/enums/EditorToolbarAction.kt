@@ -10,5 +10,8 @@ enum class EditorToolbarAction {
   BOLD,
   ITALIC,
   UNDERLINE,
-  STRIKETHROUGH
+  STRIKETHROUGH,
+  ALIGN_LEFT,
+  ALIGN_CENTER,
+  ALIGN_RIGHT
 }
