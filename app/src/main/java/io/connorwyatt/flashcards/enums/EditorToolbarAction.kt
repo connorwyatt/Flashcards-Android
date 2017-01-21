@@ -4,8 +4,11 @@
  * This file can not be copied and/or distributed without the express permission of Connor Wyatt.
  */
 
-package io.connorwyatt.flashcards.fragments
+package io.connorwyatt.flashcards.enums
 
 enum class EditorToolbarAction {
-  BOLD
+  BOLD,
+  ITALIC,
+  UNDERLINE,
+  STRIKETHROUGH
 }

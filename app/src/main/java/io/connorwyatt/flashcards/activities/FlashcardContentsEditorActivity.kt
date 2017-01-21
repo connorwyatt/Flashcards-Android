@@ -12,7 +12,7 @@ import android.os.Bundle
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import io.connorwyatt.flashcards.R
-import io.connorwyatt.flashcards.fragments.EditorToolbarAction
+import io.connorwyatt.flashcards.enums.EditorToolbarAction
 import io.connorwyatt.flashcards.fragments.EditorToolbarFragment
 import jp.wasabeef.richeditor.RichEditor
 
@@ -97,6 +97,9 @@ class FlashcardContentsEditorActivity : BaseActivity() {
   private fun applyStyle(editorAction: EditorToolbarAction): Unit {
     when (editorAction) {
       EditorToolbarAction.BOLD -> editor.setBold()
+      EditorToolbarAction.ITALIC -> editor.setItalic()
+      EditorToolbarAction.UNDERLINE -> editor.setUnderline()
+      EditorToolbarAction.STRIKETHROUGH -> editor.setStrikeThrough()
     }
   }
 

@@ -23,6 +23,33 @@
             android:scaleType="fitCenter"
             android:src="@drawable/ic_format_bold_white" />
 
+        <ImageButton
+            android:id="@+id/fragment_editor_toolbar_italic"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_format_italic_white" />
+
+        <ImageButton
+            android:id="@+id/fragment_editor_toolbar_underline"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_format_underlined_white" />
+
+        <ImageButton
+            android:id="@+id/fragment_editor_toolbar_strikethrough"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_strikethrough_s_white" />
+
     </LinearLayout>
 
 </HorizontalScrollView>

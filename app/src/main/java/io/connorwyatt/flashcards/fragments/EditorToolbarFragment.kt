@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import io.connorwyatt.flashcards.R
+import io.connorwyatt.flashcards.enums.EditorToolbarAction
 
 class EditorToolbarFragment : Fragment() {
   private val listeners = mutableListOf<(EditorToolbarAction) -> Unit>()
@@ -40,12 +41,25 @@ class EditorToolbarFragment : Fragment() {
   }
 
   private fun initialiseButtons(viewGroup: ViewGroup): Unit {
-    val boldButton = viewGroup.findViewById(R.id.fragment_editor_toolbar_bold) as ImageButton
+    buttonActions.forEach {
+      val (id, action) = it
 
-    boldButton.setOnClickListener { callListeners(EditorToolbarAction.BOLD) }
+      val button = viewGroup.findViewById(id) as ImageButton
+
+      button.setOnClickListener { callListeners(action) }
+    }
   }
 
   private fun callListeners(action: EditorToolbarAction): Unit {
     listeners.forEach { it(action) }
+  }
+
+  companion object {
+    private val buttonActions = mapOf<Int, EditorToolbarAction>(
+      Pair(R.id.fragment_editor_toolbar_bold, EditorToolbarAction.BOLD),
+      Pair(R.id.fragment_editor_toolbar_italic, EditorToolbarAction.ITALIC),
+      Pair(R.id.fragment_editor_toolbar_underline, EditorToolbarAction.UNDERLINE),
+      Pair(R.id.fragment_editor_toolbar_strikethrough, EditorToolbarAction.STRIKETHROUGH)
+    )
   }
 }
