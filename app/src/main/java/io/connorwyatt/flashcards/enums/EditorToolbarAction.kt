@@ -17,5 +17,7 @@ enum class EditorToolbarAction {
   BULLET_LIST,
   NUMBER_LIST,
   INDENT,
-  OUTDENT
+  OUTDENT,
+  TEXT_COLOR,
+  BACKGROUND_COLOR
 }

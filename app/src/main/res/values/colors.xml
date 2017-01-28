@@ -24,4 +24,25 @@
     <color name="colorBackgroundDark">#444444</color>
     <color name="colorBackgroundDarker">#333333</color>
     <color name="colorFadedEdge">#11000000</color>
+    <color name="colorPaletteTextBlack">#212121</color>
+    <color name="colorPaletteTextDarkGrey">#757575</color>
+    <color name="colorPaletteTextMediumGrey">#9e9e9e</color>
+    <color name="colorPaletteTextLightGrey">#e0e0e0</color>
+    <color name="colorPaletteTextWhite">#ffffff</color>
+    <color name="colorPaletteTextGreen">#2e7d32</color>
+    <color name="colorPaletteTextRed">#C62828</color>
+    <color name="colorPaletteTextOrange">#D84315</color>
+    <color name="colorPaletteTextYellow">#F9A825</color>
+    <color name="colorPaletteTextBlue">#1565C0</color>
+    <color name="colorPaletteTextPurple">#4527A0</color>
+    <color name="colorPaletteTextPink">#AD1457</color>
+    <color name="colorPaletteTextCyan">#00838F</color>
+    <color name="colorPaletteBackgroundGreen">#81c784</color>
+    <color name="colorPaletteBackgroundRed">#e57373</color>
+    <color name="colorPaletteBackgroundOrange">#ff8a65</color>
+    <color name="colorPaletteBackgroundYellow">#ffee58</color>
+    <color name="colorPaletteBackgroundBlue">#90caf9</color>
+    <color name="colorPaletteBackgroundPurple">#b388ff</color>
+    <color name="colorPaletteBackgroundPink">#f48fb1</color>
+    <color name="colorPaletteBackgroundCyan">#80deea</color>
 </resources>

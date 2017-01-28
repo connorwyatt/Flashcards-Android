@@ -52,4 +52,5 @@
     <string name="activity_auth_register_email_taken">Email already has an account associated</string>
     <string name="activity_auth_login_incorrect_password">Incorrect password entered</string>
     <string name="activity_auth_unknown_error">An error occurred</string>
+    <string name="color_picker_title">Color picker</string>
 </resources>

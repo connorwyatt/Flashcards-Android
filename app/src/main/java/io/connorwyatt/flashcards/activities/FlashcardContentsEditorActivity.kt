@@ -83,6 +83,7 @@ class FlashcardContentsEditorActivity : BaseActivity() {
     }
 
     editor.setPadding(16, 16, 16, 16)
+    editor.setEditorFontColor(R.color.colorPaletteTextBlack)
 
     val fragment = EditorToolbarFragment()
 
@@ -91,10 +92,12 @@ class FlashcardContentsEditorActivity : BaseActivity() {
       .add(R.id.flashcard_contents_editor_frame, fragment)
       .commit()
 
-    fragment.addListener { applyStyle(it) }
+    fragment.addListener { action, data ->
+      applyStyle(action, data)
+    }
   }
 
-  private fun applyStyle(editorAction: EditorToolbarAction): Unit {
+  private fun applyStyle(editorAction: EditorToolbarAction, data: Any?): Unit {
     when (editorAction) {
       EditorToolbarAction.BOLD -> editor.setBold()
       EditorToolbarAction.ITALIC -> editor.setItalic()
@@ -107,6 +110,8 @@ class FlashcardContentsEditorActivity : BaseActivity() {
       EditorToolbarAction.NUMBER_LIST -> editor.setNumbers()
       EditorToolbarAction.INDENT -> editor.setIndent()
       EditorToolbarAction.OUTDENT -> editor.setOutdent()
+      EditorToolbarAction.TEXT_COLOR -> editor.setTextColor(data as Int)
+      EditorToolbarAction.BACKGROUND_COLOR -> editor.setTextBackgroundColor(data as Int)
     }
   }
 
