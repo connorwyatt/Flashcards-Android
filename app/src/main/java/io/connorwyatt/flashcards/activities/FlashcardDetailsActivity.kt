@@ -13,31 +13,29 @@ import android.support.v4.app.NavUtils
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.data.entities.Category
 import io.connorwyatt.flashcards.data.entities.Flashcard
 import io.connorwyatt.flashcards.data.viewmodels.FlashcardViewModel
+import io.connorwyatt.flashcards.views.richeditorenhanced.RichEditorEnhanced
 import io.connorwyatt.flashcards.views.textinput.EnhancedTextInputEditText
 import io.reactivex.Observable
 
 class FlashcardDetailsActivity : BaseActivity() {
   private var viewModel: FlashcardViewModel? = null
   private var titleInput: EnhancedTextInputEditText? = null
-  private var textInput: EnhancedTextInputEditText? = null
+  private var contentPreview: RichEditorEnhanced? = null
+  private var contentPreviewEditButton: Button? = null
   private var categoriesInput: EnhancedTextInputEditText? = null
   private var saveButton: Button? = null
 
   //region Activity
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
+  override fun onCreateAfterAuth(savedInstanceState: Bundle?) {
     setContentView(R.layout.activity_flashcard_details)
-  }
-
-  override fun onStart() {
-    super.onStart()
 
     val flashcardId = intent.getStringExtra(IntentExtras.FLASHCARD_ID)
 
@@ -66,6 +64,16 @@ class FlashcardDetailsActivity : BaseActivity() {
     }
   }
 
+  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    super.onActivityResult(requestCode, resultCode, data)
+
+    when (requestCode) {
+      RequestCodes.CONTENT_EDITOR -> {
+        contentPreview!!.html = data?.getStringExtra("HTML")
+      }
+    }
+  }
+
   //endregion
 
   //region Data
@@ -76,7 +84,7 @@ class FlashcardDetailsActivity : BaseActivity() {
 
   private fun updateViewModelFromControls(): Unit {
     viewModel!!.flashcard.title = titleInput!!.text.toString()
-    viewModel!!.flashcard.text = textInput!!.text.toString()
+    viewModel!!.flashcard.text = contentPreview!!.html
 
     val categories = parseCategoriesString(categoriesInput!!.text.toString())
 
@@ -142,7 +150,9 @@ class FlashcardDetailsActivity : BaseActivity() {
 
   private fun setUpControls(): Unit {
     titleInput = findViewById(R.id.flashcard_details_title) as EnhancedTextInputEditText
-    textInput = findViewById(R.id.flashcard_details_text) as EnhancedTextInputEditText
+    contentPreview = findViewById(R.id.flashcard_details_content_preview) as RichEditorEnhanced
+    contentPreviewEditButton =
+      findViewById(R.id.flashcard_details_content_preview_edit_button) as Button
     categoriesInput = findViewById(
       R.id.flashcard_details_categories) as EnhancedTextInputEditText
     saveButton = findViewById(R.id.flashcard_details_save_button) as Button
@@ -153,8 +163,14 @@ class FlashcardDetailsActivity : BaseActivity() {
     })
     titleInput!!.addTextChangedListener { updateButton() }
 
-    textInput!!.addRequiredValidator(getString(R.string.validation_required))
-    textInput!!.addTextChangedListener { updateButton() }
+    contentPreview!!.setOnTouchListener { view, motionEvent -> true }
+    contentPreview!!.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
+    //    contentPreview!!.addRequiredValidator(getString(R.string.validation_required))
+    //    contentPreview!!.addTextChangedListener { updateButton() }
+    contentPreviewEditButton!!.setOnClickListener {
+      FlashcardContentsEditorActivity
+        .startActivityForResult(this, RequestCodes.CONTENT_EDITOR, contentPreview!!.html)
+    }
 
     categoriesInput!!.addCustomValidator(
       validator@ { value ->
@@ -193,7 +209,7 @@ class FlashcardDetailsActivity : BaseActivity() {
       titleInput!!.setText(flashcard.title)
 
     if (flashcard.text != null && flashcard.text!!.isNotEmpty())
-      textInput!!.setText(flashcard.text)
+      contentPreview!!.html = flashcard.text
 
     if (categories.isNotEmpty())
       categoriesInput!!.setText(
@@ -206,7 +222,7 @@ class FlashcardDetailsActivity : BaseActivity() {
   }
 
   private fun isValid()
-    = titleInput!!.isValid() && textInput!!.isValid() && categoriesInput!!.isValid()
+    = titleInput!!.isValid() && /*contentPreview!!.isValid() && */categoriesInput!!.isValid()
 
   private fun showToast(stringResource: Int): Unit {
     val toastMessage = getString(stringResource)
@@ -231,6 +247,10 @@ class FlashcardDetailsActivity : BaseActivity() {
       intent.putExtra(IntentExtras.FLASHCARD_ID, flashcard.id)
 
       context.startActivity(intent)
+    }
+
+    private object RequestCodes {
+      val CONTENT_EDITOR = 1
     }
 
     object IntentExtras {
