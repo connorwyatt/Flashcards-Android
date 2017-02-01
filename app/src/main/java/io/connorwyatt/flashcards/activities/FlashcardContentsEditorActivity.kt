@@ -74,6 +74,8 @@ class FlashcardContentsEditorActivity : BaseActivity() {
   private fun initialiseEditor(savedInstanceState: Bundle?): Unit {
     editor = findViewById(R.id.flashcard_contents_editor_editor) as RichEditorEnhanced
 
+    editor.setPadding(16, 8, 16, 8)
+
     intent.getStringExtra(bundleKeys.HTML)
 
     if (savedInstanceState?.getString(bundleKeys.HTML) != null) {
