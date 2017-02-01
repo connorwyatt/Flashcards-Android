@@ -25,7 +25,7 @@
         android:layout_marginTop="?attr/actionBarSize"
         android:orientation="vertical">
 
-        <jp.wasabeef.richeditor.RichEditor
+        <io.connorwyatt.flashcards.views.richeditorenhanced.RichEditorEnhanced
             android:id="@+id/flashcard_contents_editor_editor"
             android:layout_width="match_parent"
             android:layout_height="0dp"

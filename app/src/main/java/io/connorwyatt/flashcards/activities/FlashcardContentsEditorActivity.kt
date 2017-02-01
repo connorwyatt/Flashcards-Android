@@ -14,10 +14,10 @@ import android.view.MenuItem
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.enums.EditorToolbarAction
 import io.connorwyatt.flashcards.fragments.EditorToolbarFragment
-import jp.wasabeef.richeditor.RichEditor
+import io.connorwyatt.flashcards.views.richeditorenhanced.RichEditorEnhanced
 
 class FlashcardContentsEditorActivity : BaseActivity() {
-  lateinit private var editor: RichEditor
+  lateinit private var editor: RichEditorEnhanced
 
   //region Activity
 
@@ -72,7 +72,7 @@ class FlashcardContentsEditorActivity : BaseActivity() {
   }
 
   private fun initialiseEditor(savedInstanceState: Bundle?): Unit {
-    editor = findViewById(R.id.flashcard_contents_editor_editor) as RichEditor
+    editor = findViewById(R.id.flashcard_contents_editor_editor) as RichEditorEnhanced
 
     intent.getStringExtra(bundleKeys.HTML)
 
@@ -81,9 +81,6 @@ class FlashcardContentsEditorActivity : BaseActivity() {
     } else if (intent.getStringExtra(bundleKeys.HTML) != null) {
       editor.html = intent.getStringExtra(bundleKeys.HTML)
     }
-
-    editor.setPadding(16, 16, 16, 16)
-    editor.setEditorFontColor(R.color.colorPaletteTextBlack)
 
     val fragment = EditorToolbarFragment()
 
