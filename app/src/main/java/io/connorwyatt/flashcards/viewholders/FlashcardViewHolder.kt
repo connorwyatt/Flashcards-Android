@@ -16,6 +16,7 @@ import android.widget.TextView
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.data.viewmodels.FlashcardViewModel
 import io.connorwyatt.flashcards.views.progressbar.ProgressBar
+import io.connorwyatt.flashcards.views.richeditorenhanced.RichEditorEnhanced
 
 class FlashcardViewHolder constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
   private var viewModel: FlashcardViewModel? = null
@@ -24,7 +25,7 @@ class FlashcardViewHolder constructor(itemView: View) : RecyclerView.ViewHolder(
   private val bodyLayout = itemView.findViewById(R.id.flashcard_card_body_layout) as LinearLayout
   private val progress = itemView.findViewById(R.id.flashcard_card_rating) as ProgressBar
   private val titleText = itemView.findViewById(R.id.flashcard_card_title) as TextView
-  private val textText = itemView.findViewById(R.id.flashcard_card_text) as TextView
+  private val contentPreview = itemView.findViewById(R.id.flashcard_card_content_preview) as RichEditorEnhanced
   private val categoriesText = itemView.findViewById(R.id.flashcard_card_categories) as TextView
 
   fun setData(viewModel: FlashcardViewModel): Unit {
@@ -54,13 +55,16 @@ class FlashcardViewHolder constructor(itemView: View) : RecyclerView.ViewHolder(
     progress.setProgress(progressValue)
 
     titleText.text = flashcard.title
-    textText.text = flashcard.text
+    contentPreview.html = flashcard.text
 
     if (categories.isNotEmpty()) {
       categoriesText.text = categories.map { it.name }.joinToString(separator = ", ")
     } else {
       bodyLayout.removeView(categoriesText)
     }
+
+    contentPreview.setOnTouchListener { view, motionEvent -> true }
+    contentPreview.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
   }
 
   fun setOnCardClickListener(listener: (FlashcardViewModel) -> Unit): Unit {
