@@ -34,14 +34,10 @@ class FlashcardDetailsActivity : BaseActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_flashcard_details)
-  }
-
-  override fun onStart() {
-    super.onStart()
 
     val flashcardId = intent.getStringExtra(IntentExtras.FLASHCARD_ID)
 
-    initialiseUI(flashcardId)
+    initialiseUI(flashcardId, savedInstanceState)
   }
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -64,6 +60,14 @@ class FlashcardDetailsActivity : BaseActivity() {
       }
       else -> super.onOptionsItemSelected(item)
     }
+  }
+
+  override fun onSaveInstanceState(outState: Bundle) {
+    outState.putString(SavedInstanceState.TITLE, titleInput!!.text.toString())
+    outState.putString(SavedInstanceState.TEXT, textInput!!.text.toString())
+    outState.putString(SavedInstanceState.CATEGORIES, categoriesInput!!.text.toString())
+
+    super.onSaveInstanceState(outState)
   }
 
   //endregion
@@ -114,19 +118,23 @@ class FlashcardDetailsActivity : BaseActivity() {
 
   //region UI
 
-  private fun initialiseUI(flashcardId: String?): Unit {
-    if (flashcardId != null) {
-      getData(flashcardId).subscribe {
-        viewModel = it
-        updateUI()
-      }
-    } else {
-      viewModel = FlashcardViewModel(Flashcard(null), listOf())
-    }
-
+  private fun initialiseUI(flashcardId: String?, savedInstanceState: Bundle?): Unit {
     setUpToolbar()
 
     setUpControls()
+
+    if (flashcardId != null) {
+      getData(flashcardId).subscribe {
+        viewModel = mergeModelAndSavedInstanceState(it, savedInstanceState)
+        updateUI()
+      }
+    } else {
+      viewModel = mergeModelAndSavedInstanceState(
+        FlashcardViewModel(Flashcard(null), listOf()),
+        savedInstanceState
+      )
+      updateUI()
+    }
 
     updateButton()
   }
@@ -205,6 +213,23 @@ class FlashcardDetailsActivity : BaseActivity() {
     saveButton!!.isEnabled = isValid()
   }
 
+  private fun mergeModelAndSavedInstanceState(
+    flashcardViewModel: FlashcardViewModel, savedInstanceState: Bundle?): FlashcardViewModel {
+    savedInstanceState?.let {
+      flashcardViewModel.flashcard.title = savedInstanceState.getString(SavedInstanceState.TITLE)
+      flashcardViewModel.flashcard.text = savedInstanceState.getString(SavedInstanceState.TEXT)
+
+      val categories = parseCategoriesString(
+        savedInstanceState.getString(SavedInstanceState.CATEGORIES))
+
+      flashcardViewModel.categories = categories
+
+      flashcardViewModel
+    }
+
+    return flashcardViewModel
+  }
+
   private fun isValid()
     = titleInput!!.isValid() && textInput!!.isValid() && categoriesInput!!.isValid()
 
@@ -235,6 +260,12 @@ class FlashcardDetailsActivity : BaseActivity() {
 
     object IntentExtras {
       val FLASHCARD_ID = "FLASHCARD_ID"
+    }
+
+    object SavedInstanceState {
+      val TITLE = "TITLE";
+      val TEXT = "TEXT";
+      val CATEGORIES = "CATEGORIES";
     }
   }
 }
