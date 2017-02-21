@@ -181,12 +181,21 @@ abstract class BaseDataSource {
 
         val updates = getUpdates(reference, user, reference.key, resource)
 
-        getUserDataQuery(userId = user.uid).updateChildren(updates)
-          .addOnFailureListener { observer.onError(it) }
-          .addOnSuccessListener {
+        isOnline().subscribe { isOnline ->
+          val updateChildren = getUserDataQuery(userId = user.uid).updateChildren(updates)
+
+          if (isOnline) {
+            updateChildren
+              .addOnFailureListener { observer.onError(it) }
+              .addOnSuccessListener {
+                observer.onNext(reference.key)
+                observer.onComplete()
+              }
+          } else {
             observer.onNext(reference.key)
             observer.onComplete()
           }
+        }
       }
     }
 
@@ -210,12 +219,21 @@ abstract class BaseDataSource {
 
         updates.putAll(getRelationshipUpdates(relationships, resource, ref.key, null))
 
-        getUserDataQuery(userId = user.uid).updateChildren(updates)
-          .addOnFailureListener { observer.onError(it) }
-          .addOnSuccessListener {
+        isOnline().subscribe { isOnline ->
+          val updateChildren = getUserDataQuery(userId = user.uid).updateChildren(updates)
+
+          if (isOnline) {
+            updateChildren
+              .addOnFailureListener { observer.onError(it) }
+              .addOnSuccessListener {
+                observer.onNext(true)
+                observer.onComplete()
+              }
+          } else {
             observer.onNext(true)
             observer.onComplete()
           }
+        }
       }
     }
 
@@ -294,5 +312,13 @@ abstract class BaseDataSource {
     )
 
     return relationshipPath.joinToString(separator = "/")
+  }
+
+  private fun isOnline(): Observable<Boolean> {
+    return executeQuerySingle(
+      { user -> database.getReference(".info/connected") },
+      { Observable.just(it.value as Boolean) },
+      false
+    )
   }
 }
