@@ -33,14 +33,10 @@ class CategoryDetailsActivity : BaseActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_category_details)
-  }
-
-  override fun onStart() {
-    super.onStart()
 
     val categoryId = intent.getStringExtra(IntentExtras.CATEGORY_ID)
 
-    initialiseUI(categoryId)
+    initialiseUI(categoryId, savedInstanceState)
   }
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -63,6 +59,12 @@ class CategoryDetailsActivity : BaseActivity() {
         return super.onOptionsItemSelected(item)
       }
     }
+  }
+
+  override fun onSaveInstanceState(outState: Bundle) {
+    outState.putString(SavedInstanceState.NAME, nameInput.text.toString())
+
+    super.onSaveInstanceState(outState)
   }
 
   //endregion
@@ -110,14 +112,17 @@ class CategoryDetailsActivity : BaseActivity() {
 
   //region UI
 
-  private fun initialiseUI(categoryId: String?): Unit {
+  private fun initialiseUI(categoryId: String?, savedInstanceState: Bundle?): Unit {
     if (categoryId != null) {
       getData(categoryId).subscribe {
-        category = it
+        category = mergeModelAndSavedInstanceState(it, savedInstanceState)
         updateUI()
       }
     } else {
-      category = Category(null)
+      category = mergeModelAndSavedInstanceState(
+        Category(null),
+        savedInstanceState
+      )
     }
 
     initialiseToolbar()
@@ -163,6 +168,15 @@ class CategoryDetailsActivity : BaseActivity() {
 
   private fun updateButton(): Unit {
     saveButton.isEnabled = isValid()
+  }
+
+  private fun mergeModelAndSavedInstanceState(
+    category: Category, savedInstanceState: Bundle?): Category {
+    savedInstanceState?.let {
+      category.name = savedInstanceState.getString(SavedInstanceState.NAME)
+    }
+
+    return category
   }
 
   private fun isValid() = nameInput.isValid()
@@ -214,6 +228,10 @@ class CategoryDetailsActivity : BaseActivity() {
 
     object IntentExtras {
       val CATEGORY_ID = "CATEGORY_ID"
+    }
+
+    object SavedInstanceState {
+      val NAME = "NAME"
     }
   }
 }
