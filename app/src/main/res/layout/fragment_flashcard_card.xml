@@ -33,6 +33,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
+                    android:fontFamily="sans-serif-light"
                     android:lines="1"
                     android:textColor="@color/colorTextInvert"
                     android:textSize="30sp" />
