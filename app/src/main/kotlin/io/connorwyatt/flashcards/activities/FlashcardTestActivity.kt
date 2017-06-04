@@ -22,9 +22,9 @@ class FlashcardTestActivity : BaseActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_flashcard_test)
 
-    val categoryId = intent.getStringExtra(IntentExtras.CATEGORY_ID)
+    val tagId = intent.getStringExtra(IntentExtras.TAG_ID)
 
-    initialiseFragment(categoryId)
+    initialiseFragment(tagId)
   }
 
   override fun onBackPressed() {
@@ -35,7 +35,7 @@ class FlashcardTestActivity : BaseActivity() {
 
   //region UI
 
-  private fun initialiseFragment(categoryId: String?): Unit {
+  private fun initialiseFragment(tagId: String?): Unit {
     var fragment = fragmentManager.findFragmentByTag(FRAGMENT_TAG) as FlashcardTestFragment?
 
     if (fragment == null) {
@@ -44,7 +44,7 @@ class FlashcardTestActivity : BaseActivity() {
       val arguments = Bundle()
 
       arguments.putString(
-        FlashcardTestFragment.Companion.ArgumentKeys.CATEGORY_ID, categoryId)
+        FlashcardTestFragment.Companion.ArgumentKeys.TAG_ID, tagId)
 
       fragment.arguments = arguments
 
@@ -68,9 +68,9 @@ class FlashcardTestActivity : BaseActivity() {
       context.startActivity(intent)
     }
 
-    fun startActivityWithCategoryFilter(context: Context, categoryId: String) {
+    fun startActivityWithTagFilter(context: Context, tagId: String) {
       val extras = Bundle()
-      extras.putString(IntentExtras.CATEGORY_ID, categoryId)
+      extras.putString(IntentExtras.TAG_ID, tagId)
 
       val intent = Intent(context, FlashcardTestActivity::class.java)
       intent.putExtras(extras)
@@ -79,7 +79,7 @@ class FlashcardTestActivity : BaseActivity() {
     }
 
     object IntentExtras {
-      val CATEGORY_ID = "CATEGORY_ID"
+      val TAG_ID = "TAG_ID"
     }
   }
 }

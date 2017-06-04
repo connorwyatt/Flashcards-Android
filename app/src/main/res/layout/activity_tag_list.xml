@@ -7,10 +7,10 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/category_list_coordinator_layout"
+    android:id="@+id/tag_list_coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.CategoryListActivity">
+    tools:context=".activities.TagListActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/main.appbar"
@@ -21,7 +21,7 @@
         android:theme="@style/AppTheme.AppBar">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/category_list_toolbar"
+            android:id="@+id/tag_list_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:elevation="4dp"
@@ -29,13 +29,13 @@
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.widget.NestedScrollView
-        android:id="@+id/category_list_scroll_view"
+        android:id="@+id/tag_list_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/category_list_recycler"
+            android:id="@+id/tag_list_recycler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:nestedScrollingEnabled="false"
@@ -43,7 +43,7 @@
     </android.support.v4.widget.NestedScrollView>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/category_list_add_button"
+        android:id="@+id/tag_list_add_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
@@ -52,7 +52,7 @@
         android:layout_marginRight="16dp"
         android:clickable="true"
         app:fabSize="normal"
-        app:layout_anchor="@id/category_list_scroll_view"
+        app:layout_anchor="@id/tag_list_scroll_view"
         app:layout_anchorGravity="bottom|right|end"
         app:srcCompat="@drawable/ic_add_white" />
 </android.support.design.widget.CoordinatorLayout>

@@ -50,9 +50,9 @@ class FlashcardTestFragment : Fragment() {
     viewGroup = inflater.inflate(
       R.layout.fragment_flashcard_test, container, false) as ViewGroup
 
-    val categoryId = arguments.getString(ArgumentKeys.CATEGORY_ID)
+    val tagId = arguments.getString(ArgumentKeys.TAG_ID)
 
-    initialiseUI(categoryId)
+    initialiseUI(tagId)
 
     updateUI(false)
 
@@ -101,9 +101,9 @@ class FlashcardTestFragment : Fragment() {
 
   fun getPerformanceObservable(): Observable<PerformanceViewModel> = performanceSubject
 
-  private fun getData(categoryId: String?): Observable<List<Flashcard>> {
-    return if (categoryId !== null)
-      FlashcardService.getByCategory(categoryId)
+  private fun getData(tagId: String?): Observable<List<Flashcard>> {
+    return if (tagId !== null)
+      FlashcardService.getByTag(tagId)
     else
       FlashcardService.getAll()
   }
@@ -122,17 +122,17 @@ class FlashcardTestFragment : Fragment() {
 
   //region UI
 
-  private fun initialiseUI(categoryId: String?): Unit {
-    initialisePager(categoryId)
+  private fun initialiseUI(tagId: String?): Unit {
+    initialisePager(tagId)
 
     initialiseProgressBar()
   }
 
-  private fun initialisePager(categoryId: String?): Unit {
+  private fun initialisePager(tagId: String?): Unit {
     flashcardTestPagerAdapter = FlashcardTestPagerAdapter(fragmentManager)
 
     if (flashcards == null) {
-      getData(categoryId).subscribe {
+      getData(tagId).subscribe {
         flashcards = it
 
         flashcardTestPagerAdapter!!.setData(it)
@@ -194,7 +194,7 @@ class FlashcardTestFragment : Fragment() {
 
   companion object {
     object ArgumentKeys {
-      val CATEGORY_ID = "CATEGORY_ID"
+      val TAG_ID = "TAG_ID"
     }
   }
 }

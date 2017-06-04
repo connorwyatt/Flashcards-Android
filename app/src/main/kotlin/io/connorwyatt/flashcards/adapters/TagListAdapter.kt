@@ -10,14 +10,14 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import io.connorwyatt.flashcards.R
-import io.connorwyatt.flashcards.data.viewmodels.CategoryViewModel
-import io.connorwyatt.flashcards.viewholders.CategoryViewHolder
+import io.connorwyatt.flashcards.data.viewmodels.TagViewModel
+import io.connorwyatt.flashcards.viewholders.TagViewHolder
 
-class CategoryListAdapter : RecyclerView.Adapter<CategoryViewHolder>() {
-  private var viewModels: List<CategoryViewModel>? = null
+class TagListAdapter : RecyclerView.Adapter<TagViewHolder>() {
+  private var viewModels: List<TagViewModel>? = null
   private val idMap: MutableList<String> = mutableListOf()
-  private val onEditListeners: MutableList<(CategoryViewModel) -> Unit> = mutableListOf()
-  private val onDeleteListeners: MutableList<(CategoryViewModel) -> Unit> = mutableListOf()
+  private val onEditListeners: MutableList<(TagViewModel) -> Unit> = mutableListOf()
+  private val onDeleteListeners: MutableList<(TagViewModel) -> Unit> = mutableListOf()
 
   init {
     setHasStableIds(true)
@@ -26,16 +26,16 @@ class CategoryListAdapter : RecyclerView.Adapter<CategoryViewHolder>() {
   override fun getItemCount(): Int = viewModels?.size ?: 0
 
   override fun getItemId(position: Int): Long
-    = idMap.indexOf(viewModels!![position].category.id!!).toLong()
+    = idMap.indexOf(viewModels!![position].tag.id!!).toLong()
 
-  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
+  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TagViewHolder {
     val inflatedView = LayoutInflater.from(parent.context)
-      .inflate(R.layout.fragment_category_list_item, parent, false)
+      .inflate(R.layout.fragment_tag_list_item, parent, false)
 
-    return CategoryViewHolder(inflatedView)
+    return TagViewHolder(inflatedView)
   }
 
-  override fun onBindViewHolder(holder: CategoryViewHolder, position: Int): Unit {
+  override fun onBindViewHolder(holder: TagViewHolder, position: Int): Unit {
     val bundle = viewModels!![position]
 
     holder.setData(bundle)
@@ -46,7 +46,7 @@ class CategoryListAdapter : RecyclerView.Adapter<CategoryViewHolder>() {
 
   // region Data
 
-  fun setItems(viewModels: List<CategoryViewModel>): Unit {
+  fun setItems(viewModels: List<TagViewModel>): Unit {
     this.viewModels = viewModels
 
     updateIdMap(viewModels)
@@ -54,10 +54,10 @@ class CategoryListAdapter : RecyclerView.Adapter<CategoryViewHolder>() {
     notifyDataSetChanged()
   }
 
-  fun updateIdMap(viewModels: List<CategoryViewModel>): Unit {
+  fun updateIdMap(viewModels: List<TagViewModel>): Unit {
     viewModels.forEach { bundle ->
-      if (bundle.category.id!! !in idMap) {
-        idMap.add(bundle.category.id!!)
+      if (bundle.tag.id!! !in idMap) {
+        idMap.add(bundle.tag.id!!)
       }
     }
   }
@@ -66,23 +66,23 @@ class CategoryListAdapter : RecyclerView.Adapter<CategoryViewHolder>() {
 
   //region Listeners
 
-  fun addOnEditListener(listener: (CategoryViewModel) -> Unit): () -> Unit {
+  fun addOnEditListener(listener: (TagViewModel) -> Unit): () -> Unit {
     onEditListeners.add(listener)
 
     return { onEditListeners.removeAll(listOf(listener)) }
   }
 
-  fun addOnDeleteListener(listener: (CategoryViewModel) -> Unit): () -> Unit {
+  fun addOnDeleteListener(listener: (TagViewModel) -> Unit): () -> Unit {
     onDeleteListeners.add(listener)
 
     return { onDeleteListeners.removeAll(listOf(listener)) }
   }
 
-  private fun dispatchOnEditEvent(viewModel: CategoryViewModel): Unit {
+  private fun dispatchOnEditEvent(viewModel: TagViewModel): Unit {
     onEditListeners.forEach { it.invoke(viewModel) }
   }
 
-  private fun dispatchOnDeleteEvent(viewModel: CategoryViewModel): Unit {
+  private fun dispatchOnDeleteEvent(viewModel: TagViewModel): Unit {
     onDeleteListeners.forEach { it.invoke(viewModel) }
   }
 

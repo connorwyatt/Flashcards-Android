@@ -17,14 +17,14 @@ import android.view.MenuItem
 import android.widget.Button
 import android.widget.Toast
 import io.connorwyatt.flashcards.R
-import io.connorwyatt.flashcards.data.entities.Category
-import io.connorwyatt.flashcards.data.services.CategoryService
-import io.connorwyatt.flashcards.exceptions.CategoryNameTakenException
+import io.connorwyatt.flashcards.data.entities.Tag
+import io.connorwyatt.flashcards.data.services.TagService
+import io.connorwyatt.flashcards.exceptions.TagNameTakenException
 import io.connorwyatt.flashcards.views.textinput.EnhancedTextInputEditText
 import io.reactivex.Observable
 
-class CategoryDetailsActivity : BaseActivity() {
-  lateinit private var category: Category
+class TagDetailsActivity : BaseActivity() {
+  lateinit private var tag: Tag
   lateinit private var nameInput: EnhancedTextInputEditText
   lateinit private var saveButton: Button
 
@@ -32,17 +32,17 @@ class CategoryDetailsActivity : BaseActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_category_details)
+    setContentView(R.layout.activity_tag_details)
 
-    val categoryId = intent.getStringExtra(IntentExtras.CATEGORY_ID)
+    val tagId = intent.getStringExtra(IntentExtras.TAG_ID)
 
-    initialiseUI(categoryId, savedInstanceState)
+    initialiseUI(tagId, savedInstanceState)
   }
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
-    menuInflater.inflate(R.menu.activity_category_details_menu, menu)
+    menuInflater.inflate(R.menu.activity_tag_details_menu, menu)
 
-    if (!category.existsInDatabase()) {
+    if (!tag.existsInDatabase()) {
       menu.findItem(R.id.action_delete).isEnabled = false
     }
 
@@ -52,7 +52,7 @@ class CategoryDetailsActivity : BaseActivity() {
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     when (item.itemId) {
       R.id.action_delete -> {
-        showDeleteCategoryDialog(category)
+        showDeleteTagDialog(tag)
         return true
       }
       else -> {
@@ -71,36 +71,36 @@ class CategoryDetailsActivity : BaseActivity() {
 
   //region Data
 
-  private fun getData(categoryId: String): Observable<Category> {
-    return CategoryService.getById(categoryId)
+  private fun getData(tagId: String): Observable<Tag> {
+    return TagService.getById(tagId)
   }
 
-  private fun updateCategoryFromControls(): Unit {
-    category.name = nameInput.editableText.toString()
+  private fun updateTagFromControls(): Unit {
+    tag.name = nameInput.editableText.toString()
   }
 
-  private fun saveCategory(category: Category): Unit {
-    category.save().subscribe(
+  private fun saveTag(tag: Tag): Unit {
+    tag.save().subscribe(
       {
-        this.category = it
+        this.tag = it
         updateUI()
         showToast(R.string.save_toast)
       },
       {
         when (it) {
-          is CategoryNameTakenException -> {
-            showToast(R.string.category_name_taken, category.name!!)
+          is TagNameTakenException -> {
+            showToast(R.string.tag_name_taken, tag.name!!)
           }
         }
       }
     )
   }
 
-  private fun deleteCategory(category: Category, deleteFlashcards: Boolean): Unit {
+  private fun deleteTag(tag: Tag, deleteFlashcards: Boolean): Unit {
     val observable = if (deleteFlashcards)
-      CategoryService.deleteWithFlashcards(category)
+      TagService.deleteWithFlashcards(tag)
     else
-      CategoryService.delete(category)
+      TagService.delete(tag)
 
     observable.subscribe {
       showToast(R.string.delete_toast)
@@ -112,15 +112,15 @@ class CategoryDetailsActivity : BaseActivity() {
 
   //region UI
 
-  private fun initialiseUI(categoryId: String?, savedInstanceState: Bundle?): Unit {
-    if (categoryId != null) {
-      getData(categoryId).subscribe {
-        category = mergeModelAndSavedInstanceState(it, savedInstanceState)
+  private fun initialiseUI(tagId: String?, savedInstanceState: Bundle?): Unit {
+    if (tagId != null) {
+      getData(tagId).subscribe {
+        tag = mergeModelAndSavedInstanceState(it, savedInstanceState)
         updateUI()
       }
     } else {
-      category = mergeModelAndSavedInstanceState(
-        Category(null),
+      tag = mergeModelAndSavedInstanceState(
+        Tag(null),
         savedInstanceState
       )
     }
@@ -131,7 +131,7 @@ class CategoryDetailsActivity : BaseActivity() {
   }
 
   private fun initialiseToolbar(): Unit {
-    val toolbar = findViewById(R.id.category_details_toolbar) as Toolbar
+    val toolbar = findViewById(R.id.tag_details_toolbar) as Toolbar
     setSupportActionBar(toolbar)
 
     val actionBar = supportActionBar
@@ -140,19 +140,19 @@ class CategoryDetailsActivity : BaseActivity() {
   }
 
   private fun initialiseControls(): Unit {
-    nameInput = findViewById(R.id.category_details_name) as EnhancedTextInputEditText
+    nameInput = findViewById(R.id.tag_details_name) as EnhancedTextInputEditText
     nameInput.addRequiredValidator(getString(R.string.validation_required))
     nameInput.addMaxLengthValidator(40, { actualLength, maxLength ->
       getString(R.string.validation_max_length, actualLength, maxLength)
     })
     nameInput.addTextChangedListener { updateButton() }
 
-    saveButton = findViewById(R.id.category_details_save_button) as Button
+    saveButton = findViewById(R.id.tag_details_save_button) as Button
 
     saveButton.setOnClickListener {
-      updateCategoryFromControls()
+      updateTagFromControls()
 
-      saveCategory(category)
+      saveTag(tag)
     }
   }
 
@@ -163,7 +163,7 @@ class CategoryDetailsActivity : BaseActivity() {
   }
 
   private fun updateControls(): Unit {
-    nameInput.setText(category.name)
+    nameInput.setText(tag.name)
   }
 
   private fun updateButton(): Unit {
@@ -171,12 +171,12 @@ class CategoryDetailsActivity : BaseActivity() {
   }
 
   private fun mergeModelAndSavedInstanceState(
-    category: Category, savedInstanceState: Bundle?): Category {
+    tag: Tag, savedInstanceState: Bundle?): Tag {
     savedInstanceState?.let {
-      category.name = savedInstanceState.getString(SavedInstanceState.NAME)
+      tag.name = savedInstanceState.getString(SavedInstanceState.NAME)
     }
 
-    return category
+    return tag
   }
 
   private fun isValid() = nameInput.isValid()
@@ -189,20 +189,20 @@ class CategoryDetailsActivity : BaseActivity() {
     toast.show()
   }
 
-  private fun showDeleteCategoryDialog(category: Category): Unit {
+  private fun showDeleteTagDialog(tag: Tag): Unit {
     AlertDialog.Builder(this)
-      .setTitle(getString(R.string.delete_category_dialog_title))
-      .setMessage(getString(R.string.delete_category_dialog_message))
+      .setTitle(getString(R.string.delete_tag_dialog_title))
+      .setMessage(getString(R.string.delete_tag_dialog_message))
       .setPositiveButton(
-        getString(R.string.delete_category_dialog_yes),
-        { di, i -> deleteCategory(this.category, true) }
+        getString(R.string.delete_tag_dialog_yes),
+        { di, i -> deleteTag(this.tag, true) }
       )
       .setNegativeButton(
-        getString(R.string.delete_category_dialog_no),
-        { di, i -> deleteCategory(this.category, false) }
+        getString(R.string.delete_tag_dialog_no),
+        { di, i -> deleteTag(this.tag, false) }
       )
       .setNeutralButton(
-        getString(R.string.delete_category_dialog_cancel),
+        getString(R.string.delete_tag_dialog_cancel),
         { di, i -> }
       )
       .create()
@@ -213,21 +213,21 @@ class CategoryDetailsActivity : BaseActivity() {
 
   companion object {
     fun startActivity(context: Context) {
-      val intent = Intent(context, CategoryDetailsActivity::class.java)
+      val intent = Intent(context, TagDetailsActivity::class.java)
 
       context.startActivity(intent)
     }
 
-    fun startActivity(context: Context, category: Category) {
-      val intent = Intent(context, CategoryDetailsActivity::class.java)
+    fun startActivity(context: Context, tag: Tag) {
+      val intent = Intent(context, TagDetailsActivity::class.java)
 
-      intent.putExtra(IntentExtras.CATEGORY_ID, category.id)
+      intent.putExtra(IntentExtras.TAG_ID, tag.id)
 
       context.startActivity(intent)
     }
 
     object IntentExtras {
-      val CATEGORY_ID = "CATEGORY_ID"
+      val TAG_ID = "TAG_ID"
     }
 
     object SavedInstanceState {

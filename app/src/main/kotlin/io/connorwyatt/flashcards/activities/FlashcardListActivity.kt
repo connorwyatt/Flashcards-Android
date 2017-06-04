@@ -22,9 +22,9 @@ import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.adapters.DropdownItem
 import io.connorwyatt.flashcards.adapters.FlashcardListAdapter
 import io.connorwyatt.flashcards.adapters.GenericArrayAdapter
-import io.connorwyatt.flashcards.data.entities.Category
+import io.connorwyatt.flashcards.data.entities.Tag
 import io.connorwyatt.flashcards.data.entities.Flashcard
-import io.connorwyatt.flashcards.data.services.CategoryService
+import io.connorwyatt.flashcards.data.services.TagService
 import io.connorwyatt.flashcards.data.services.FlashcardService
 import io.connorwyatt.flashcards.data.viewmodels.FlashcardViewModel
 import io.connorwyatt.flashcards.listeners.SimpleOnItemSelectedListener
@@ -32,7 +32,7 @@ import io.reactivex.Observable
 
 class FlashcardListActivity : BaseActivity() {
   private var adapter = FlashcardListAdapter()
-  private var filterCategory: Category? = null
+  private var filterTag: Tag? = null
 
   // region Activity
 
@@ -50,7 +50,7 @@ class FlashcardListActivity : BaseActivity() {
   override fun onResume() {
     super.onResume()
 
-    filterByCategory(filterCategory)
+    filterByTag(filterTag)
   }
 
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -67,17 +67,17 @@ class FlashcardListActivity : BaseActivity() {
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     return when (item.itemId) {
       R.id.action_test -> {
-        val category = filterCategory
+        val tag = filterTag
 
-        if (category != null) {
-          navigateToFlashcardTest(category)
+        if (tag != null) {
+          navigateToFlashcardTest(tag)
         } else {
           navigateToFlashcardTest()
         }
         true
       }
-      R.id.action_navigate_to_categories -> {
-        navigateToCategoryList()
+      R.id.action_navigate_to_tags -> {
+        navigateToTagList()
         true
       }
       else -> super.onOptionsItemSelected(item)
@@ -92,19 +92,19 @@ class FlashcardListActivity : BaseActivity() {
     return mapFlashcardsToViewModels(FlashcardService.getAllAsStream())
   }
 
-  fun getDataWithCategoryFilter(category: Category): Observable<List<FlashcardViewModel>> {
-    return mapFlashcardsToViewModels(FlashcardService.getByCategoryAsStream(category.id!!))
+  fun getDataWithTagFilter(tag: Tag): Observable<List<FlashcardViewModel>> {
+    return mapFlashcardsToViewModels(FlashcardService.getByTagAsStream(tag.id!!))
   }
 
-  fun getDropdownCategories(): Observable<List<DropdownItem<Category?>>> {
-    return CategoryService.getAllAsStream().map { categories ->
-      val dropdownItems = categories.map { category ->
-        DropdownItem<Category?>(value = category.name!!, data = category)
+  fun getDropdownTags(): Observable<List<DropdownItem<Tag?>>> {
+    return TagService.getAllAsStream().map { tags ->
+      val dropdownItems = tags.map { tag ->
+        DropdownItem<Tag?>(value = tag.name!!, data = tag)
       }
 
-      val allCategoryName = getString(R.string.flashcard_cards_list_all_category)
+      val allTagName = getString(R.string.flashcard_cards_list_all_tag)
 
-      listOf(DropdownItem<Category?>(value = allCategoryName, data = null))
+      listOf(DropdownItem<Tag?>(value = allTagName, data = null))
         .plus(dropdownItems)
     }
   }
@@ -148,12 +148,12 @@ class FlashcardListActivity : BaseActivity() {
   }
 
   private fun setUpSpinner() {
-    getDropdownCategories().subscribe { dropdownCategories ->
+    getDropdownTags().subscribe { dropdownTags ->
       val spinner = findViewById(R.id.flashcard_list_spinner) as Spinner
 
-      val spinnerAdapter = GenericArrayAdapter<Category?>(
+      val spinnerAdapter = GenericArrayAdapter<Tag?>(
         supportActionBar!!.themedContext,
-        dropdownCategories
+        dropdownTags
       )
 
       spinner.onItemSelectedListener = object : SimpleOnItemSelectedListener() {
@@ -161,10 +161,10 @@ class FlashcardListActivity : BaseActivity() {
                                     view: View?,
                                     position: Int,
                                     id: Long) {
-          val category
-            = (adapterView.getItemAtPosition(position) as DropdownItem<*>).data as Category?
+          val tag
+            = (adapterView.getItemAtPosition(position) as DropdownItem<*>).data as Tag?
 
-          filterByCategory(category)
+          filterByTag(tag)
         }
       }
 
@@ -204,11 +204,11 @@ class FlashcardListActivity : BaseActivity() {
     invalidateOptionsMenu()
   }
 
-  private fun filterByCategory(category: Category?): Unit {
-    filterCategory = category
+  private fun filterByTag(tag: Tag?): Unit {
+    filterTag = tag
 
-    if (category !== null) {
-      getDataWithCategoryFilter(category).subscribe {
+    if (tag !== null) {
+      getDataWithTagFilter(tag).subscribe {
         updateAdapterData(it)
       }
     } else {
@@ -234,12 +234,12 @@ class FlashcardListActivity : BaseActivity() {
     FlashcardTestActivity.startActivity(this)
   }
 
-  private fun navigateToFlashcardTest(category: Category): Unit {
-    FlashcardTestActivity.startActivityWithCategoryFilter(this, category.id!!)
+  private fun navigateToFlashcardTest(tag: Tag): Unit {
+    FlashcardTestActivity.startActivityWithTagFilter(this, tag.id!!)
   }
 
-  private fun navigateToCategoryList(): Unit {
-    CategoryListActivity.startActivity(this)
+  private fun navigateToTagList(): Unit {
+    TagListActivity.startActivity(this)
   }
 
   // endregion

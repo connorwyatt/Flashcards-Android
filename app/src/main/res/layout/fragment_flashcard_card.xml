@@ -63,7 +63,7 @@
                     android:maxLines="3" />
 
                 <TextView
-                    android:id="@+id/flashcard_card_categories"
+                    android:id="@+id/flashcard_card_tags"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
