@@ -35,6 +35,7 @@
     <string name="validation_required">This field is required</string>
     <string name="validation_max_length">Exceeded max length: %1$d/%2$d</string>
     <string name="validation_tags_max_length">Exceeded max length for individual tags: %1$d</string>
+    <string name="validation_email">This is not a valid email</string>
     <string name="category_details_name">Name</string>
     <string name="category_details_save">Save</string>
     <string name="category_name_taken">A category with the name \"%1$s\" already exists</string>
@@ -49,7 +50,9 @@
     <string name="activity_auth_register">Register</string>
     <string name="activity_auth_password">Password</string>
     <string name="activity_auth_title">Login / Register</string>
-    <string name="activity_auth_register_email_taken">Email already has an account associated</string>
-    <string name="activity_auth_login_incorrect_password">Incorrect password entered</string>
+    <string name="activity_auth_register_email_taken_error">Email already has an account associated</string>
+    <string name="activity_auth_login_user_not_found_error">No user account found for the email provided</string>
+    <string name="activity_auth_login_invalid_credentials_error">Incorrect email or password entered</string>
+    <string name="activity_auth_register_invalid_credentials_error">Invalid email or password entered</string>
     <string name="activity_auth_unknown_error">An error occurred</string>
 </resources>
