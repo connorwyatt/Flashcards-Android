@@ -16,7 +16,7 @@ import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.FirebaseUser
 import io.connorwyatt.flashcards.helpers.auth.exceptions.AuthException
 import io.connorwyatt.flashcards.helpers.auth.exceptions.EmailAlreadyInUseException
-import io.connorwyatt.flashcards.helpers.auth.exceptions.InvalidEmailException
+import io.connorwyatt.flashcards.helpers.auth.exceptions.InvalidCredentialsException
 import io.connorwyatt.flashcards.helpers.auth.exceptions.UserDisabledException
 import io.connorwyatt.flashcards.helpers.auth.exceptions.UserNotFoundException
 import io.connorwyatt.flashcards.helpers.auth.exceptions.WeakPasswordException
@@ -58,7 +58,7 @@ class AuthHelper private constructor(private val firebaseAuth: FirebaseAuth) {
         }
       }
       is FirebaseAuthUserCollisionException -> EmailAlreadyInUseException()
-      is FirebaseAuthInvalidCredentialsException -> InvalidEmailException()
+      is FirebaseAuthInvalidCredentialsException -> InvalidCredentialsException()
       else -> AuthException()
     }
   }
