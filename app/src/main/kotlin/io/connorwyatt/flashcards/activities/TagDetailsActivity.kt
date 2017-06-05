@@ -20,7 +20,7 @@ import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.data.entities.Tag
 import io.connorwyatt.flashcards.data.services.TagService
 import io.connorwyatt.flashcards.exceptions.TagNameTakenException
-import io.connorwyatt.flashcards.views.textinput.EnhancedTextInputEditText
+import io.connorwyatt.flashcards.views.inputs.EnhancedTextInputEditText
 import io.reactivex.Observable
 
 class TagDetailsActivity : BaseActivity() {

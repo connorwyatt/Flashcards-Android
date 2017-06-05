@@ -19,7 +19,7 @@ import io.connorwyatt.flashcards.helpers.auth.AuthHelper
 import io.connorwyatt.flashcards.helpers.auth.exceptions.EmailAlreadyInUseException
 import io.connorwyatt.flashcards.helpers.auth.exceptions.InvalidCredentialsException
 import io.connorwyatt.flashcards.helpers.auth.exceptions.UserNotFoundException
-import io.connorwyatt.flashcards.views.textinput.EnhancedTextInputEditText
+import io.connorwyatt.flashcards.views.inputs.EnhancedTextInputEditText
 
 class AuthActivity : AppCompatActivity() {
   private val auth = AuthHelper.getInstance()

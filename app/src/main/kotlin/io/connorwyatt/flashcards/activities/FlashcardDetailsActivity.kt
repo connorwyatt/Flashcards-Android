@@ -22,14 +22,15 @@ import io.connorwyatt.flashcards.data.entities.Flashcard
 import io.connorwyatt.flashcards.data.entities.Tag
 import io.connorwyatt.flashcards.data.services.TagService
 import io.connorwyatt.flashcards.data.viewmodels.FlashcardViewModel
-import io.connorwyatt.flashcards.views.textinput.EnhancedTextInputEditText
+import io.connorwyatt.flashcards.views.inputs.EnhancedMultiAutoCompleteTextView
+import io.connorwyatt.flashcards.views.inputs.EnhancedTextInputEditText
 import io.reactivex.Observable
 
 class FlashcardDetailsActivity : BaseActivity() {
   private var viewModel: FlashcardViewModel? = null
   lateinit private var titleInput: EnhancedTextInputEditText
   lateinit private var textInput: EnhancedTextInputEditText
-  lateinit private var tagsInput: MultiAutoCompleteTextView
+  lateinit private var tagsInput: EnhancedMultiAutoCompleteTextView
   lateinit private var saveButton: Button
 
   //region Activity
@@ -155,7 +156,7 @@ class FlashcardDetailsActivity : BaseActivity() {
     titleInput = findViewById(R.id.flashcard_details_title) as EnhancedTextInputEditText
     textInput = findViewById(R.id.flashcard_details_text) as EnhancedTextInputEditText
     tagsInput = findViewById(
-      R.id.flashcard_details_tags) as MultiAutoCompleteTextView
+      R.id.flashcard_details_tags) as EnhancedMultiAutoCompleteTextView
     saveButton = findViewById(R.id.flashcard_details_save_button) as Button
 
     titleInput.addRequiredValidator(getString(R.string.validation_required))
@@ -177,11 +178,15 @@ class FlashcardDetailsActivity : BaseActivity() {
   }
 
   private fun initialiseTagsControl(): Unit {
-    tagsInput.setTokenizer(MultiAutoCompleteTextView.CommaTokenizer())
-
     val tagsAdapter = ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line)
 
     tagsInput.setAdapter(tagsAdapter)
+
+    tagsInput.addTagMaxLengthValidator(40) { maxLength ->
+      getString(R.string.validation_tags_max_length, maxLength)
+    }
+
+    tagsInput.addTextChangedListener { updateButton() }
 
     TagService.getAllAsStream().subscribe { tags ->
       val tagNames = tags.map { it.name }
@@ -237,7 +242,7 @@ class FlashcardDetailsActivity : BaseActivity() {
   }
 
   private fun isValid()
-    = titleInput.isValid() && textInput.isValid()/* && tagsInput.isValid()*/
+    = titleInput.isValid() && textInput.isValid() && tagsInput.isValid()
 
   private fun showToast(stringResource: Int): Unit {
     val toastMessage = getString(stringResource)

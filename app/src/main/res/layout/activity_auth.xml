@@ -96,7 +96,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp">
 
-                <io.connorwyatt.flashcards.views.textinput.EnhancedTextInputEditText
+                <io.connorwyatt.flashcards.views.inputs.EnhancedTextInputEditText
                     android:id="@+id/activity_auth_email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -110,7 +110,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp">
 
-                <io.connorwyatt.flashcards.views.textinput.EnhancedTextInputEditText
+                <io.connorwyatt.flashcards.views.inputs.EnhancedTextInputEditText
                     android:id="@+id/activity_auth_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
