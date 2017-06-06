@@ -52,7 +52,7 @@ class CategoryDetailsActivity : BaseActivity() {
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     when (item.itemId) {
       R.id.action_delete -> {
-        showDeleteCategoryDialog(category)
+        showDeleteCategoryDialog()
         return true
       }
       else -> {
@@ -189,21 +189,21 @@ class CategoryDetailsActivity : BaseActivity() {
     toast.show()
   }
 
-  private fun showDeleteCategoryDialog(category: Category): Unit {
+  private fun showDeleteCategoryDialog(): Unit {
     AlertDialog.Builder(this)
       .setTitle(getString(R.string.delete_category_dialog_title))
       .setMessage(getString(R.string.delete_category_dialog_message))
       .setPositiveButton(
         getString(R.string.delete_category_dialog_yes),
-        { di, i -> deleteCategory(this.category, true) }
+        { _, _ -> deleteCategory(this.category, true) }
       )
       .setNegativeButton(
         getString(R.string.delete_category_dialog_no),
-        { di, i -> deleteCategory(this.category, false) }
+        { _, _ -> deleteCategory(this.category, false) }
       )
       .setNeutralButton(
         getString(R.string.delete_category_dialog_cancel),
-        { di, i -> }
+        { _, _ -> }
       )
       .create()
       .show()
