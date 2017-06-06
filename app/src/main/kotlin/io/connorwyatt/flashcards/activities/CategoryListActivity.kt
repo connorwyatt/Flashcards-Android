@@ -81,7 +81,7 @@ class CategoryListActivity : BaseActivity() {
                                            viewModel.category.name),
                                  Snackbar.LENGTH_LONG)
 
-    snackbar.setAction(getString(R.string.action_undo)) { view ->
+    snackbar.setAction(getString(R.string.action_undo)) { _ ->
       removedCategoryIds.remove(viewModel.category.id!!)
 
       refreshUIData()
@@ -147,7 +147,7 @@ class CategoryListActivity : BaseActivity() {
   private fun initialiseFAB(): Unit {
     val fab = findViewById(R.id.category_list_add_button) as FloatingActionButton
 
-    fab.setOnClickListener { view ->
+    fab.setOnClickListener {
       navigateToCategoryDetails()
     }
   }
@@ -162,15 +162,15 @@ class CategoryListActivity : BaseActivity() {
       .setMessage(getString(R.string.delete_category_dialog_message))
       .setPositiveButton(
         getString(R.string.delete_category_dialog_yes),
-        { di, i -> deleteCategory(viewModel, true) }
+        { _, _ -> deleteCategory(viewModel, true) }
       )
       .setNegativeButton(
         getString(R.string.delete_category_dialog_no),
-        { di, i -> deleteCategory(viewModel, false) }
+        { _, _ -> deleteCategory(viewModel, false) }
       )
       .setNeutralButton(
         getString(R.string.delete_category_dialog_cancel),
-        { di, i -> }
+        { _, _ -> }
       )
       .create()
       .show()
