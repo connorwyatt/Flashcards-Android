@@ -84,7 +84,7 @@ class AuthActivity : AppCompatActivity() {
   private fun initSwitch(): Unit {
     val switch = findViewById(R.id.activity_auth_switch) as Switch
 
-    switch.setOnCheckedChangeListener { compoundButton, isChecked ->
+    switch.setOnCheckedChangeListener { _, isChecked ->
       formState = if (isChecked) FormStates.REGISTER else FormStates.LOGIN
 
       setError(null)

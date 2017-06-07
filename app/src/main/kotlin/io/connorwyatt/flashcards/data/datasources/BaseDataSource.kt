@@ -316,7 +316,7 @@ abstract class BaseDataSource {
 
   private fun isOnline(): Observable<Boolean> {
     return executeQuerySingle(
-      { user -> database.getReference(".info/connected") },
+      { database.getReference(".info/connected") },
       { Observable.just(it.value as Boolean) },
       false
     )

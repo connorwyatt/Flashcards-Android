@@ -70,8 +70,8 @@ class FlashcardTestFragment : Fragment() {
         .setTitle(R.string.flashcard_test_confirmation_title)
         .setMessage(R.string.flashcard_test_confirmation_message)
         .setPositiveButton(
-          R.string.flashcard_test_confirmation_yes) { dialogInterface, i -> callback.invoke() }
-        .setNegativeButton(R.string.flashcard_test_confirmation_no) { dialogInterface, i -> }
+          R.string.flashcard_test_confirmation_yes) { _, _ -> callback.invoke() }
+        .setNegativeButton(R.string.flashcard_test_confirmation_no) { _, _ -> }
         .create()
         .show()
     }

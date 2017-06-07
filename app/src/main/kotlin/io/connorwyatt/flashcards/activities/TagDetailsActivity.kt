@@ -52,7 +52,7 @@ class TagDetailsActivity : BaseActivity() {
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     when (item.itemId) {
       R.id.action_delete -> {
-        showDeleteTagDialog(tag)
+        showDeleteTagDialog()
         return true
       }
       else -> {
@@ -189,21 +189,21 @@ class TagDetailsActivity : BaseActivity() {
     toast.show()
   }
 
-  private fun showDeleteTagDialog(tag: Tag): Unit {
+  private fun showDeleteTagDialog(): Unit {
     AlertDialog.Builder(this)
       .setTitle(getString(R.string.delete_tag_dialog_title))
       .setMessage(getString(R.string.delete_tag_dialog_message))
       .setPositiveButton(
         getString(R.string.delete_tag_dialog_yes),
-        { di, i -> deleteTag(this.tag, true) }
+        { _, _ -> deleteTag(this.tag, true) }
       )
       .setNegativeButton(
         getString(R.string.delete_tag_dialog_no),
-        { di, i -> deleteTag(this.tag, false) }
+        { _, _ -> deleteTag(this.tag, false) }
       )
       .setNeutralButton(
         getString(R.string.delete_tag_dialog_cancel),
-        { di, i -> }
+        { _, _ -> }
       )
       .create()
       .show()
