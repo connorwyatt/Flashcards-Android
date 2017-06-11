@@ -10,4 +10,8 @@
         <attr name="unfilledBarColor" format="color" />
         <attr name="progress" format="float" />
     </declare-styleable>
+
+    <declare-styleable name="LineGraph">
+        <attr name="lineColor" format="color" />
+    </declare-styleable>
 </resources>
