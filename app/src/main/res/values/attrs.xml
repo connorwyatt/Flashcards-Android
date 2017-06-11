@@ -13,5 +13,6 @@
 
     <declare-styleable name="LineGraph">
         <attr name="lineColor" format="color" />
+        <attr name="gridLineColor" format="color" />
     </declare-styleable>
 </resources>

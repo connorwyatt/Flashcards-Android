@@ -2,6 +2,7 @@ package io.connorwyatt.flashcards.views.graphs
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Paint.Cap.ROUND
 import android.graphics.Paint.Join
@@ -22,6 +23,12 @@ class LineGraph : View {
     }
 
   var lineColor: Int? = null
+    set(color) {
+      field = color
+      invalidate()
+    }
+
+  var gridLineColor: Int? = null
     set(color) {
       field = color
       invalidate()
@@ -50,21 +57,30 @@ class LineGraph : View {
   override fun onDraw(canvas: Canvas) {
     val coordinates = this.coordinates ?: return
     val lineColor = this.lineColor ?: return
+    val gridLineColor = this.gridLineColor ?: return
+
+    val gridLines = getGridLines(11, canvas.width, canvas.height)
+
+    paint.color = gridLineColor
+    paint.alpha = 15
+    paint.style = STROKE
+    paint.strokeWidth = 2f
+
+    gridLines.forEach { canvas.drawPath(it, paint) }
 
     val linePath = getLinePath(coordinates, canvas.width, canvas.height)
 
     paint.color = lineColor
-    paint.strokeCap = ROUND
-    paint.strokeJoin = Join.ROUND
-    paint.strokeWidth = 6f
-
     paint.alpha = 100
     paint.style = FILL
 
     canvas.drawPath(linePath, paint)
 
-    paint.style = STROKE
     paint.alpha = 255
+    paint.style = STROKE
+    paint.strokeCap = ROUND
+    paint.strokeJoin = Join.ROUND
+    paint.strokeWidth = 6f
 
     canvas.drawPath(linePath, paint)
   }
@@ -76,6 +92,7 @@ class LineGraph : View {
       val primaryColor = ContextCompat.getColor(context, R.color.colorPrimary)
 
       lineColor = typedArray.getColor(R.styleable.LineGraph_lineColor, primaryColor)
+      gridLineColor = typedArray.getColor(R.styleable.LineGraph_gridLineColor, Color.BLACK)
     } finally {
       typedArray.recycle()
     }
@@ -127,7 +144,22 @@ class LineGraph : View {
     return path
   }
 
+  private fun getGridLines(lines: Int, width: Int, height: Int): List<Path> {
+    val verticalDistance = height.toFloat() / (lines - 1).toFloat()
+
+    return (0..lines).map { i ->
+      val path = Path()
+
+      val yPosition = i.toFloat() * verticalDistance
+
+      path.moveTo(0f, yPosition)
+      path.lineTo(width.toFloat(), yPosition)
+
+      return@map path
+    }
+  }
+
   private fun mapCoordinateToArea(coordinate: Coordinate, width: Int, height: Int)
-    = Coordinate(x = coordinate.x * width, y = coordinate.y * height)
+    = Coordinate(coordinate.x * width, coordinate.y * height)
 
 }
