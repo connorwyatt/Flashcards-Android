@@ -181,7 +181,7 @@ class FlashcardListActivity : BaseActivity() {
     val layoutManager = LinearLayoutManager(this)
     recyclerView.layoutManager = layoutManager
 
-    adapter.addOnCardClickListener {
+    adapter.setOnCardClickListener {
       navigateToFlashcardDetails(it.flashcard)
     }
 
