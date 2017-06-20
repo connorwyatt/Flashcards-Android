@@ -17,7 +17,7 @@ class FlashcardListAdapter :
   RecyclerView.Adapter<FlashcardViewHolder>() {
   private var viewModels: List<FlashcardViewModel>? = null
   private val idMap: MutableList<String> = mutableListOf()
-  private val cardClickListeners: MutableList<(FlashcardViewModel) -> Unit> = mutableListOf()
+  private var cardClickListener: ((FlashcardViewModel) -> Unit)? = null
 
   init {
     setHasStableIds(true)
@@ -41,7 +41,7 @@ class FlashcardListAdapter :
     val bundle = viewModels!![position]
 
     holder.setOnCardClickListener {
-      callOnCardClickListeners(viewModels!![holder.adapterPosition])
+      cardClickListener?.invoke(viewModels!![holder.adapterPosition])
     }
 
     holder.setData(bundle)
@@ -58,9 +58,9 @@ class FlashcardListAdapter :
   }
 
   fun updateIdMap(viewModels: List<FlashcardViewModel>): Unit {
-    viewModels.forEach { bundle ->
-      if (bundle.flashcard.id!! !in idMap) {
-        idMap.add(bundle.flashcard.id!!)
+    viewModels.forEach { (flashcard) ->
+      if (flashcard.id!! !in idMap) {
+        idMap.add(flashcard.id)
       }
     }
   }
@@ -69,20 +69,8 @@ class FlashcardListAdapter :
 
   //region Listeners
 
-  fun addOnCardClickListener(listener: (FlashcardViewModel) -> Unit): () -> Unit {
-    cardClickListeners.add(listener)
-
-    return {
-      removeOnCardClickListener(listener)
-    }
-  }
-
-  fun removeOnCardClickListener(listener: (FlashcardViewModel) -> Unit): Unit {
-    cardClickListeners.removeAll { it === listener }
-  }
-
-  fun callOnCardClickListeners(viewModel: FlashcardViewModel): Unit {
-    cardClickListeners.forEach { it.invoke(viewModel) }
+  fun setOnCardClickListener(listener: (FlashcardViewModel) -> Unit): Unit {
+    cardClickListener = listener
   }
 
   //endregion
