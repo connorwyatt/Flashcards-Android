@@ -23,10 +23,8 @@ object FlashcardService {
   fun getByTag(tagId: String): Observable<List<Flashcard>>
     = FlashcardDataSource().getByTagId(tagId, false)
 
-
   fun getByTagAsStream(tagId: String): Observable<List<Flashcard>>
     = FlashcardDataSource().getByTagId(tagId, true)
-
 
   fun save(flashcard: Flashcard): Observable<Flashcard> {
     val flashcardDataSource = FlashcardDataSource()
