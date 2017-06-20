@@ -7,10 +7,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/fragment_category_list_item_menu_action_edit"
+        android:id="@+id/fragment_tag_list_item_menu_action_edit"
         android:title="@string/action_edit" />
     <item
-        android:id="@+id/fragment_category_list_item_menu_action_delete"
+        android:id="@+id/fragment_tag_list_item_menu_action_delete"
         android:title="@string/action_delete" />
 
 </menu>

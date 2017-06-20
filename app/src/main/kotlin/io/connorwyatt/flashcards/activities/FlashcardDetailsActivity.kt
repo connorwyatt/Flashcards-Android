@@ -13,21 +13,25 @@ import android.support.v4.app.NavUtils
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ArrayAdapter
 import android.widget.Button
+import android.widget.MultiAutoCompleteTextView
 import android.widget.Toast
 import io.connorwyatt.flashcards.R
-import io.connorwyatt.flashcards.data.entities.Category
 import io.connorwyatt.flashcards.data.entities.Flashcard
+import io.connorwyatt.flashcards.data.entities.Tag
+import io.connorwyatt.flashcards.data.services.TagService
 import io.connorwyatt.flashcards.data.viewmodels.FlashcardViewModel
-import io.connorwyatt.flashcards.views.textinput.EnhancedTextInputEditText
+import io.connorwyatt.flashcards.views.inputs.EnhancedMultiAutoCompleteTextView
+import io.connorwyatt.flashcards.views.inputs.EnhancedTextInputEditText
 import io.reactivex.Observable
 
 class FlashcardDetailsActivity : BaseActivity() {
   private var viewModel: FlashcardViewModel? = null
-  private var titleInput: EnhancedTextInputEditText? = null
-  private var textInput: EnhancedTextInputEditText? = null
-  private var categoriesInput: EnhancedTextInputEditText? = null
-  private var saveButton: Button? = null
+  lateinit private var titleInput: EnhancedTextInputEditText
+  lateinit private var textInput: EnhancedTextInputEditText
+  lateinit private var tagsInput: EnhancedMultiAutoCompleteTextView
+  lateinit private var saveButton: Button
 
   //region Activity
 
@@ -63,9 +67,9 @@ class FlashcardDetailsActivity : BaseActivity() {
   }
 
   override fun onSaveInstanceState(outState: Bundle) {
-    outState.putString(SavedInstanceState.TITLE, titleInput!!.text.toString())
-    outState.putString(SavedInstanceState.TEXT, textInput!!.text.toString())
-    outState.putString(SavedInstanceState.CATEGORIES, categoriesInput!!.text.toString())
+    outState.putString(SavedInstanceState.TITLE, titleInput.text.toString())
+    outState.putString(SavedInstanceState.TEXT, textInput.text.toString())
+    outState.putString(SavedInstanceState.TAGS, tagsInput.text.toString())
 
     super.onSaveInstanceState(outState)
   }
@@ -79,22 +83,22 @@ class FlashcardDetailsActivity : BaseActivity() {
   }
 
   private fun updateViewModelFromControls(): Unit {
-    viewModel!!.flashcard.title = titleInput!!.text.toString()
-    viewModel!!.flashcard.text = textInput!!.text.toString()
+    viewModel!!.flashcard.title = titleInput.text.toString()
+    viewModel!!.flashcard.text = textInput.text.toString()
 
-    val categories = parseCategoriesString(categoriesInput!!.text.toString())
+    val tags = parseTagsString(tagsInput.text.toString())
 
-    viewModel!!.categories = categories
+    viewModel!!.tags = tags
   }
 
-  private fun parseCategoriesString(categoriesString: String): List<Category> {
-    val categoryNames = categoriesString.split(",")
+  private fun parseTagsString(tagsString: String): List<Tag> {
+    val tagNames = tagsString.split(",")
 
-    return categoryNames.map {
-      val category = Category(null)
-      category.name = it.trim()
+    return tagNames.map {
+      val tag = Tag(null)
+      tag.name = it.trim()
 
-      category
+      return@map tag
     }
   }
 
@@ -119,9 +123,9 @@ class FlashcardDetailsActivity : BaseActivity() {
   //region UI
 
   private fun initialiseUI(flashcardId: String?, savedInstanceState: Bundle?): Unit {
-    setUpToolbar()
+    initialiseToolbar()
 
-    setUpControls()
+    initialiseControls()
 
     if (flashcardId != null) {
       getData(flashcardId).subscribe {
@@ -139,7 +143,7 @@ class FlashcardDetailsActivity : BaseActivity() {
     updateButton()
   }
 
-  private fun setUpToolbar(): Unit {
+  private fun initialiseToolbar(): Unit {
     val toolbar = findViewById(R.id.flashcard_details_toolbar) as Toolbar
     setSupportActionBar(toolbar)
 
@@ -148,41 +152,48 @@ class FlashcardDetailsActivity : BaseActivity() {
     actionBar.setDisplayShowTitleEnabled(false)
   }
 
-  private fun setUpControls(): Unit {
+  private fun initialiseControls(): Unit {
     titleInput = findViewById(R.id.flashcard_details_title) as EnhancedTextInputEditText
     textInput = findViewById(R.id.flashcard_details_text) as EnhancedTextInputEditText
-    categoriesInput = findViewById(
-      R.id.flashcard_details_categories) as EnhancedTextInputEditText
+    tagsInput = findViewById(
+      R.id.flashcard_details_tags) as EnhancedMultiAutoCompleteTextView
     saveButton = findViewById(R.id.flashcard_details_save_button) as Button
 
-    titleInput!!.addRequiredValidator(getString(R.string.validation_required))
-    titleInput!!.addMaxLengthValidator(80, { actualLength, maxLength ->
+    titleInput.addRequiredValidator(getString(R.string.validation_required))
+    titleInput.addMaxLengthValidator(80, { actualLength, maxLength ->
       getString(R.string.validation_max_length, actualLength, maxLength)
     })
-    titleInput!!.addTextChangedListener { updateButton() }
+    titleInput.addTextChangedListener { updateButton() }
 
-    textInput!!.addRequiredValidator(getString(R.string.validation_required))
-    textInput!!.addTextChangedListener { updateButton() }
+    textInput.addRequiredValidator(getString(R.string.validation_required))
+    textInput.addTextChangedListener { updateButton() }
 
-    categoriesInput!!.addCustomValidator(
-      validator@ { value ->
-        val names = value.split(",").map(String::trim)
-        val maxLength = 40
+    initialiseTagsControl()
 
-        names.forEach {
-          if (it.length > maxLength)
-            return@validator getString(R.string.validation_tags_max_length, maxLength)
-        }
-
-        null
-      }
-    )
-    categoriesInput!!.addTextChangedListener { updateButton() }
-
-    saveButton!!.setOnClickListener {
+    saveButton.setOnClickListener {
       updateViewModelFromControls()
 
       saveViewModel(viewModel!!)
+    }
+  }
+
+  private fun initialiseTagsControl(): Unit {
+    val tagsAdapter = ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line)
+
+    tagsInput.setAdapter(tagsAdapter)
+
+    tagsInput.addTagMaxLengthValidator(40) { maxLength ->
+      getString(R.string.validation_tags_max_length, maxLength)
+    }
+
+    tagsInput.addTextChangedListener { updateButton() }
+
+    TagService.getAllAsStream().subscribe { tags ->
+      val tagNames = tags.map { it.name }
+
+      tagsAdapter.clear()
+
+      tagsAdapter.addAll(tagNames)
     }
   }
 
@@ -195,22 +206,22 @@ class FlashcardDetailsActivity : BaseActivity() {
   }
 
   private fun updateControls(): Unit {
-    val (flashcard, categories) = viewModel!!
+    val (flashcard, tags) = viewModel!!
 
     if (flashcard.title != null && flashcard.title!!.isNotEmpty())
-      titleInput!!.setText(flashcard.title)
+      titleInput.setText(flashcard.title)
 
     if (flashcard.text != null && flashcard.text!!.isNotEmpty())
-      textInput!!.setText(flashcard.text)
+      textInput.setText(flashcard.text)
 
-    if (categories.isNotEmpty())
-      categoriesInput!!.setText(
-        categories.map { it.name }.joinToString(separator = ", ")
+    if (tags.isNotEmpty())
+      tagsInput.setText(
+        tags.map { it.name }.joinToString(separator = ", ")
       )
   }
 
   private fun updateButton(): Unit {
-    saveButton!!.isEnabled = isValid()
+    saveButton.isEnabled = isValid()
   }
 
   private fun mergeModelAndSavedInstanceState(
@@ -219,10 +230,10 @@ class FlashcardDetailsActivity : BaseActivity() {
       flashcardViewModel.flashcard.title = savedInstanceState.getString(SavedInstanceState.TITLE)
       flashcardViewModel.flashcard.text = savedInstanceState.getString(SavedInstanceState.TEXT)
 
-      val categories = parseCategoriesString(
-        savedInstanceState.getString(SavedInstanceState.CATEGORIES))
+      val tags = parseTagsString(
+        savedInstanceState.getString(SavedInstanceState.TAGS))
 
-      flashcardViewModel.categories = categories
+      flashcardViewModel.tags = tags
 
       flashcardViewModel
     }
@@ -231,14 +242,13 @@ class FlashcardDetailsActivity : BaseActivity() {
   }
 
   private fun isValid()
-    = titleInput!!.isValid() && textInput!!.isValid() && categoriesInput!!.isValid()
+    = titleInput.isValid() && textInput.isValid() && tagsInput.isValid()
 
   private fun showToast(stringResource: Int): Unit {
     val toastMessage = getString(stringResource)
     val duration = Toast.LENGTH_SHORT
 
-    val toast = Toast.makeText(this, toastMessage, duration)
-    toast.show()
+    Toast.makeText(this, toastMessage, duration).show()
   }
 
   //endregion
@@ -263,9 +273,9 @@ class FlashcardDetailsActivity : BaseActivity() {
     }
 
     object SavedInstanceState {
-      val TITLE = "TITLE";
-      val TEXT = "TEXT";
-      val CATEGORIES = "CATEGORIES";
+      val TITLE = "TITLE"
+      val TEXT = "TEXT"
+      val TAGS = "TAGS"
     }
   }
 }

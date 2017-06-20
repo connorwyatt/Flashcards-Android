@@ -27,10 +27,10 @@ class FlashcardDataSource : BaseDataSource() {
     )
   }
 
-  fun getByCategoryId(id: String, stream: Boolean): Observable<List<Flashcard>> {
+  fun getByTagId(id: String, stream: Boolean): Observable<List<Flashcard>> {
     return executeQueryRelationship(
       getQuery = { getFlashcardsQuery(userId = it.uid) },
-      resourceName = "category",
+      resourceName = "tag",
       resourceId = id,
       parser = { Observable.just(Flashcard(it)) },
       clazz = Flashcard::class.java,

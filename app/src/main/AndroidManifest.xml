@@ -27,10 +27,10 @@
             android:name=".activities.FlashcardDetailsActivity"
             android:parentActivityName=".activities.FlashcardListActivity" />
         <activity android:name=".activities.FlashcardTestActivity" />
-        <activity android:name=".activities.CategoryListActivity" />
+        <activity android:name=".activities.TagListActivity" />
         <activity
-            android:name=".activities.CategoryDetailsActivity"
-            android:parentActivityName=".activities.CategoryListActivity" />
+            android:name=".activities.TagDetailsActivity"
+            android:parentActivityName=".activities.TagListActivity" />
         <activity android:name=".activities.AuthActivity" />
     </application>
 
