@@ -33,6 +33,7 @@
                     android:id="@+id/flashcard_test_card_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-light"
                     android:textAlignment="center"
                     android:textColor="@color/colorTextInvert"
                     android:textSize="30sp" />

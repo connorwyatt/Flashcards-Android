@@ -15,6 +15,7 @@
     <color name="colorTextDivider">#1E000000</color>
     <color name="colorTextInvert">#FFFFFFFF</color>
     <color name="colorGrey">#D0D0D0</color>
+    <color name="colorError">#F44336</color>
     <color name="colorPositive">#9CCC65</color>
     <color name="colorPositiveDark">#75994D</color>
     <color name="colorNeutral">#FFCA28</color>
