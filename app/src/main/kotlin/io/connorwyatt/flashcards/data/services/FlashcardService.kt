@@ -20,12 +20,12 @@ object FlashcardService {
   fun getById(id: String): Observable<Flashcard>
     = FlashcardDataSource().getById(id)
 
-  fun getByCategory(categoryId: String): Observable<List<Flashcard>>
-    = FlashcardDataSource().getByCategoryId(categoryId, false)
+  fun getByTag(tagId: String): Observable<List<Flashcard>>
+    = FlashcardDataSource().getByTagId(tagId, false)
 
 
-  fun getByCategoryAsStream(categoryId: String): Observable<List<Flashcard>>
-    = FlashcardDataSource().getByCategoryId(categoryId, true)
+  fun getByTagAsStream(tagId: String): Observable<List<Flashcard>>
+    = FlashcardDataSource().getByTagId(tagId, true)
 
 
   fun save(flashcard: Flashcard): Observable<Flashcard> {
@@ -41,8 +41,8 @@ object FlashcardService {
     }
   }
 
-  fun deleteByCategoryId(categoryId: String): Observable<Any?> {
-    return getByCategory(categoryId).flatMap { flashcards ->
+  fun deleteByTagId(tagId: String): Observable<Any?> {
+    return getByTag(tagId).flatMap { flashcards ->
       val observables = flashcards.map { delete(it) }
 
       if (observables.isNotEmpty())

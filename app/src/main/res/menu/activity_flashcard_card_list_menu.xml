@@ -14,8 +14,8 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/action_navigate_to_categories"
-        android:title="@string/action_navigate_to_categories"
+        android:id="@+id/action_navigate_to_tags"
+        android:title="@string/action_navigate_to_tags"
         app:showAsAction="never" />
 
 </menu>

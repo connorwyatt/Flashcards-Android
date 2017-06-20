@@ -10,7 +10,7 @@
     android:orientation="horizontal">
 
     <LinearLayout
-        android:id="@+id/fragment_category_list_item_category_status_bar"
+        android:id="@+id/fragment_tag_list_item_tag_status_bar"
         android:layout_width="4dp"
         android:layout_height="match_parent"
         android:orientation="vertical" />
@@ -37,27 +37,27 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/fragment_category_list_item_category_title"
+                    android:id="@+id/fragment_tag_list_item_tag_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/colorText"
                     android:textSize="18dp" />
 
                 <TextView
-                    android:id="@+id/fragment_category_list_item_category_flashcard_count"
+                    android:id="@+id/fragment_tag_list_item_tag_flashcard_count"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/colorTextSecondary" />
 
                 <TextView
-                    android:id="@+id/fragment_category_list_item_category_status"
+                    android:id="@+id/fragment_tag_list_item_tag_status"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/colorTextDisabled" />
             </LinearLayout>
 
             <ImageButton
-                android:id="@+id/fragment_category_list_item_category_menu"
+                android:id="@+id/fragment_tag_list_item_tag_menu"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="40dp"
                 android:layout_height="40dp"

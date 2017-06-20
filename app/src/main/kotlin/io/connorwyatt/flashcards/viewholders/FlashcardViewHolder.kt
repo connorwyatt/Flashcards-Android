@@ -25,11 +25,11 @@ class FlashcardViewHolder constructor(itemView: View) : RecyclerView.ViewHolder(
   private val progress = itemView.findViewById(R.id.flashcard_card_rating) as ProgressBar
   private val titleText = itemView.findViewById(R.id.flashcard_card_title) as TextView
   private val textText = itemView.findViewById(R.id.flashcard_card_text) as TextView
-  private val categoriesText = itemView.findViewById(R.id.flashcard_card_categories) as TextView
+  private val tagsText = itemView.findViewById(R.id.flashcard_card_tags) as TextView
 
   fun setData(viewModel: FlashcardViewModel): Unit {
     this.viewModel = viewModel
-    val (flashcard, categories, rating) = viewModel
+    val (flashcard, tags, rating) = viewModel
 
     val colorId = rating?.let {
       if (rating >= 0) {
@@ -56,10 +56,10 @@ class FlashcardViewHolder constructor(itemView: View) : RecyclerView.ViewHolder(
     titleText.text = flashcard.title
     textText.text = flashcard.text
 
-    if (categories.isNotEmpty()) {
-      categoriesText.text = categories.map { it.name }.joinToString(separator = ", ")
+    if (tags.isNotEmpty()) {
+      tagsText.text = tags.map { it.name }.joinToString(separator = ", ")
     } else {
-      bodyLayout.removeView(categoriesText)
+      bodyLayout.removeView(tagsText)
     }
   }
 

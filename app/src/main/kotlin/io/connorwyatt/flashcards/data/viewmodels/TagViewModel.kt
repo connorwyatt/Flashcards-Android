@@ -6,38 +6,38 @@
 
 package io.connorwyatt.flashcards.data.viewmodels
 
-import io.connorwyatt.flashcards.data.entities.Category
-import io.connorwyatt.flashcards.data.services.CategoryService
+import io.connorwyatt.flashcards.data.entities.Tag
+import io.connorwyatt.flashcards.data.services.TagService
 import io.connorwyatt.flashcards.data.services.FlashcardTestService
 import io.reactivex.Observable
 
-data class CategoryViewModel(
-  var category: Category,
+data class TagViewModel(
+  var tag: Tag,
   var flashcardCount: Int,
   var averageRating: Double? = null
 ) {
   fun delete(deleteFlashcards: Boolean = false): Observable<Any?> {
     return if (deleteFlashcards) {
-      CategoryService.deleteWithFlashcards(this.category)
+      TagService.deleteWithFlashcards(this.tag)
     } else {
-      CategoryService.delete(this.category)
+      TagService.delete(this.tag)
     }
   }
 
   companion object {
-    fun getFromCategory(category: Category,
-                        includeRating: Boolean = true): Observable<CategoryViewModel> {
+    fun getFromTag(tag: Tag,
+                        includeRating: Boolean = true): Observable<TagViewModel> {
       val ratingObservable = if (includeRating)
-        FlashcardTestService.getAverageRatingForCategory(category.id!!)
+        FlashcardTestService.getAverageRatingForTag(tag.id!!)
       else
         Observable.just(false)
 
 
       return ratingObservable.map {
-        val flashcardCount = category.relationships.getRelationships("flashcard")?.count() ?: 0
+        val flashcardCount = tag.relationships.getRelationships("flashcard")?.count() ?: 0
         val averageRating = if (it is Double) it else null
 
-        CategoryViewModel(category, flashcardCount, averageRating)
+        TagViewModel(tag, flashcardCount, averageRating)
       }
     }
   }

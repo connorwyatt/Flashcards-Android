@@ -24,8 +24,8 @@ object FlashcardTestService {
     }
   }
 
-  fun getByCategoryId(id: String): Observable<List<FlashcardTest>> {
-    return FlashcardService.getByCategory(id).flatMap { flashcards ->
+  fun getByTagId(id: String): Observable<List<FlashcardTest>> {
+    return FlashcardService.getByTag(id).flatMap { flashcards ->
       val observables = flashcards.map { getByFlashcardId(it.id!!) }
 
       if (observables.isNotEmpty()) {
@@ -38,8 +38,8 @@ object FlashcardTestService {
     }
   }
 
-  fun getAverageRatingForCategory(id: String): Observable<Double> {
-    return getByCategoryId(id).map { tests ->
+  fun getAverageRatingForTag(id: String): Observable<Double> {
+    return getByTagId(id).map { tests ->
       averageFlashcardTests(tests) ?: -1.0
     }
   }

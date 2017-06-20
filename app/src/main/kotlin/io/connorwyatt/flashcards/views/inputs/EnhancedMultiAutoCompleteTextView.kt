@@ -1,19 +1,13 @@
-/*
- * Copyright (c) 2016-2017 Connor Wyatt <connorwyatt1@gmail.com>.
- *
- * This file can not be copied and/or distributed without the express permission of Connor Wyatt.
- */
-
-package io.connorwyatt.flashcards.views.textinput
+package io.connorwyatt.flashcards.views.inputs
 
 import android.content.Context
 import android.graphics.Rect
-import android.support.design.widget.TextInputEditText
 import android.support.design.widget.TextInputLayout
 import android.util.AttributeSet
 import android.view.View
+import android.widget.MultiAutoCompleteTextView
 
-class EnhancedTextInputEditText : TextInputEditText {
+class EnhancedMultiAutoCompleteTextView : MultiAutoCompleteTextView {
   private var touched = false
   private var dirty = false
   private var valid = true
@@ -23,12 +17,22 @@ class EnhancedTextInputEditText : TextInputEditText {
     getParentTextInputLayout()
   }
 
-  constructor(context: Context) : super(context)
+  constructor(context: Context) : super(context) {
+    initialise()
+  }
 
-  constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
+  constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
+    initialise()
+  }
 
   constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) :
-    super(context, attrs, defStyleAttr)
+    super(context, attrs, defStyleAttr) {
+    initialise()
+  }
+
+  private fun initialise() {
+    setTokenizer(MultiAutoCompleteTextView.CommaTokenizer())
+  }
 
   private fun getParentTextInputLayout(): TextInputLayout? {
     var parent = parent
@@ -90,9 +94,17 @@ class EnhancedTextInputEditText : TextInputEditText {
   fun isValid() = valid
   fun isInvalid() = !valid
 
-  fun addRequiredValidator(errorMessage: String): () -> Unit {
-    val validator = { value: String ->
-      if (value.isEmpty()) errorMessage else null
+  fun addTagMaxLengthValidator(maxLength: Int, getErrorMessage: (Int) -> String): () -> Unit {
+    val validator = validator@{ value: String ->
+      val tags = value.split(",").map(String::trim)
+
+      tags.forEach { tag ->
+        if (tag.length > maxLength) {
+          return@validator getErrorMessage.invoke(maxLength)
+        }
+      }
+
+      return@validator null
     }
 
     validators.add(validator)
@@ -119,8 +131,7 @@ class EnhancedTextInputEditText : TextInputEditText {
     return { validators.removeAll(listOf(validator)) }
   }
 
-  fun addCustomValidator(validator: (String) -> String?):
-    () -> Unit {
+  fun addCustomValidator(validator: (String) -> String?): () -> Unit {
     validators.add(validator)
 
     runValidators(editableText.toString())
