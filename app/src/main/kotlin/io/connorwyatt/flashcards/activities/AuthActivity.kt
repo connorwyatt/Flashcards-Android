@@ -11,25 +11,18 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import android.widget.Button
-import android.widget.Switch
-import android.widget.TextView
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.helpers.auth.AuthHelper
 import io.connorwyatt.flashcards.helpers.auth.exceptions.EmailAlreadyInUseException
 import io.connorwyatt.flashcards.helpers.auth.exceptions.InvalidCredentialsException
 import io.connorwyatt.flashcards.helpers.auth.exceptions.UserNotFoundException
-import io.connorwyatt.flashcards.views.inputs.EnhancedTextInputEditText
+import kotlinx.android.synthetic.main.activity_auth.*
 
 class AuthActivity : AppCompatActivity() {
   private val auth = AuthHelper.getInstance()
   private val emailRegex = Regex("""^[A-Za-z0-9]+@[A-Za-z0-9]+(\.[A-Za-z0-9]+)+$""")
   private var formState = FormStates.LOGIN
   private var isLoading = false
-  lateinit private var errorMessage: TextView
-  lateinit private var email: EnhancedTextInputEditText
-  lateinit private var password: EnhancedTextInputEditText
-  lateinit private var submitButton: Button
 
   override fun onCreate(savedInstanceState: Bundle?): Unit {
     super.onCreate(savedInstanceState)
@@ -49,8 +42,6 @@ class AuthActivity : AppCompatActivity() {
   }
 
   private fun initUI(): Unit {
-    initErrorMessage()
-
     initTextFields()
 
     initSwitch()
@@ -58,33 +49,25 @@ class AuthActivity : AppCompatActivity() {
     initButtons()
   }
 
-  private fun initErrorMessage(): Unit {
-    errorMessage = findViewById(R.id.activity_auth_error_message) as TextView
-  }
 
   private fun initTextFields(): Unit {
-    email = findViewById(R.id.activity_auth_email) as EnhancedTextInputEditText
-    password = findViewById(R.id.activity_auth_password) as EnhancedTextInputEditText
-
-    email.addRequiredValidator(getString(R.string.validation_required))
-    email.addCustomValidator validator@ {
+    activity_auth_email.addRequiredValidator(getString(R.string.validation_required))
+    activity_auth_email.addCustomValidator validator@ {
       val isMatch = emailRegex.matches(it.subSequence(0, it.length))
 
       return@validator if (!isMatch) getString(R.string.validation_email) else null
     }
-    email.addMaxLengthValidator(255, { actualLength, maxLength ->
+    activity_auth_email.addMaxLengthValidator(255, { actualLength, maxLength ->
       getString(R.string.validation_max_length, actualLength, maxLength)
     })
-    email.addTextChangedListener { updateUI() }
+    activity_auth_email.addTextChangedListener { updateUI() }
 
-    password.addRequiredValidator(getString(R.string.validation_required))
-    password.addTextChangedListener { updateUI() }
+    activity_auth_password.addRequiredValidator(getString(R.string.validation_required))
+    activity_auth_password.addTextChangedListener { updateUI() }
   }
 
   private fun initSwitch(): Unit {
-    val switch = findViewById(R.id.activity_auth_switch) as Switch
-
-    switch.setOnCheckedChangeListener { _, isChecked ->
+    activity_auth_switch.setOnCheckedChangeListener { _, isChecked ->
       formState = if (isChecked) FormStates.REGISTER else FormStates.LOGIN
 
       setError(null)
@@ -93,9 +76,7 @@ class AuthActivity : AppCompatActivity() {
   }
 
   private fun initButtons(): Unit {
-    submitButton = findViewById(R.id.activity_auth_submit_button) as Button
-
-    submitButton.setOnClickListener {
+    activity_auth_submit_button.setOnClickListener {
       val (email, password) = getUserInput()
 
       when (formState) {
@@ -160,8 +141,8 @@ class AuthActivity : AppCompatActivity() {
   }
 
   private fun getUserInput(): UserInput {
-    val email: String = email.text.toString()
-    val password: String = password.text.toString()
+    val email: String = activity_auth_email.text.toString()
+    val password: String = activity_auth_password.text.toString()
 
     return UserInput(email, password)
   }
@@ -172,7 +153,7 @@ class AuthActivity : AppCompatActivity() {
   }
 
   private fun updateButtonState(): Unit {
-    submitButton.isEnabled = isValid() && !isLoading
+    activity_auth_submit_button.isEnabled = isValid() && !isLoading
   }
 
   private fun updateButtonLabel(): Unit {
@@ -181,11 +162,11 @@ class AuthActivity : AppCompatActivity() {
       FormStates.REGISTER -> getString(R.string.activity_auth_register)
     }
 
-    submitButton.text = label
+    activity_auth_submit_button.text = label
   }
 
   private fun isValid(): Boolean =
-    email.isValid() && password.isValid()
+    activity_auth_email.isValid() && activity_auth_password.isValid()
 
   private fun onSignIn() {
     FlashcardListActivity.startActivity(this)
@@ -194,11 +175,11 @@ class AuthActivity : AppCompatActivity() {
 
   private fun setError(errorMessageResource: Int?) {
     if (errorMessageResource != null) {
-      errorMessage.setText(errorMessageResource)
-      errorMessage.visibility = View.VISIBLE
+      activity_auth_error_message.setText(errorMessageResource)
+      activity_auth_error_message.visibility = View.VISIBLE
     } else {
-      errorMessage.text = ""
-      errorMessage.visibility = View.GONE
+      activity_auth_error_message.text = ""
+      activity_auth_error_message.visibility = View.GONE
     }
   }
 
