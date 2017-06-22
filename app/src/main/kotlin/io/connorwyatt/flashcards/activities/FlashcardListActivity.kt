@@ -18,14 +18,16 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.Spinner
+import io.connorwyatt.flashcards.FlashcardTestOptionsDialogFragment
 import io.connorwyatt.flashcards.R
+import io.connorwyatt.flashcards.activities.FlashcardTestActivity.Companion.Configuration
 import io.connorwyatt.flashcards.adapters.DropdownItem
 import io.connorwyatt.flashcards.adapters.FlashcardListAdapter
 import io.connorwyatt.flashcards.adapters.GenericArrayAdapter
-import io.connorwyatt.flashcards.data.entities.Tag
 import io.connorwyatt.flashcards.data.entities.Flashcard
-import io.connorwyatt.flashcards.data.services.TagService
+import io.connorwyatt.flashcards.data.entities.Tag
 import io.connorwyatt.flashcards.data.services.FlashcardService
+import io.connorwyatt.flashcards.data.services.TagService
 import io.connorwyatt.flashcards.data.viewmodels.FlashcardViewModel
 import io.connorwyatt.flashcards.listeners.SimpleOnItemSelectedListener
 import io.reactivex.Observable
@@ -67,13 +69,14 @@ class FlashcardListActivity : BaseActivity() {
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     return when (item.itemId) {
       R.id.action_test -> {
-        val tag = filterTag
+        val dialog = FlashcardTestOptionsDialogFragment()
 
-        if (tag != null) {
-          navigateToFlashcardTest(tag)
-        } else {
-          navigateToFlashcardTest()
+        dialog.setContinueAction { (order, limit) ->
+          navigateToFlashcardTest(Configuration(filterTag, order, limit))
         }
+
+        dialog.show(supportFragmentManager, "blah")
+
         true
       }
       R.id.action_navigate_to_tags -> {
@@ -230,12 +233,8 @@ class FlashcardListActivity : BaseActivity() {
     FlashcardDetailsActivity.startActivityWithFlashcard(this, flashcard)
   }
 
-  private fun navigateToFlashcardTest(): Unit {
-    FlashcardTestActivity.startActivity(this)
-  }
-
-  private fun navigateToFlashcardTest(tag: Tag): Unit {
-    FlashcardTestActivity.startActivityWithTagFilter(this, tag.id!!)
+  private fun navigateToFlashcardTest(configuration: Configuration): Unit {
+    FlashcardTestActivity.startActivity(this, configuration)
   }
 
   private fun navigateToTagList(): Unit {

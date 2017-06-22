@@ -15,9 +15,9 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import io.connorwyatt.flashcards.R
-import io.connorwyatt.flashcards.data.entities.Flashcard
+import io.connorwyatt.flashcards.data.viewmodels.FlashcardViewModel
 
-class FlashcardTestCardFrontFragment(private val flashcard: Flashcard) : Fragment() {
+class FlashcardTestCardFrontFragment(private val viewModel: FlashcardViewModel) : Fragment() {
   override fun onCreateView(
     inflater: LayoutInflater, container: ViewGroup, savedInstanceState: Bundle?): View {
     super.onCreateView(inflater, container, savedInstanceState)
@@ -35,7 +35,7 @@ class FlashcardTestCardFrontFragment(private val flashcard: Flashcard) : Fragmen
 
     val titleTextView = viewGroup.findViewById(R.id.flashcard_test_card_title) as TextView
 
-    titleTextView.text = flashcard.title
+    titleTextView.text = viewModel.flashcard.title
 
     val flipButton = viewGroup.findViewById(R.id.flashcard_test_card_flip_button) as ImageButton
     flipButton.setOnClickListener { parentFragment.flipCard() }

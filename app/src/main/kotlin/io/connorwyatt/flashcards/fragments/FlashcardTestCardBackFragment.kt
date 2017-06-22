@@ -16,11 +16,11 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.activities.FlashcardTestActivity
-import io.connorwyatt.flashcards.data.entities.Flashcard
+import io.connorwyatt.flashcards.data.viewmodels.FlashcardViewModel
 import io.connorwyatt.flashcards.enums.Rating
 
 class FlashcardTestCardBackFragment(
-  private val flashcard: Flashcard,
+  private val viewModel: FlashcardViewModel,
   initialRating: Rating?,
   private val onRatingChangeListener: (Rating?) -> Unit)
   : Fragment() {
@@ -71,11 +71,11 @@ class FlashcardTestCardBackFragment(
 
     val titleTextView = viewGroup.findViewById(R.id.flashcard_test_card_title) as TextView
 
-    titleTextView.text = flashcard.title
+    titleTextView.text = viewModel.flashcard.title
 
     val textTextView = viewGroup.findViewById(R.id.flashcard_test_card_text) as TextView
 
-    textTextView.text = flashcard.text
+    textTextView.text = viewModel.flashcard.text
 
     initialiseButtons()
   }

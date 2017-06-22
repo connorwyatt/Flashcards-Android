@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2016-2017 Connor Wyatt <connorwyatt1@gmail.com>.
+  ~
+  ~ This file can not be copied and/or distributed without the express permission of Connor Wyatt.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/order_label" />
+
+    <RadioGroup
+        android:id="@+id/order_radio_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.AppCompatRadioButton
+            android:id="@+id/order_radio_random"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/order_random" />
+
+        <android.support.v7.widget.AppCompatRadioButton
+            android:id="@+id/order_radio_worst_to_best"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/order_worst_to_best" />
+
+    </RadioGroup>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/divider" />
+
+    <CheckBox
+        android:id="@+id/limit_checkbox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/limit_cards" />
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/limit_value_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
+
+        <io.connorwyatt.flashcards.views.inputs.EnhancedTextInputEditText
+            android:id="@+id/limit_value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/limit_label"
+            android:inputType="number" />
+
+    </android.support.design.widget.TextInputLayout>
+
+</LinearLayout>

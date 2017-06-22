@@ -13,12 +13,12 @@ import android.view.View
 import android.view.ViewGroup
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.activities.FlashcardTestActivity
-import io.connorwyatt.flashcards.data.entities.Flashcard
+import io.connorwyatt.flashcards.data.viewmodels.FlashcardViewModel
 import io.connorwyatt.flashcards.enums.Rating
 
 class FlashcardTestCardFragment : Fragment() {
   lateinit private var flashcardTestFragment: FlashcardTestFragment
-  private var flashcard: Flashcard? = null
+  private var viewModel: FlashcardViewModel? = null
   private var isFlipped = false
   private var rating: Rating? = null
 
@@ -45,7 +45,7 @@ class FlashcardTestCardFragment : Fragment() {
   override fun onDestroy() {
     super.onDestroy()
 
-    rating?.let { flashcardTestFragment.rateFlashcard(flashcard!!, it).subscribe() }
+    rating?.let { flashcardTestFragment.rateFlashcard(viewModel!!, it).subscribe() }
   }
 
   //endregion
@@ -58,7 +58,7 @@ class FlashcardTestCardFragment : Fragment() {
         .beginTransaction()
         .setCustomAnimations(R.animator.card_flip_in, R.animator.card_flip_out)
         .replace(R.id.flashcard_test_card_frame,
-                 getCardBackFragment())
+          getCardBackFragment())
         .commit()
 
       isFlipped = true
@@ -72,11 +72,11 @@ class FlashcardTestCardFragment : Fragment() {
   private fun initialiseFragment(): Unit {
     flashcardTestFragment = (activity as FlashcardTestActivity).flashcardTestFragment!!
 
-    flashcard = flashcardTestFragment
+    viewModel = flashcardTestFragment
       .getFlashcardFromAdapter(arguments.getString(ArgumentKeys.FLASHCARD_ID))
 
     val fragment = if (!isFlipped)
-      FlashcardTestCardFrontFragment(flashcard!!)
+      FlashcardTestCardFrontFragment(viewModel!!)
     else
       getCardBackFragment()
 
@@ -87,7 +87,7 @@ class FlashcardTestCardFragment : Fragment() {
   }
 
   private fun getCardBackFragment()
-    = FlashcardTestCardBackFragment(flashcard!!, rating, { rating = it })
+    = FlashcardTestCardBackFragment(viewModel!!, rating, { rating = it })
 
   //endregion
 
