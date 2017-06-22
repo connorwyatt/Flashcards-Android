@@ -10,6 +10,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import io.connorwyatt.flashcards.R
+import io.connorwyatt.flashcards.data.entities.Tag
 import io.connorwyatt.flashcards.fragments.FlashcardTestFragment
 
 class FlashcardTestActivity : BaseActivity() {
@@ -22,9 +23,11 @@ class FlashcardTestActivity : BaseActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_flashcard_test)
 
-    val tagId = intent.getStringExtra(IntentExtras.TAG_ID)
+    val tagId = if (intent.hasExtra(IntentExtras.TAG_ID)) intent.getStringExtra(IntentExtras.TAG_ID) else null
+    val order = Order.values()[intent.getIntExtra(IntentExtras.ORDER, -1)]
+    val limit = if (intent.hasExtra(IntentExtras.LIMIT)) intent.getIntExtra(IntentExtras.LIMIT, -1) else null
 
-    initialiseFragment(tagId)
+    initialiseFragment(tagId, order, limit)
   }
 
   override fun onBackPressed() {
@@ -35,7 +38,7 @@ class FlashcardTestActivity : BaseActivity() {
 
   //region UI
 
-  private fun initialiseFragment(tagId: String?): Unit {
+  private fun initialiseFragment(tagId: String?, order: Order, limit: Int?): Unit {
     var fragment = fragmentManager.findFragmentByTag(FRAGMENT_TAG) as FlashcardTestFragment?
 
     if (fragment == null) {
@@ -43,8 +46,9 @@ class FlashcardTestActivity : BaseActivity() {
 
       val arguments = Bundle()
 
-      arguments.putString(
-        FlashcardTestFragment.Companion.ArgumentKeys.TAG_ID, tagId)
+      arguments.putString(FlashcardTestFragment.Companion.ArgumentKeys.TAG_ID, tagId)
+      arguments.putInt(FlashcardTestFragment.Companion.ArgumentKeys.ORDER, order.ordinal)
+      arguments.putInt(FlashcardTestFragment.Companion.ArgumentKeys.LIMIT, limit ?: -1)
 
       fragment.arguments = arguments
 
@@ -62,15 +66,13 @@ class FlashcardTestActivity : BaseActivity() {
   companion object {
     private val FRAGMENT_TAG = "DATA"
 
-    fun startActivity(context: Context) {
-      val intent = Intent(context, FlashcardTestActivity::class.java)
+    fun startActivity(context: Context, configuration: Configuration) {
+      val (tag, order, limit) = configuration
 
-      context.startActivity(intent)
-    }
-
-    fun startActivityWithTagFilter(context: Context, tagId: String) {
       val extras = Bundle()
-      extras.putString(IntentExtras.TAG_ID, tagId)
+      tag?.let { extras.putString(IntentExtras.TAG_ID, it.id) }
+      extras.putInt(IntentExtras.ORDER, order.ordinal)
+      limit?.let { extras.putInt(IntentExtras.LIMIT, it) }
 
       val intent = Intent(context, FlashcardTestActivity::class.java)
       intent.putExtras(extras)
@@ -78,8 +80,17 @@ class FlashcardTestActivity : BaseActivity() {
       context.startActivity(intent)
     }
 
+    data class Configuration(val tag: Tag?, val order: Order, val limit: Int?)
+
+    enum class Order {
+      RANDOM,
+      WORST_TO_BEST
+    }
+
     object IntentExtras {
       val TAG_ID = "TAG_ID"
+      val ORDER = "ORDER"
+      val LIMIT = "LIMIT"
     }
   }
 }

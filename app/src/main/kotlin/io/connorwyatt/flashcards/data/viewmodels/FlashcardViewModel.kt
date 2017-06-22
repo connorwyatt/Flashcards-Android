@@ -6,11 +6,11 @@
 
 package io.connorwyatt.flashcards.data.viewmodels
 
-import io.connorwyatt.flashcards.data.entities.Tag
 import io.connorwyatt.flashcards.data.entities.Flashcard
-import io.connorwyatt.flashcards.data.services.TagService
+import io.connorwyatt.flashcards.data.entities.Tag
 import io.connorwyatt.flashcards.data.services.FlashcardService
 import io.connorwyatt.flashcards.data.services.FlashcardTestService
+import io.connorwyatt.flashcards.data.services.TagService
 import io.reactivex.Observable
 
 data class FlashcardViewModel(

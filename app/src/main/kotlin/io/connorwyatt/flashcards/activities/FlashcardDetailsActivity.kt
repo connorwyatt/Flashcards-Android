@@ -15,7 +15,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.ArrayAdapter
 import android.widget.Button
-import android.widget.MultiAutoCompleteTextView
 import android.widget.Toast
 import io.connorwyatt.flashcards.R
 import io.connorwyatt.flashcards.data.entities.Flashcard
